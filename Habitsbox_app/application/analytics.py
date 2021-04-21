@@ -1,5 +1,8 @@
 import sqlite3
 from datetime import datetime
+from itertools import groupby
+from functools import reduce
+from collections import Counter
 
 #from .habit import Habit
 from habit import Habit
@@ -96,17 +99,150 @@ class Analytics:
         # print('Longest streak: 12 days')
         
     def joint_habits_trackings(self):
-        self.cursor.execute("""SELECT t.Date FROM habits h 
+        self.cursor.execute("""SELECT t.HabitID, t.Date, t.Time 
+                            FROM habits h 
                             INNER JOIN trackings t 
                             USING(HabitID)""")
         return self.cursor.fetchall()
+    
+    def format_to_date_time(self, trackings):
+        """
+        Convert strings into datetime format
+        """
+        return map(lambda x: (datetime.strptime(x[0], "%Y-%m-%d"), 
+               datetime.strptime(x[1], "%H:%M").time()),
+               trackings)
+
+
+    def select_column(self, list_date_time, i):
+        return map(lambda x: x[i], list_date_time)
+    
+    def format_to_date(self, column):
+        return map(lambda x: datetime.strptime(x, "%Y-%m-%d"), column)
+    
+    def format_to_time(self, column):
+        return map(lambda x: datetime.strptime(x, "%H:%M").time(), column)
+           
+    def to_calender_week(self, dates):
+        return map(lambda x: x.isocalendar()[1], dates)
+    
+    def unique_data(self, myobject):
+        return reduce(lambda x, y: x + [y] if y not in x else x, myobject, [])
+    
+    def zipping_unique_data(self, unique):
+        """
+        Create a sequence of pairs from a list of dates that are unique
+        """
+        return zip(unique[1:], unique[:-1])
+
+    def differences(self, pairs):
+        """
+        Difference of days between trackings 
+        """
+        return map(lambda x: (x[0]-x[1]), pairs) 
+    
+    def difference_in_days(self, differences):
+        return map(lambda x: x.days, differences)
+
+    def cw_5152_to_1(self, differences):
+        return map(lambda x: 1 
+                   if (x == -51) or (x == -52) 
+                   else x, differences)
+
+    def grouping_differences(self, differences):
+        """
+        Group by nummer (key) and members. Example: nummer: [item1, item2]
+        [(2, 2), (1, 2), (2, 1), (1, 3), (7, 1), (1, 2), (2, 1), (1, 2)]
+        """
+        return groupby(differences)
+
+    def streaks(self, grouping_differences):
+        """
+        Count the number of items if the key is the number one
+        """
+        return [sum(group) for key, group in grouping_differences if key == 1]
+
+    def longest_streak(self, streaks):
+        """
+        Select the longest streak if the list given is not empty,
+        if the list is empty gives a default value of 1
+        """
+        if len(streaks) != 0:
+            return max(streaks) + 1
+        else:
+            return 1
+    
+    def longest_streak_periodicity(self, periodicity, column):
+        if periodicity == 'daily':
+            return self.longest_streak(
+                self.streaks(
+                    self.grouping_differences(
+                        self.difference_in_days(
+                            self.differences(
+                                self.zipping_unique_data(
+                                    self.unique_data(
+                                        self.format_to_date(
+                                            self.select_column(
+                                                self.joint_habits_trackings(), 
+                                                column)))))))))
+        elif periodicity == 'weekly':
+            return self.longest_streak(
+                self.streaks(
+                    self.grouping_differences(
+                        self.cw_5152_to_1(
+                            self.differences(
+                                self.zipping_unique_data(
+                                    self.unique_data(
+                                        self.to_calender_week(
+                                            self.format_to_date(
+                                                self.select_column(
+                                                    self.joint_habits_trackings(),
+                                                    column))))))))))
+    
+    def start_habit(self, column=1):
+        return min(
+            self.format_to_date(
+                self.select_column(self.joint_habits_trackings(), column
+                                   )))
+    
+    def last_day(self, column):
+        return max(
+            self.format_to_date(
+                self.select_column(
+                    self.joint_habits_trackings(), column
+                    )))
+    
+    def activity(self, unique_data):
+        return len(unique_data)
         
     def info_one_habit(self):
         """Return the information of one habit"""
         all_habits_trackings = self.joint_habits_trackings()
+        all_habits = self.get_all_habits()
+        habit = all_habits[0][1]
+        periodicity = all_habits[0][2]
+        motivation = all_habits[0][3]
+        registration_habit = all_habits[0][-1]
+        start = self.start_habit()
+        last = self.last_day(1)
+        streak_daily = self.longest_streak_periodicity('daily', 1)
+        streak_weekly = self.longest_streak_periodicity('weekly', 1)
+        activity_daily = self.activity(
+            self.unique_data(
+                self.format_to_date(
+                    self.select_column(
+                        self.joint_habits_trackings(), 1))))
+        activity_weekly = self.activity(
+            self.unique_data(
+                self.to_calender_week(
+                    self.format_to_date(
+                        self.select_column(
+                            self.joint_habits_trackings(), 1))))) 
+
+
         if len(all_habits_trackings) == 0:
             #self.see_all_habits()
-            all_habits = self.get_all_habits()
+            #all_habits = self.get_all_habits()
             #print(all_habits)
             #[(1, 'Yoga', 'weekly', 'Be more flexible', 'Before breakfast', '2021-02-22')]
             print(
@@ -120,11 +256,43 @@ class Analytics:
                     Motivation: {}
                     
             ------------------------------------------------
-            """.format(all_habits[0][1], all_habits[0][-1], all_habits[0][3])
+            """.format(habit, registration_habit, motivation)
             )
         else:
-        
-           print(all_habits_trackings)
+            print(
+                        """
+                        ___________________________________
+                                      - {} -
+                        ___________________________________
+                        Motivation:   {}
+                        Periodicity:  {}
+                        -----------------------------------
+                        
+                        Started on:             {}
+                        Last day of activity:   {}
+                        """.format(habit, motivation, 
+                        periodicity, start, last)
+                        )
+            
+            if len(all_habits_trackings) > 1:
+                
+                if periodicity == 'daily':
+                    
+                    print(
+                        """
+                        Longest streak: {}
+                        Days of activity: {}
+                        """.format(streak_daily, activity_daily)
+                        )
+                elif all_habits[0][2] == 'weekly':
+                    print(
+                        """
+                        Longest streak: {}
+                        Weeks of activity: {}
+                        """.format(streak_weekly, activity_weekly)
+                        )
+            
+                
         #[(1, 'Yoga', 'weekly', 'Be more flexible', 'Before breakfast', '2021-02-22', 
         #1, '2021-02-24', '07:36 PM')]
         # if len(all_habits) == 1:
