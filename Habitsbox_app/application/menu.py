@@ -322,7 +322,6 @@ class Menu:
         
     def show_all_habits(self):
         self.analytics.see_all_habits()
-        
 
 
     def habits_same_periodicity(self):

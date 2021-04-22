@@ -34,6 +34,8 @@ class Analytics:
         self.cursor.execute("SELECT * FROM habits")
         return self.cursor.fetchall()
     
+
+    
     def get_all_names(self):
         """Return the names of the habits in a list"""
         all_habits = self.get_all_habits()
@@ -105,20 +107,17 @@ class Analytics:
                             USING(HabitID)""")
         return self.cursor.fetchall()
     
-    def format_to_date_time(self, trackings):
-        """
-        Convert strings into datetime format
-        """
-        return map(lambda x: (datetime.strptime(x[0], "%Y-%m-%d"), 
-               datetime.strptime(x[1], "%H:%M").time()),
-               trackings)
-
+    def display_elements(self, my_list):
+        return '\n'.join(map(str, my_list))
+    
+    def display_list_elements(self, my_list):
+        return ', the '.join(map(str, my_list))
 
     def select_column(self, list_date_time, i):
         return map(lambda x: x[i], list_date_time)
     
     def format_to_date(self, column):
-        return map(lambda x: datetime.strptime(x, "%Y-%m-%d"), column)
+        return map(lambda x: datetime.strptime(x, "%Y-%m-%d").date(), column)
     
     def format_to_time(self, column):
         return map(lambda x: datetime.strptime(x, "%H:%M").time(), column)
@@ -214,6 +213,41 @@ class Analytics:
     
     def activity(self, unique_data):
         return len(unique_data)
+    
+    def only_hours(self, time):
+        """Get hours without minutes"""
+        return map(lambda x: x.hour, time)
+
+    def sort_time(self, hours):
+        """
+        Classification of hours in
+        Morning, Afternoon, Evening and Overnight
+        """
+        return map(lambda x: 'Morning' 
+                   if x >= 5 and x < 12 
+                   else ('Afternoon'
+                         if x >= 12 and x < 18
+                         else ('Evening'
+                               if x >= 18 and x < 24
+                               else 'Overnight')), hours)
+
+    def active_time_dict(self, sort_time):
+        """Create a dictionary of the form:
+           {'Morning': 9, 'Afternoon': 5, 'Evening': 4, 'Overnight': 2}
+        """
+        return Counter(sort_time)
+
+    def max_value(self, active_time_dict):
+        """Get the maximum value of a dictionary"""
+        return max(active_time_dict.values())
+
+    def most_active_time(self, active_time_dict, max_value):
+        """
+        Get the keys with the maximum value
+        """
+        return [k for k, v in active_time_dict.items() if v == max_value]
+    
+
         
     def info_one_habit(self):
         """Return the information of one habit"""
@@ -223,22 +257,32 @@ class Analytics:
         periodicity = all_habits[0][2]
         motivation = all_habits[0][3]
         registration_habit = all_habits[0][-1]
-        start = self.start_habit()
-        last = self.last_day(1)
-        streak_daily = self.longest_streak_periodicity('daily', 1)
-        streak_weekly = self.longest_streak_periodicity('weekly', 1)
+        col_date = 1
+        col_time = 2
+        start = self.start_habit(col_date)
+        last = self.last_day(col_date)
+        streak_daily = self.longest_streak_periodicity('daily', col_date)
+        streak_weekly = self.longest_streak_periodicity('weekly', col_date)
+        date_column = self.format_to_date(
+            self.select_column(self.joint_habits_trackings(), col_date))
         activity_daily = self.activity(
             self.unique_data(
-                self.format_to_date(
-                    self.select_column(
-                        self.joint_habits_trackings(), 1))))
+                date_column))
         activity_weekly = self.activity(
             self.unique_data(
                 self.to_calender_week(
-                    self.format_to_date(
+                    date_column))) 
+        active_time_dictionary = self.active_time_dict(
+            self.sort_time(
+                self.only_hours(
+                    self.format_to_time(
                         self.select_column(
-                            self.joint_habits_trackings(), 1))))) 
-
+                            self.joint_habits_trackings(), col_time)))))        
+        max_value_active_time = self.max_value(
+            active_time_dictionary)
+        
+        most_active_time = self.most_active_time(
+            active_time_dictionary, max_value_active_time)
 
         if len(all_habits_trackings) == 0:
             #self.see_all_habits()
@@ -275,6 +319,13 @@ class Analytics:
                         )
             
             if len(all_habits_trackings) > 1:
+
+                print(
+                        """
+                        You are more active during:
+                        the {}
+                        """.format(self.display_list_elements(most_active_time))
+                    )
                 
                 if periodicity == 'daily':
                     
