@@ -28,48 +28,57 @@ class Analytics:
                             'description':self.habit.description,
                             'creation_date':self.habit.creation_date})
             
-    def get_all_habits(self):
-        """Return all the habits and all the fields
-        available in the table habits in the DB"""
+    def habits_table(self):
+        """
+        Return all the habits and all the fields
+        available in the table habits in the DB
+        example:
+        [(1, 'Yoga', 'daily', 'Be more flexible', 'Before breakfast', '2021-02-22')]
+        """
         self.cursor.execute("SELECT * FROM habits")
         return self.cursor.fetchall()
     
-
+    def trackings_table(self):
+        self.cursor.execute("""SELECT t.HabitID, t.Date, t.Time 
+                            FROM habits h 
+                            INNER JOIN trackings t 
+                            USING(HabitID)""")
+        return self.cursor.fetchall()
     
+    def join_tables(self, id_habit):
+        self.cursor.execute("""SELECT * FROM habits h 
+                                INNER JOIN trackings t 
+                                ON h.id = t.id_habit
+                                WHERE id_habit=:id_habit""",
+                            {'id_habit': id_habit})
+        return self.cursor.fetchall()
+    
+    def select_column(self, list_date_time, i):
+        return map(lambda x: x[i], list_date_time)
+    
+    # def get_dates(self, trackings_table):
+    #     return select_column(trackings_table, )
+     
     def get_all_names(self):
         """Return the names of the habits in a list"""
-        all_habits = self.get_all_habits()
+        
+        all_habits = self.habits_table()
         if len(all_habits) >= 1:
             return [habit[1] for habit in all_habits]
         else:
             return []
 
-    def get_all_ids(self):
+    def get_all_ids(self, table):
         """Return the ids of the habits in a list"""
-        all_habits = self.get_all_habits()
-        return [habit[0] for habit in all_habits]
-                                     
-    def see_all_habits(self):
-        """Print a table with all habits and
-        its fields"""
-        all_habits = self.get_all_habits()
-        if len(all_habits) >= 1:
-            print('-' * 50)
-            print('ID'.center(2) + 'HABIT'.center(15) + 'PERIODICITY'.center(15) + 'MOTIVATION'.center(15))
-            print('-' * 50)
-            for habit in all_habits:
-                print(str(habit[0]).ljust(6) + str(habit[1]).ljust(15) + str(habit[2]).ljust(15)+ str(habit[3]))
-                        
-    def get_habit_by_id(self, id_n):
-        self.cursor.execute("SELECT * FROM habits WHERE HabitID=:habitID", 
-                       {'habitID': id_n})
-        one_habit = self.cursor.fetchone()
-        print('\n')
-        print('-' * 50)
-        print('HABIT'.ljust(16) + 'PERIODICITY'.ljust(18) + 'MOTIVATION')
-        print('-' * 50)
-        print(one_habit[1] + ' ✔'.ljust(12) + one_habit[2].ljust(18) + one_habit[3])
-        
+        return list(self.select_column(table, 0))
+        # all_habits = self.habits_table()
+        # return [habit[0] for habit in all_habits]
+
+    def one_habit_info_by_id(self, table, id):
+        """
+        Select the row with the corresponding id
+        """
+        return list(filter(lambda x: x[0]==id, table))
     
     def get_habits_by_name(self, name):
         self.cursor.execute("SELECT * FROM habits WHERE name=:name", 
@@ -83,39 +92,13 @@ class Analytics:
         print('Progress %')
         print('Days 12/30')
         print('Longest streak: 12 days')
-        
-    def join_tables(self, id_habit):
-        self.cursor.execute("""SELECT * FROM habits h 
-                                INNER JOIN trackings t 
-                                ON h.id = t.id_habit
-                                WHERE id_habit=:id_habit""",
-                            {'id_habit': id_habit})
-        return self.cursor.fetchall()
-        # print('-' * 45)
-        # print('HABIT'.ljust(30) + 'MOTIVATION')
-        # print('-' * 45)
-        # print(one_habit[2].ljust(30) + one_habit[4])
-        # print('\nStart:')
-        # print('Progress %')
-        # print('Days 12/30')
-        # print('Longest streak: 12 days')
-        
-    def joint_habits_trackings(self):
-        self.cursor.execute("""SELECT t.HabitID, t.Date, t.Time 
-                            FROM habits h 
-                            INNER JOIN trackings t 
-                            USING(HabitID)""")
-        return self.cursor.fetchall()
-    
+            
     def display_elements(self, my_list):
         return '\n'.join(map(str, my_list))
     
     def display_list_elements(self, my_list):
-        return ', the '.join(map(str, my_list))
+        return ', '.join(map(str, my_list))
 
-    def select_column(self, list_date_time, i):
-        return map(lambda x: x[i], list_date_time)
-    
     def format_to_date(self, column):
         return map(lambda x: datetime.strptime(x, "%Y-%m-%d").date(), column)
     
@@ -171,54 +154,69 @@ class Analytics:
         else:
             return 1
     
-    def longest_streak_periodicity(self, periodicity, column):
-        if periodicity == 'daily':
-            return self.longest_streak(
-                self.streaks(
-                    self.grouping_differences(
-                        self.difference_in_days(
-                            self.differences(
-                                self.zipping_unique_data(
-                                    self.unique_data(
-                                        self.format_to_date(
-                                            self.select_column(
-                                                self.joint_habits_trackings(), 
-                                                column)))))))))
-        elif periodicity == 'weekly':
-            return self.longest_streak(
-                self.streaks(
-                    self.grouping_differences(
-                        self.cw_5152_to_1(
-                            self.differences(
-                                self.zipping_unique_data(
-                                    self.unique_data(
-                                        self.to_calender_week(
+    def longest_streak_periodicity(self, trackings, periodicity, column):
+        if len(trackings) == 0:
+            return []
+        else:
+            if periodicity == 'daily':
+                return self.longest_streak(
+                    self.streaks(
+                        self.grouping_differences(
+                            self.difference_in_days(
+                                self.differences(
+                                    self.zipping_unique_data(
+                                       self.unique_data(
                                             self.format_to_date(
                                                 self.select_column(
-                                                    self.joint_habits_trackings(),
-                                                    column))))))))))
+                                                    trackings,
+                                                    column)))))))))
+            elif periodicity == 'weekly':
+                return self.longest_streak(
+                    self.streaks(
+                        self.grouping_differences(
+                            self.cw_5152_to_1(
+                                self.differences(
+                                    self.zipping_unique_data(
+                                        self.unique_data(
+                                            self.to_calender_week(
+                                                self.format_to_date(
+                                                    self.select_column(
+                                                        trackings,
+                                                        column))))))))))
     
-    def start_habit(self, column=1):
-        return min(
-            self.format_to_date(
-                self.select_column(self.joint_habits_trackings(), column
+    def start_habit(self, trackings, column):
+        if len(trackings) == 0:
+            return []
+        else:
+            return min(
+                self.format_to_date(
+                    self.select_column(trackings, column
                                    )))
     
-    def last_day(self, column):
-        return max(
-            self.format_to_date(
-                self.select_column(
-                    self.joint_habits_trackings(), column
-                    )))
+    def last_day(self, trackings, column):
+        if len(trackings) == 0:
+            return []
+        else:
+            return max(
+                self.format_to_date(
+                    self.select_column(
+                        trackings, column
+                        )))
     
-    def activity(self, unique_data):
-        return len(unique_data)
-    
+    def activity(self, periodicity, trackings, col_date):
+        date_column = self.format_to_date(
+            self.select_column(
+                trackings, col_date))
+        if periodicity == 'daily':
+            return len(self.unique_data(date_column))
+        elif periodicity == 'weekly':
+            return len(self.unique_data(self.to_calender_week(date_column))) 
+        
     def only_hours(self, time):
         """Get hours without minutes"""
         return map(lambda x: x.hour, time)
 
-    def sort_time(self, hours):
+    def sort_hours(self, hours):
         """
         Classification of hours in
         Morning, Afternoon, Evening and Overnight
@@ -231,145 +229,36 @@ class Analytics:
                                if x >= 18 and x < 24
                                else 'Overnight')), hours)
 
-    def active_time_dict(self, sort_time):
+    def count_sorted_hours(self, sort_hours):
         """Create a dictionary of the form:
            {'Morning': 9, 'Afternoon': 5, 'Evening': 4, 'Overnight': 2}
         """
-        return Counter(sort_time)
+        return Counter(sort_hours)
 
     def max_value(self, active_time_dict):
         """Get the maximum value of a dictionary"""
-        return max(active_time_dict.values())
+        if len(active_time_dict) == 0:
+            return {}
+        else:
+            return max(active_time_dict.values())
 
     def most_active_time(self, active_time_dict, max_value):
         """
-        Get the keys with the maximum value
+        Get the keys with the maximum value for example:
+        ['Morning']
         """
-        return [k for k, v in active_time_dict.items() if v == max_value]
+        if len(active_time_dict) == 0:
+            return {}
+        else:
+            return [k for k, v in active_time_dict.items() if v == max_value]
     
-
-        
-    def info_one_habit(self):
-        """Return the information of one habit"""
-        all_habits_trackings = self.joint_habits_trackings()
-        all_habits = self.get_all_habits()
-        habit = all_habits[0][1]
-        periodicity = all_habits[0][2]
-        motivation = all_habits[0][3]
-        registration_habit = all_habits[0][-1]
-        col_date = 1
-        col_time = 2
-        start = self.start_habit(col_date)
-        last = self.last_day(col_date)
-        streak_daily = self.longest_streak_periodicity('daily', col_date)
-        streak_weekly = self.longest_streak_periodicity('weekly', col_date)
-        date_column = self.format_to_date(
-            self.select_column(self.joint_habits_trackings(), col_date))
-        activity_daily = self.activity(
-            self.unique_data(
-                date_column))
-        activity_weekly = self.activity(
-            self.unique_data(
-                self.to_calender_week(
-                    date_column))) 
-        active_time_dictionary = self.active_time_dict(
-            self.sort_time(
+    def active_time_dict(self, trackings, col_time):
+        return self.count_sorted_hours(
+            self.sort_hours(
                 self.only_hours(
                     self.format_to_time(
                         self.select_column(
-                            self.joint_habits_trackings(), col_time)))))        
-        max_value_active_time = self.max_value(
-            active_time_dictionary)
-        
-        most_active_time = self.most_active_time(
-            active_time_dictionary, max_value_active_time)
-
-        if len(all_habits_trackings) == 0:
-            #self.see_all_habits()
-            #all_habits = self.get_all_habits()
-            #print(all_habits)
-            #[(1, 'Yoga', 'weekly', 'Be more flexible', 'Before breakfast', '2021-02-22')]
-            print(
-                """             
-            ------------------------------------------------
-                    ** Start now with {} **
-                    and check it off as done
-            ------------------------------------------------
-                    
-                    Registration date: {}
-                    Motivation: {}
-                    
-            ------------------------------------------------
-            """.format(habit, registration_habit, motivation)
-            )
-        else:
-            print(
-                        """
-                        ___________________________________
-                                      - {} -
-                        ___________________________________
-                        Motivation:   {}
-                        Periodicity:  {}
-                        -----------------------------------
-                        
-                        Started on:             {}
-                        Last day of activity:   {}
-                        """.format(habit, motivation, 
-                        periodicity, start, last)
-                        )
-            
-            if len(all_habits_trackings) > 1:
-
-                print(
-                        """
-                        You are more active during:
-                        the {}
-                        """.format(self.display_list_elements(most_active_time))
-                    )
-                
-                if periodicity == 'daily':
-                    
-                    print(
-                        """
-                        Longest streak: {}
-                        Days of activity: {}
-                        """.format(streak_daily, activity_daily)
-                        )
-                elif all_habits[0][2] == 'weekly':
-                    print(
-                        """
-                        Longest streak: {}
-                        Weeks of activity: {}
-                        """.format(streak_weekly, activity_weekly)
-                        )
-            
-                
-        #[(1, 'Yoga', 'weekly', 'Be more flexible', 'Before breakfast', '2021-02-22', 
-        #1, '2021-02-24', '07:36 PM')]
-        # if len(all_habits) == 1:
-        #     for habit in all_habits:
-        #         print(str(habit[0]).ljust(6) + str(habit[1]).ljust(15) + str(habit[2]).ljust(15)+ str(habit[3]))
-        #     print('-' * 45)
-        #     print('HABIT'.ljust(30) + 'MOTIVATION')
-        #     print('-' * 45)
-        #     print(all_habits[2].ljust(30) + all_habits[4])
-        #     print('\nStart:')
-        #     print('Progress %')
-        #     print('Days 12/30')
-        #     print('Longest streak: 12 days')
-        
-        
-
-
-
-    # def joint_habits_trackings(self, name):
-    #     self.cursor.execute("""SELECT * FROM habits h 
-    #                         INNER JOIN trackings t 
-    #                         ON h.HabitID = t.HabitID
-    #                         WHERE Name=:name""",
-    #                         {'name': name})
-        
-    #     print(self.cursor.fetchall())      
+                            trackings, col_time)))))  
     
     def remove_habit(self, name):
         with self.connection:

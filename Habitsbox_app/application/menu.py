@@ -23,8 +23,14 @@ class Menu:
             "9": self.exit,
            
             }
+            
+    def display_menu(self):
+        habits_list = self.analytics.get_all_names()
+        habits_names = self.analytics.select_column(habits_list, 1)
+        # return []
+        # return ['Yoga']
+        number_of_habits = len(list(habits_names))
         
-    def display_first_menu(self):
         print(
             """
             ----------------------------------------
@@ -39,21 +45,19 @@ class Menu:
             Choose a number:
                 
             1. Add a new habit
+            ----------------------------------------
+            """)
+        
+        if number_of_habits == 0:
+            print(
+            """
             9. Exit
             
             ----------------------------------------
             """)
-            
-    def display_one_habit_menu(self):
-        print(
+        elif number_of_habits == 1:
+            print(
             """
-            ----------------------------------------
-                    WELCOME TO YOUR HABITSBOX       
-            ----------------------------------------
-            
-            What do you want to do?
-            
-            1. Add a new habit
             2. Check-in a habit
             3. Delete a habit
             
@@ -65,21 +69,9 @@ class Menu:
             9. Exit
             ----------------------------------------
             """)
-        
-             
-    def display_full_menu(self):
-        print(
-            """
-            ----------------------------------------
-                    WELCOME TO YOUR HABITSBOX       
-            ----------------------------------------
-            
-            What do you want to do?
-            
-            1. Add a new habit
-            2. Check-in a habit
-            3. Delete a habit
-            
+        else:
+            print(
+            """            
             Analysis -------------------------------
                 
             4. Search a habit
@@ -92,18 +84,6 @@ class Menu:
             ----------------------------------------
             """)
             
-    def choose_menu(self):
-        habits_names = self.analytics.get_all_names()
-        # return []
-        # return ['Yoga']
-        number_of_habits = len(habits_names)
-        if number_of_habits == 0:
-            print('No habits')
-        elif number_of_habits == 1:
-            print('One habit')
-        else:
-            print('Many habits')
-            
     
     def run(self):
         """Show three types of menus.
@@ -112,44 +92,36 @@ class Menu:
         and a menu with more than one habit.
         If a number is selected it reacts to the option"""
         
+        habits_list = self.analytics.get_all_names()
+        habits_names = self.analytics.select_column(habits_list, 1)
+        # return []
+        # return ['Yoga']
+        number_of_habits = len(list(habits_names))
+        
         habits_names = self.analytics.get_all_names()
         
-        if len(habits_names) == 0:
-            while True:
-                self.display_first_menu()
-                choice = input("Enter an number: ")
-                if choice in ['1', '9']:
-                    action = self.menu_options.get(choice)
-                    action()
-                else:
-                    print("{} is not a valid choice.".format(choice))
-                    
-        elif len(habits_names) == 1:
-            while True:
-                self.display_one_habit_menu()
-                choice = input("Enter an number: ")
-                if choice in ['1', '2', '3', '4', '9']:
-                    action = self.menu_options.get(choice)
-                    action()
-                else:
-                    print("{} is not a valid choice.".format(choice))            
-
-        elif len(habits_names) > 1:
-            while True:
-                self.display_full_menu()
-                choice = input("Enter an number: ")
+        while True:
+            self.display_menu()
+            choice = input("Enter an number: ")
+            if (number_of_habits == 0) and (choice in ['1', '9']):
                 action = self.menu_options.get(choice)
-                if action:
-                    action()
-                else:
-                    print("{} is not a valid choice.".format(choice))
-                                
+                action()
+            elif (number_of_habits == 1) and choice in ['1', '2', '3', '4', '9']:
+                action = self.menu_options.get(choice)
+                action()
+            elif (number_of_habits > 1):
+                action = self.menu_options.get(choice)
+                action()
+            else:
+                print("{} is not a valid choice.".format(choice))
+                                                 
     def back_to_menu(self):
         print(
             """
-            ------------------------------------------------
+            ________________________________________________
+            
                               HABITSBOX       
-            ------------------------------------------------
+            ________________________________________________
             Hint: Press 0 (zero) to return to the main menu
             ------------------------------------------------
             """)
@@ -165,7 +137,8 @@ class Menu:
             ----------------Your first habit ---------------
             """)
         else:
-            print('Your registered habits:',  habits_names)
+            print('Your registered habits:',  
+                  self.analytics.display_list_elements(habits_names))
                
         while True:
             try:
@@ -235,23 +208,28 @@ class Menu:
         print("\nYour habit has been added.\n")
         time.sleep(2)
         self.run()
-        
              
     def check_in(self):
         """Register the custom as done
         when the user enters the habit-id"""
         # Shows the number to return to the main menu
         self.back_to_menu()
+        habits_info = self.analytics.habits_table()
         # A list with all habit identifiers
-        ids = self.analytics.get_all_ids()
+        ids = self.analytics.get_all_ids(habits_info)
             
         while True:
-            print('\nTime to improve!\n')
-            print('Which habit do you want to check-off')
+            print(
+                """                 
+                          Time to improve!!
+                          
+                 Which habit do you want to check-off?
+                """
+                )
             # display a table with all the registered habits
             self.show_all_habits()
             print('')
-            id_n = pyip.inputNum("Choose the number(ID) of your habit")
+            id_n = pyip.inputNum("Choose the ID of your habit")
             if id_n == 0:
                 # back to the main menu
                 self.run()
@@ -259,23 +237,23 @@ class Menu:
                 # Insert the day and time in the database
                 self.analytics.insert_day(id_n)
                 # Display a table with the checked habit
-                self.analytics.get_habit_by_id(id_n)
-                print('\nGood job!')
+                print(
+                    """                 
+                                Good job!       
+                              {} ✔ is done.
+                 """.format(
+                 self.analytics.one_habit_info_by_id(habits_info, id_n)[0][1])
+                 )
                 time.sleep(3)
-                
                 break
             else:
-                print('Please, choose a number from the list ' + str(ids))
-                
-                
-        # if len(ids) == 0:
-        #     print("""\nYou have not yet registered any habit.
-        #           \nLet us return to the main menu""")
-        #     time.sleep(3)
+                print("Please, choose an ID from the list")
 
     def delete_habit(self):
         self.back_to_menu()
         habits_names = self.analytics.get_all_names()
+        print(self.analytics.habits_table())
+        display_habits_names = self.analytics.display_list_elements(habits_names)
         print(
             """             Your registered habits:
                                     {}
@@ -283,7 +261,7 @@ class Menu:
                    Deleting a habit will also reset
                           all progress on it!
             ------------------------------------------------
-            """.format(habits_names))
+            """.format(display_habits_names))
 
         while True:
             name = input('Which habit do you want to delete? ').title()
@@ -292,7 +270,10 @@ class Menu:
                 if int(name) == 0:
                     self.run()
                 else:
-                    break
+                    print("""
+                          Write the name of the habit you want to delete
+                          or press 0 (zero) to return to the main menu
+                          """)
             elif name in habits_names:
                 self.analytics.remove_habit(name)
                 time.sleep(2)
@@ -308,20 +289,101 @@ class Menu:
                 print('This habit is not in your list')
         
     def search_habit(self):
+        #print(self.analytics.habits_table())
+        #print(self.analytics.trackings_table())
+        habits_info = self.analytics.habits_table()
+        # [(1, 'Yoga', 'weekly', 'Be more flexible', 'Before breakfast', '2021-02-22')]
+        habits_trackings = self.analytics.trackings_table()
+        # []
+        habit = habits_info[0][1]
+        periodicity = habits_info[0][2]
+        motivation = habits_info[0][3]
+        registration_habit = habits_info[0][-1]
+        col_date = 1
+        col_time = 2
+        start = self.analytics.start_habit(habits_trackings, col_date)
+        last = self.analytics.last_day(habits_trackings, col_date)
+        streak_daily = self.analytics.longest_streak_periodicity(
+            habits_trackings, 'daily', col_date)
+        streak_weekly = self.analytics.longest_streak_periodicity(
+            habits_trackings, 'weekly', col_date)
+        activity_daily = self.analytics.activity('daily', habits_trackings, col_date)
+        activity_weekly = self.analytics.activity('weekly', habits_trackings, col_date)
+        active_time_dictionary = self.analytics.active_time_dict(habits_trackings, col_time)  
+        max_value_active_time = self.analytics.max_value(active_time_dictionary)
+        most_active_time = self.analytics.most_active_time(active_time_dictionary, max_value_active_time)
         
-        habits_names = self.analytics.get_all_names()
-        if len(habits_names) == 1:
-            self.analytics.info_one_habit()
-            #self.show_all_habits()
-            time.sleep(3)
+        if len(habits_trackings) == 0:     
+            print(
+                """             
+                        ___________________________________
+                
+                                  Start now with
+                                      - {} -    
+                            and check it off as done
+                        -----------------------------------
+                      
+                          Motivation: {}
+                          Periodicity: {}
+                      
+                          Registration date: {}
+                        ___________________________________
+                    
+            """.format(habit, motivation, periodicity, registration_habit))
+        
         else:
-            self.back_to_menu()
-            print('Your registered habits:',  habits_names)
-            name = input("Search for the name: ").title()
-            self.analytics.get_habits_by_name(name)
-        
+            print(
+                        """
+                        ___________________________________
+                                      - {} -
+                        ___________________________________
+                        Motivation:   {}
+                        Periodicity:  {}
+                        -----------------------------------
+                        
+                        Started on:             {}
+                        Last day of activity:   {}
+                        """.format(habit, motivation, 
+                        periodicity, start, last)
+                        )
+            
+            if len(habits_trackings) > 1:
+
+                print(
+                        """
+                        You are more active during:
+                        the {}
+                        """.format(self.analytics.display_list_elements(most_active_time))
+                    )
+                
+                if periodicity == 'daily':
+                    
+                    print(
+                        """
+                        Longest streak: {}
+                        Days of activity: {}
+                        """.format(streak_daily, activity_daily)
+                        )
+                elif periodicity == 'weekly':
+                    print(
+                        """
+                        Longest streak: {}
+                        Weeks of activity: {}
+                        """.format(streak_weekly, activity_weekly)
+                        )
+
     def show_all_habits(self):
-        self.analytics.see_all_habits()
+        #self.analytics.see_all_habits()
+        """Print a table with all habits and
+        its fields"""
+        all_habits = self.analytics.habits_table()
+        if len(all_habits) >= 1:
+            print('-' * 50)
+            print('ID'.center(2) + 'HABIT'.center(15) + 'PERIODICITY'.center(15) + 'MOTIVATION'.center(15))
+            print('-' * 50)
+            for habit in all_habits:
+                print(str(habit[0]).ljust(6) + str(habit[1]).ljust(15) + str(habit[2]).ljust(15)+ str(habit[3]))        
+        
 
 
     def habits_same_periodicity(self):
