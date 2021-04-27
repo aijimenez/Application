@@ -3,6 +3,7 @@ from datetime import datetime
 from itertools import groupby
 from functools import reduce
 from collections import Counter
+from operator import itemgetter
 
 #from .habit import Habit
 from habit import Habit
@@ -39,12 +40,25 @@ class Analytics:
         return self.cursor.fetchall()
     
     def trackings_table(self):
-        self.cursor.execute("""SELECT t.HabitID, t.Date, t.Time 
-                            FROM habits h 
-                            INNER JOIN trackings t 
-                            USING(HabitID)""")
+        self.cursor.execute("""SELECT HabitID, Date, Time
+                            FROM trackings""")
         return self.cursor.fetchall()
     
+    # def trackings_table(self):
+    #     self.cursor.execute("""SELECT t.HabitID, t.Date, t.Time 
+    #                         FROM habits h 
+    #                         INNER JOIN trackings t 
+    #                         USING(HabitID)""")
+    #     return self.cursor.fetchall()
+    
+    def habits_trackings(self):
+        self.cursor.execute("""SELECT h.HabitID, h.Name, h.Periodicity,
+                            h.Motivation, h.Description, t.Date, t.Time
+                            FROM habits h
+                            JOIN trackings t
+                            USING(HabitID)""")
+        return self.cursor.fetchall()
+                                                    
     def join_tables(self, id_habit):
         self.cursor.execute("""SELECT * FROM habits h 
                                 INNER JOIN trackings t 
@@ -53,26 +67,24 @@ class Analytics:
                             {'id_habit': id_habit})
         return self.cursor.fetchall()
     
-    def select_column(self, list_date_time, i):
-        return map(lambda x: x[i], list_date_time)
+    def select_column(self, table, i):
+        return map(lambda x: x[i], table)
     
     # def get_dates(self, trackings_table):
     #     return select_column(trackings_table, )
-     
+    
     def get_all_names(self):
-        """Return the names of the habits in a list"""
-        
-        all_habits = self.habits_table()
-        if len(all_habits) >= 1:
-            return [habit[1] for habit in all_habits]
-        else:
-            return []
-
+        """
+        Return the names of the habits in a list
+        Example: ['Yoga', 'Run']
+        """
+        return list(self.select_column(self.habits_table(), 1))
+    
     def get_all_ids(self, table):
-        """Return the ids of the habits in a list"""
+        """
+        Return the first column of a table in a list
+        """
         return list(self.select_column(table, 0))
-        # all_habits = self.habits_table()
-        # return [habit[0] for habit in all_habits]
 
     def one_habit_info_by_id(self, table, id):
         """
@@ -93,10 +105,10 @@ class Analytics:
         print('Days 12/30')
         print('Longest streak: 12 days')
             
-    def display_elements(self, my_list):
+    def display_list_elements(self, my_list):
         return '\n'.join(map(str, my_list))
     
-    def display_list_elements(self, my_list):
+    def display_elements(self, my_list):
         return ', '.join(map(str, my_list))
 
     def format_to_date(self, column):
@@ -258,7 +270,25 @@ class Analytics:
                 self.only_hours(
                     self.format_to_time(
                         self.select_column(
-                            trackings, col_time)))))  
+                            trackings, col_time))))) 
+    def lengths(self, table):
+        return [[len(str(x)) for x in row] for row in table]
+
+    def max_lengths(self, lengths, table):
+        return list(max(map(itemgetter(x), lengths)) for x in range(0, len(table[0])))
+    
+    def strings_distance(self, max_lengths):
+        return ''.join(map(lambda x: '%%-%ss    ' % x, max_lengths))
+    
+    def display_table(self, strings_distance, table):
+       return map(lambda x: strings_distance % x, table)
+   
+    def strings_format(self, table, lengths):
+        return self.strings_distance(
+            self.max_lengths(
+                lengths, table))
+    
+
     
     def remove_habit(self, name):
         with self.connection:
