@@ -59,16 +59,19 @@ class Analytics:
                             USING(HabitID)""")
         return self.cursor.fetchall()
                                                     
-    def join_tables(self, id_habit):
-        self.cursor.execute("""SELECT * FROM habits h 
-                                INNER JOIN trackings t 
-                                ON h.id = t.id_habit
-                                WHERE id_habit=:id_habit""",
-                            {'id_habit': id_habit})
-        return self.cursor.fetchall()
+    # def join_tables(self, id_habit):
+    #     self.cursor.execute("""SELECT * FROM habits h 
+    #                             INNER JOIN trackings t 
+    #                             ON h.id = t.id_habit
+    #                             WHERE id_habit=:id_habit""",
+    #                         {'id_habit': id_habit})
+    #     return self.cursor.fetchall()
     
     def select_column(self, table, i):
         return map(lambda x: x[i], table)
+    
+    def select_columns(self, table, start=0, stop=1):
+        return map(lambda x: x[start:stop], table)
     
     # def get_dates(self, trackings_table):
     #     return select_column(trackings_table, )
@@ -92,18 +95,18 @@ class Analytics:
         """
         return list(filter(lambda x: x[0]==id, table))
     
-    def get_habits_by_name(self, name):
-        self.cursor.execute("SELECT * FROM habits WHERE name=:name", 
-                       {'name': name})
-        one_habit = self.cursor.fetchone()
-        print('-' * 45)
-        print('HABIT'.ljust(30) + 'MOTIVATION')
-        print('-' * 45)
-        print(one_habit[1].ljust(30) + one_habit[3])
-        print('\nStart:')
-        print('Progress %')
-        print('Days 12/30')
-        print('Longest streak: 12 days')
+    # def get_habits_by_name(self, name):
+    #     self.cursor.execute("SELECT * FROM habits WHERE name=:name", 
+    #                    {'name': name})
+    #     one_habit = self.cursor.fetchone()
+    #     print('-' * 45)
+    #     print('HABIT'.ljust(30) + 'MOTIVATION')
+    #     print('-' * 45)
+    #     print(one_habit[1].ljust(30) + one_habit[3])
+    #     print('\nStart:')
+    #     print('Progress %')
+    #     print('Days 12/30')
+    #     print('Longest streak: 12 days')
             
     def display_list_elements(self, my_list):
         return '\n'.join(map(str, my_list))
@@ -271,22 +274,22 @@ class Analytics:
                     self.format_to_time(
                         self.select_column(
                             trackings, col_time))))) 
-    def lengths(self, table):
-        return [[len(str(x)) for x in row] for row in table]
+    # def lengths(self, table):
+    #     return [[len(str(x)) for x in row] for row in table]
 
-    def max_lengths(self, lengths, table):
-        return list(max(map(itemgetter(x), lengths)) for x in range(0, len(table[0])))
+    # def max_lengths(self, lengths, table):
+    #     return list(max(map(itemgetter(x), lengths)) for x in range(0, len(table[0])))
     
-    def strings_distance(self, max_lengths):
-        return ''.join(map(lambda x: '%%-%ss    ' % x, max_lengths))
+    # def strings_distance(self, max_lengths):
+    #     return ''.join(map(lambda x: '%%-%ss    ' % x, max_lengths))
     
-    def display_table(self, strings_distance, table):
-       return map(lambda x: strings_distance % x, table)
+    # def display_table(self, strings_distance, table):
+    #    return map(lambda x: strings_distance % x, table)
    
-    def strings_format(self, table, lengths):
-        return self.strings_distance(
-            self.max_lengths(
-                lengths, table))
+    # def strings_format(self, table, lengths):
+    #     return self.strings_distance(
+    #         self.max_lengths(
+    #             lengths, table))
     
 
     
