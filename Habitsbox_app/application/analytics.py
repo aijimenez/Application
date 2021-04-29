@@ -3,7 +3,7 @@ from datetime import datetime
 from itertools import groupby
 from functools import reduce
 from collections import Counter
-#from operator import itemgetter
+from operator import itemgetter
 
 #from .habit import Habit
 from habit import Habit
@@ -89,11 +89,24 @@ class Analytics:
         """
         return list(self.select_column(table, 0))
 
-    def one_habit_info_by_id(self, table, id):
+    # def one_habit_info_by_id(self, table, id_n):
+    #     """
+    #     Select all rows with the corresponding id
+    #     """
+    #     return list(filter(lambda x: x[0]==id_n, table))
+    
+    # def habits_same_periodicity(self, table, periodicity):
+    #     """
+    #     Select all rows with the same periodicity
+    #     """
+    #     return list(filter(lambda x: x[2]==periodicity, table))
+    
+    def select_rows(self, table, number_column, feature):
         """
-        Select the row with the corresponding id
+        Select all rows with the same feature
         """
-        return list(filter(lambda x: x[0]==id, table))
+        return list(filter(lambda x: x[number_column]==feature, table))
+        
     
     # def get_habits_by_name(self, name):
     #     self.cursor.execute("SELECT * FROM habits WHERE name=:name", 
@@ -113,6 +126,13 @@ class Analytics:
     
     def display_elements(self, my_list):
         return ', '.join(map(str, my_list))
+    
+    def display_unique_elements_of_column(self, table, column):
+        return self.display_elements(
+                self.unique_data(
+                    self.select_column(
+                        table, 
+                        column)))
 
     def format_to_date(self, column):
         return map(lambda x: datetime.strptime(x, "%Y-%m-%d").date(), column)
@@ -274,22 +294,61 @@ class Analytics:
                     self.format_to_time(
                         self.select_column(
                             trackings, col_time))))) 
-    # def lengths(self, table):
-    #     return [[len(str(x)) for x in row] for row in table]
+    
+    def list_habits_list(self,habits_trackings, unique_ids):
+        """
+        Give a list of the lists of habits grouped by id
+        """
+        return [self.select_rows(habits_trackings, 0, id_n) for id_n in unique_ids]
+    
+    def periodicity_info(self, lists_periodicity, periodicity, col_date=5):
+        if periodicity == 'daily':
+            habits_info = [('HABIT', 'FIRST TRACKING', 'LAST TRACKING', 'ACTIVE', 'DAYS ACTIVE', 'LONGEST STREAK')]
+        elif periodicity == 'weekly':
+            habits_info = [('HABIT', 'FIRST TRACKING', 'LAST TRACKING', 'ACTIVE', 'WEEKS ACTIVE', 'LONGEST STREAK')]
+        
+        for l in lists_periodicity:
+            
+            active_time_dictionary = self.active_time_dict(
+                                l, 
+                                6)  
+            max_value_active_time = self.max_value(
+                                active_time_dictionary)
+            most_active_time = self.most_active_time(
+                                active_time_dictionary, 
+                                max_value_active_time)
+                        
+            habits_info.append((self.display_unique_elements_of_column(l, 1),
+                  ''.join(min(self.select_column(l, col_date))),
+                  ''.join(max(self.select_column(l, col_date))),
+                  self.display_elements(most_active_time), 
+                  self.longest_streak_periodicity(
+                      l, 
+                      periodicity, 
+                      col_date), 
+                  self.activity(
+                      periodicity, 
+                      l, 
+                      col_date)))
+            
+        return habits_info
+    
+    def lengths(self, table):
+        return [[len(str(x)) for x in row] for row in table]
 
-    # def max_lengths(self, lengths, table):
-    #     return list(max(map(itemgetter(x), lengths)) for x in range(0, len(table[0])))
+    def max_lengths(self, lengths, table):
+        return list(max(map(itemgetter(x), lengths)) for x in range(0, len(table[0])))
     
-    # def strings_distance(self, max_lengths):
-    #     return ''.join(map(lambda x: '%%-%ss    ' % x, max_lengths))
+    def strings_distance(self, max_lengths):
+        return ''.join(map(lambda x: '%%-%ss    ' % x, max_lengths))
     
-    # def display_table(self, strings_distance, table):
-    #    return map(lambda x: strings_distance % x, table)
+    def display_table(self, strings_distance, table):
+        return map(lambda x: strings_distance % x, table)
    
-    # def strings_format(self, table, lengths):
-    #     return self.strings_distance(
-    #         self.max_lengths(
-    #             lengths, table))
+    def strings_format(self, table, lengths):
+        return self.strings_distance(
+            self.max_lengths(
+                lengths, table))
     
 
     
@@ -349,10 +408,6 @@ class Analytics:
             self.cursor.execute("""INSERT INTO trackings (Date, Time, HabitID)
                                 VALUES (:date, :time, :habitID)""", 
                             {'date': date, 'time': time, 'habitID': id_habit})
-        
-
-       
-
 
     def get_trackings_by_id(self, id_habit):
         self.cursor.execute("SELECT * FROM trackings WHERE id_habit=:id_habit",

@@ -236,13 +236,13 @@ class Menu:
                               {} ✔ is done.
                  ------------------------------------------ 
                  """.format(
-                 self.analytics.one_habit_info_by_id(habits_info, id_n)[0][1])
+                 self.analytics.select_rows(habits_info, 0, id_n)[0][1])
                  )
                 time.sleep(3)
                 self.run()
             else:
                 print("Please, choose an ID from the list")
-
+                
     def delete_habit(self):
         self.back_to_menu()
         habits_names = self.analytics.get_all_names()
@@ -315,9 +315,8 @@ class Menu:
                 self.run()
             elif id_n in ids_habits_table:
                 if id_n in ids_trackings_table:
-                    one_habit_trackings_info = self.analytics.one_habit_info_by_id(
-                        habits_trackings, 
-                        id_n)
+                    one_habit_trackings_info = self.analytics.select_rows(
+                        habits_trackings, 0, id_n)
                     periodicity = one_habit_trackings_info[0][2]
                     if len(one_habit_trackings_info) >= 1:
                         # [(2, 'Run', 'weekly', 'Faster', 'Sundays', '2021-04-27', '10:56')]
@@ -399,9 +398,7 @@ class Menu:
                         #     if id_n == 0:
                         #         self.run()
                 else:
-                    one_habit_info = self.analytics.one_habit_info_by_id(
-                        habits_info, 
-                        id_n)
+                    one_habit_info = self.analytics.select_rows(habits_info, 0, id_n)
                     print(
                         """
                         ___________________________________
@@ -474,7 +471,58 @@ class Menu:
                       str(habit[3]))        
         
     def habits_same_periodicity(self):
-        pass
+        self.back_to_menu()
+        habits_trackings = self.analytics.habits_trackings()
+        
+        while True:
+            print("""
+                  What periodicity would you like to see?
+                  1: daily
+                  2: weekly
+                  """)
+
+            periodicity = pyip.inputNum('Choose a number: ')
+        
+            if periodicity == 1:
+                periodicity = 'daily'
+                break
+            elif periodicity == 2:
+                periodicity = 'weekly'
+                break
+            elif periodicity == 0:
+                self.run()
+            else:
+                print('Please, choose number 1, 2 or 0')
+                
+        habits_periodicity = self.analytics.select_rows(habits_trackings, 2, periodicity)
+        ids_periodicity = self.analytics.get_all_ids(habits_periodicity)
+        unique_ids_periodicity = self.analytics.unique_data(ids_periodicity)
+        lists_periodicity = self.analytics.list_habits_list(habits_trackings, unique_ids_periodicity)
+ 
+        table_periodicity = self.analytics.periodicity_info(lists_periodicity, periodicity)
+        
+        lengths = self.analytics.lengths(table_periodicity)
+        strings_format = self.analytics.strings_format(table_periodicity, lengths)
+        table = self.analytics.display_table(strings_format, table_periodicity)
+        
+        print('_'*90)
+        print(self.analytics.display_list_elements(table))
+        print('_'*90)
+        print(' ')
+        
+        while True:
+            choice = pyip.inputNum("""
+                                 Press number 1 if you want to check other habits or
+                                 press zero to go back to the main menu:""")
+            if choice == 0:
+                self.run()
+            elif choice == 1:
+                self.habits_same_periodicity()
+            else:
+                print('Please, choose number 0 or 1')
+            
+        
+        
     
     def habits_longest_streaks(self):
         pass
