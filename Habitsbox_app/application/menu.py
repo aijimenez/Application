@@ -321,10 +321,12 @@ class Menu:
                     periodicity = one_habit_trackings_info[0][2]
                     if len(one_habit_trackings_info) >= 1:
                         # [(2, 'Run', 'weekly', 'Faster', 'Sundays', '2021-04-27', '10:56')]
+                        print(one_habit_trackings_info)
+                        print(len(one_habit_trackings_info))
                         print(
                         """
                         ___________________________________
-                                      - {} -
+                                    - {} -
                         ___________________________________
                         Motivation:   {}
                         Description:  {}
@@ -374,7 +376,7 @@ class Menu:
                                         col_date),
                                     self.analytics.activity(
                                         'daily', 
-                                        habits_trackings, 
+                                        one_habit_trackings_info, 
                                         col_date))
                                       )
                             elif periodicity == 'weekly':
@@ -441,6 +443,10 @@ class Menu:
         its fields"""
         habits_info = self.analytics.habits_table()
         # [(1, 'Yoga', 'weekly', 'Be more flexible', 'Before breakfast', '2021-02-22')]
+        habits_trackings = self.analytics.habits_trackings()
+        # ID, Name, Periodicity, Motivation,  Description,     t.Date, t.Time
+        # [(1, 'Yoga', 'daily', 'Flexibility', 'Mornings', '2021-04-26', '17:38')]
+        print(habits_trackings)
         
 #         lengths = self.analytics.lengths(habits_info)
 #         strings_format = self.analytics.strings_format(habits_info, lengths)

@@ -3,7 +3,7 @@ from datetime import datetime
 from itertools import groupby
 from functools import reduce
 from collections import Counter
-from operator import itemgetter
+#from operator import itemgetter
 
 #from .habit import Habit
 from habit import Habit
