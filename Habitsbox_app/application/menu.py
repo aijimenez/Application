@@ -320,8 +320,6 @@ class Menu:
                     periodicity = one_habit_trackings_info[0][2]
                     if len(one_habit_trackings_info) >= 1:
                         # [(2, 'Run', 'weekly', 'Faster', 'Sundays', '2021-04-27', '10:56')]
-                        print(one_habit_trackings_info)
-                        print(len(one_habit_trackings_info))
                         print(
                         """
                         ___________________________________
@@ -402,6 +400,8 @@ class Menu:
                     print(
                         """
                         ___________________________________
+                                    - {} -
+                        ___________________________________
                     
                          You do not have any trackings yet
                            Start today with - {} - 
@@ -414,6 +414,7 @@ class Menu:
                         Registration day: {}
                         ___________________________________
                         """.format(one_habit_info[0][1],
+                        one_habit_info[0][1],
                         one_habit_info[0][3],
                         one_habit_info[0][4],
                         one_habit_info[0][2],
@@ -494,25 +495,43 @@ class Menu:
             else:
                 print('Please, choose number 1, 2 or 0')
                 
-        habits_periodicity = self.analytics.select_rows(habits_trackings, 2, periodicity)
-        ids_periodicity = self.analytics.get_all_ids(habits_periodicity)
+        habits_trackings_periodicity = self.analytics.select_rows(habits_trackings, 2, periodicity)
+        habits_table_periodicity = self.analytics.select_rows(
+            self.analytics.habits_table(), 2, periodicity)
+        ids_periodicity = self.analytics.get_all_ids(habits_trackings_periodicity)
         unique_ids_periodicity = self.analytics.unique_data(ids_periodicity)
         lists_periodicity = self.analytics.list_habits_list(habits_trackings, unique_ids_periodicity)
- 
+        
         table_periodicity = self.analytics.periodicity_info(lists_periodicity, periodicity)
         
         lengths = self.analytics.lengths(table_periodicity)
         strings_format = self.analytics.strings_format(table_periodicity, lengths)
         table = self.analytics.display_table(strings_format, table_periodicity)
         
+        print("""
+              ________________________________________________________
+              
+                               - PERIODICITY: {} -
+              ________________________________________________________
+              """.format(periodicity))
         print('_'*90)
         print(self.analytics.display_list_elements(table))
         print('_'*90)
         print(' ')
         
+        if len(habits_table_periodicity) != len(lists_periodicity):
+            ids_habits_table = self.analytics.get_all_ids(habits_table_periodicity)
+            ids_without_trackings = list(set(ids_habits_table)-set(unique_ids_periodicity))
+            for id_n in ids_without_trackings:
+                print('{} No trackings'.format(
+                    self.analytics.select_rows(habits_table_periodicity, 0, id_n)[0][1]))
+        print('_'*90)
+                
+        
+        
         while True:
             choice = pyip.inputNum("""
-                                 Press number 1 if you want to check other habits or
+                                 Press number 1 if you want to check other periodicity or
                                  press zero to go back to the main menu:""")
             if choice == 0:
                 self.run()
@@ -520,10 +539,7 @@ class Menu:
                 self.habits_same_periodicity()
             else:
                 print('Please, choose number 0 or 1')
-            
-        
-        
-    
+
     def habits_longest_streaks(self):
         pass
     
@@ -531,7 +547,7 @@ class Menu:
         pass
     
     def exit(self):
-        print("\nThank you for using your Habitsbox today.")
+        print("\n - Thank you for using your Habitsbox today -")
         sys.exit(0)
         
 
