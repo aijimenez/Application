@@ -1,4 +1,5 @@
 import sqlite3
+#import os
 from datetime import datetime
 from itertools import groupby
 from functools import reduce
@@ -44,13 +45,6 @@ class Analytics:
                             FROM trackings""")
         return self.cursor.fetchall()
     
-    # def trackings_table(self):
-    #     self.cursor.execute("""SELECT t.HabitID, t.Date, t.Time 
-    #                         FROM habits h 
-    #                         INNER JOIN trackings t 
-    #                         USING(HabitID)""")
-    #     return self.cursor.fetchall()
-    
     def habits_trackings(self):
         self.cursor.execute("""SELECT h.HabitID, h.Name, h.Periodicity,
                             h.Motivation, h.Description, t.Date, t.Time
@@ -58,14 +52,6 @@ class Analytics:
                             JOIN trackings t
                             USING(HabitID)""")
         return self.cursor.fetchall()
-                                                    
-    # def join_tables(self, id_habit):
-    #     self.cursor.execute("""SELECT * FROM habits h 
-    #                             INNER JOIN trackings t 
-    #                             ON h.id = t.id_habit
-    #                             WHERE id_habit=:id_habit""",
-    #                         {'id_habit': id_habit})
-    #     return self.cursor.fetchall()
     
     def select_column(self, table, i):
         return map(lambda x: x[i], table)
@@ -106,20 +92,6 @@ class Analytics:
         Select all rows with the same feature
         """
         return list(filter(lambda x: x[number_column]==feature, table))
-        
-    
-    # def get_habits_by_name(self, name):
-    #     self.cursor.execute("SELECT * FROM habits WHERE name=:name", 
-    #                    {'name': name})
-    #     one_habit = self.cursor.fetchone()
-    #     print('-' * 45)
-    #     print('HABIT'.ljust(30) + 'MOTIVATION')
-    #     print('-' * 45)
-    #     print(one_habit[1].ljust(30) + one_habit[3])
-    #     print('\nStart:')
-    #     print('Progress %')
-    #     print('Days 12/30')
-    #     print('Longest streak: 12 days')
             
     def display_list_elements(self, my_list):
         return '\n'.join(map(str, my_list))
@@ -301,11 +273,24 @@ class Analytics:
         """
         return [self.select_rows(habits_trackings, 0, id_n) for id_n in unique_ids]
     
+    def lists_periodicity(self, table, periodicity):
+        """
+        Give a list of the lists of habits grouped by id
+        and with the same periodicity
+        """
+        return self.list_habits_list(table,
+                                     self.unique_data(
+                                         self.get_all_ids(
+                                             self.select_rows(table, 2, periodicity))))
+    
+    def header_in_list(self, header):
+        return [header]
+
+    def add_header(self, header, table):
+        return self.header_in_list(header)+table    
+        
     def periodicity_info(self, lists_periodicity, periodicity, col_date=5):
-        if periodicity == 'daily':
-            habits_info = [('HABIT', 'FIRST TRACKING', 'LAST TRACKING', 'ACTIVE', 'DAYS ACTIVE', 'LONGEST STREAK')]
-        elif periodicity == 'weekly':
-            habits_info = [('HABIT', 'FIRST TRACKING', 'LAST TRACKING', 'ACTIVE', 'WEEKS ACTIVE', 'LONGEST STREAK')]
+        habits_info = []
         
         for l in lists_periodicity:
             
@@ -322,36 +307,60 @@ class Analytics:
                   ''.join(min(self.select_column(l, col_date))),
                   ''.join(max(self.select_column(l, col_date))),
                   self.display_elements(most_active_time), 
-                  self.longest_streak_periodicity(
-                      l, 
-                      periodicity, 
-                      col_date), 
                   self.activity(
                       periodicity, 
                       l, 
+                      col_date),
+                  self.longest_streak_periodicity(
+                      l, 
+                      periodicity, 
                       col_date)))
             
         return habits_info
     
+    def max_streak(self, table, periodicity):
+        return max(
+            self.periodicity_info(
+                self.lists_periodicity(table,
+                                       periodicity),
+                periodicity),
+            key=itemgetter(-1))
+
     def lengths(self, table):
+        """
+        A list of lists with the lengths of each element
+        Example: [[1, 4, 5, 16, 16, 10], [1, 3, 5, 10, 11, 10]]
+        """
         return [[len(str(x)) for x in row] for row in table]
 
     def max_lengths(self, lengths, table):
+        """
+        Choose the list whith the maximum of the lengths
+        Example: [1, 4, 5, 16, 16, 10]
+        """
         return list(max(map(itemgetter(x), lengths)) for x in range(0, len(table[0])))
     
-    def strings_distance(self, max_lengths):
+    def distance_format(self, max_lengths):
+        """
+        Use the list with maximum lenghts to create the following
+        format: %-1s   %-4s   %-5s   %-16s   %-16s   %-10s   
+        """
         return ''.join(map(lambda x: '%%-%ss    ' % x, max_lengths))
     
-    def display_table(self, strings_distance, table):
-        return map(lambda x: strings_distance % x, table)
+    def table_including_distances(self, format_distance, table):
+        """
+        anteriormente display_table
+        A list of strings with the appropriate distances
+        Example: ['1    Yoga    daily    Be more flexible    Before breakfast    2021-02-22    ', 
+                  '2    Run     daily    Be healthy          At weekends         2021-02-22    ']
+        """
+        return map(lambda x: format_distance % x, table)
    
     def strings_format(self, table, lengths):
-        return self.strings_distance(
+        return self.distance_format(
             self.max_lengths(
                 lengths, table))
-    
-
-    
+   
     def remove_habit(self, name):
         with self.connection:
             self.cursor.execute("SELECT HabitID FROM habits WHERE Name=:name", 
@@ -364,31 +373,6 @@ class Analytics:
             
             print('\nThe habit {} has been deleted.\n'.format(name))
             
-
-         
-    # def joint_habits_trackings(self, id_habit):
-    #     self.cursor.execute("""SELECT * FROM habits h INNER JOIN trackings t ON h.HabitID = t.HabitID
-    #                         WHERE habitID=:id_habit""",
-    #                         {'habitID': id_habit})
-        
-    #     habits_trackings = self.cursor.fetchall()
-    #     for habit in habits_trackings:
-    #         print(str(habit[0]).ljust(6) + 
-    #               habit[2].ljust(15) + habit[3].ljust(15) + habit[4])        
-            
-    
-    # def get_habits_by_name(self, name):
-    #     self.cursor.execute("SELECT * FROM habits WHERE name=:name", 
-    #                    {'name': name})
-    #     one_habit = self.cursor.fetchone()
-    #     print('HABIT'.ljust(15) + 'PERIODICITY'.ljust(15) + 'MOTIVATION')
-    #     print('-' * 45)
-    #     print(one_habit[2].ljust(15) + one_habit[3].ljust(15) + one_habit[4])
-        
-    # def total_habits(self):
-    #     self.cursor.execute("SELECT COUNT(*) FROM habits")
-    #     return self.cursor.fetchone()[0]        
-                      
     def update_motivation(self, habit, new_mot):
         with self.connection:
             self.cursor.execute("""UPDATE habits SET motivation = :new_mot
@@ -419,7 +403,23 @@ class Analytics:
             self.cursor.execute("""DELETE from trackings 
                             WHERE id_habit = :id_habit AND date_time = :date_time""",
                   {'id_habit': day.id_habit, 'date_time': day.date_time})
-
+    
+    # def clear_console(self):
+    #     return lambda: os.system('cls' if os.name in ('nt', 'dos') else 'clear')
+    
+    # def clear_console(self):
+    #     command = 'clear'
+    #     if os.name in ('nt', 'dos'):
+    #         print('hola')
+    #         command = 'cls'
+    #     os.system(command)
+    #     print(command)
+       
+    
+    def clear_console(self):
+        print('\n' * 200)
+    
+    
     def __del__(self):
         self.connection.close()
 

@@ -1,6 +1,6 @@
 import sys
 import pyinputplus as pyip
-
+from operator import itemgetter
 
 import time
 from analytics import Analytics
@@ -13,12 +13,12 @@ class Menu:
         self.analytics = Analytics()
         self.menu_options = { 
             "1": self.add_habit,
-            "2": self.check_in,
+            "2": self.check_off,
             "3": self.delete_habit,
             "4": self.search_habit,
             "5": self.show_all_habits,
             "6": self.habits_same_periodicity,
-            "7": self.habits_longest_streaks,
+            "7": self.habit_longest_streak,
             "8": self.habits_less_constant,
             "0": self.exit,
            
@@ -51,7 +51,7 @@ class Menu:
         if number_of_habits >= 1:
             print(
             """
-            2. Check-in a habit
+            2. Check a habit off
             3. Delete a habit
             ----------------------------------------
             """)
@@ -69,9 +69,9 @@ class Menu:
             Analysis -------------------------------
                 
             4. Search a habit
-            5. See all habits
+            5. See all habits registered
             6. See habits with same periodicity
-            7. See my longest streaks
+            7. See my longest streak
             8. Which habits do I struggle at most?
             
             ----------------------------------------
@@ -114,12 +114,16 @@ class Menu:
                               HABITSBOX       
             ________________________________________________
             Hint: Press 0 (zero) to return to the main menu
-            ------------------------------------------------
-            """)
+            ------------------------------------------------""")
                 
     def add_habit(self):
-        
+        self.analytics.clear_console()
         self.back_to_menu()
+        print("""
+                             ADD A HABIT    
+            ________________________________________________
+            """)
+
         habits_names = self.analytics.habits_table()
         
         if habits_names == []:
@@ -202,11 +206,15 @@ class Menu:
         time.sleep(2)
         self.run()
              
-    def check_in(self):
+    def check_off(self):
         """Register the custom as done
         when the user enters the habit-id"""
         # Shows the number to return to the main menu
         self.back_to_menu()
+        print("""
+                            CHECK A HABIT OFF    
+            ________________________________________________
+            """)
         habits_info = self.analytics.habits_table()
         # A list with all habit identifiers
         ids = self.analytics.get_all_ids(habits_info)
@@ -245,6 +253,10 @@ class Menu:
                 
     def delete_habit(self):
         self.back_to_menu()
+        print("""
+                             DELETE HABIT    
+            ________________________________________________
+            """)
         habits_names = self.analytics.get_all_names()
         # ['Run', 'Yoga']
         #print(self.analytics.habits_table())
@@ -288,6 +300,10 @@ class Menu:
         
     def search_habit(self):
         self.back_to_menu()
+        print("""
+                             SEARCH A HABIT    
+            ________________________________________________
+            """)
         habits_info = self.analytics.habits_table()
         self.id_habits()
         habits_trackings = self.analytics.habits_trackings()
@@ -404,7 +420,7 @@ class Menu:
                         ___________________________________
                     
                          You do not have any trackings yet
-                           Start today with - {} - 
+                           Start today with * {} * 
                                and check it off!
                         ___________________________________
                         Motivation:   {}
@@ -439,40 +455,34 @@ class Menu:
         #self.analytics.see_all_habits()
         """Print a table with all habits and
         its fields"""
+        self.back_to_menu()
+        print("""
+                            SHOW ALL HABITS    
+            ________________________________________________
+            """)
         habits_info = self.analytics.habits_table()
         # [(1, 'Yoga', 'weekly', 'Be more flexible', 'Before breakfast', '2021-02-22')]
-        habits_trackings = self.analytics.habits_trackings()
-        # ID, Name, Periodicity, Motivation,  Description,     t.Date, t.Time
-        # [(1, 'Yoga', 'daily', 'Flexibility', 'Mornings', '2021-04-26', '17:38')]
-        print(habits_trackings)
-        
-#         lengths = self.analytics.lengths(habits_info)
-#         strings_format = self.analytics.strings_format(habits_info, lengths)
-#         table = self.analytics.display_table(strings_format, habits_info)
+        header = ('ID', 'HABIT', 'PERIODICITY', 'MOTIVATION', 'DESCRIPTION', 'CREATION DAY')
+        habits_with_header = self.analytics.add_header(header, habits_info)
 
-#         print(
-#             """
-# ----------------------------------------------------------------
-# ID   HABIT  PERIODICITY  MOTIVATION  DESCRIPTION    START
-# ----------------------------------------------------------------     
-#             """)
-#         print(self.analytics.display_list_elements(table))
-        
-        if len(habits_info) >= 1:
-            print(
-            """
-              ---------------------------------------------------
-              ID     HABIT    PERIODICITY    MOTIVATION
-              ---------------------------------------------------      
-            """)
-            for habit in habits_info:
-                print(str(habit[0]).rjust(16) + 
-                      str(habit[1]).center(15) + 
-                      str(habit[2]).ljust(10)+ 
-                      str(habit[3]))        
+        lengths = self.analytics.lengths(habits_with_header)
+        strings_format = self.analytics.strings_format(habits_with_header, lengths)
+        table = self.analytics.table_including_distances(strings_format, habits_with_header)
+        print(self.analytics.display_list_elements(table))
+        print('')
+        while True:
+            number = pyip.inputNum("Press zero to go back to the main menu:")
+            if number == 0:
+                self.run() 
+            else:
+                print('Press the number zero to go back')
         
     def habits_same_periodicity(self):
         self.back_to_menu()
+        print("""
+                    HABITS WITH THE SAME PERIODICITY    
+            ________________________________________________
+            """)
         habits_trackings = self.analytics.habits_trackings()
         
         while True:
@@ -497,16 +507,20 @@ class Menu:
                 
         habits_trackings_periodicity = self.analytics.select_rows(habits_trackings, 2, periodicity)
         habits_table_periodicity = self.analytics.select_rows(
-            self.analytics.habits_table(), 2, periodicity)
+             self.analytics.habits_table(), 2, periodicity)
         ids_periodicity = self.analytics.get_all_ids(habits_trackings_periodicity)
         unique_ids_periodicity = self.analytics.unique_data(ids_periodicity)
-        lists_periodicity = self.analytics.list_habits_list(habits_trackings, unique_ids_periodicity)
+        # lists_periodicity = self.analytics.list_habits_list(habits_trackings, unique_ids_periodicity)
+        
+        lists_periodicity = self.analytics.lists_periodicity(habits_trackings, periodicity)
+        
+        
         
         table_periodicity = self.analytics.periodicity_info(lists_periodicity, periodicity)
         
         lengths = self.analytics.lengths(table_periodicity)
         strings_format = self.analytics.strings_format(table_periodicity, lengths)
-        table = self.analytics.display_table(strings_format, table_periodicity)
+        table = self.analytics.table_including_distances(strings_format, table_periodicity)
         
         print("""
               ________________________________________________________
@@ -540,11 +554,48 @@ class Menu:
             else:
                 print('Please, choose number 0 or 1')
 
-    def habits_longest_streaks(self):
-        pass
-    
+    def habit_longest_streak(self):
+        self.back_to_menu()
+        print("""
+                             MY LONGEST STREAK    
+            ________________________________________________
+            """)
+        
+        habits_trackings = self.analytics.habits_trackings()
+        
+        
+        
+        habits_max_streak = list(map(self.analytics.max_streak, *zip((habits_trackings, 'daily'),
+                                            (habits_trackings, 'weekly'))))
+        
+        if len(habits_max_streak) > 1:
+            max_n = max(habits_max_streak, key=itemgetter(-1))[-1]
+            #print(max_n)
+            habits_with_maximus = self.analytics.select_rows(habits_max_streak, -1, max_n)
+            #print(habits_with_maximus)
+            
+        else:
+            habits_with_maximus = habits_max_streak
+            
+        names_streaks = list(zip(self.analytics.select_column(habits_with_maximus, 0),
+                                 self.analytics.select_column(habits_with_maximus, -1)))
+        
+        header = ('HABIT', 'LONGEST STREAK')
+        
+        habits_longest_streaks = self.analytics.add_header(header, names_streaks)
+        
+        lengths = self.analytics.lengths(habits_longest_streaks)
+        strings_format = self.analytics.strings_format(habits_longest_streaks, lengths)
+        table = self.analytics.table_including_distances(strings_format, habits_longest_streaks)
+        print(self.analytics.display_list_elements(table))
+        print('')
+               
     def habits_less_constant(self):
-        pass
+        self.back_to_menu()
+        print("""
+                           HABITS LESS CONSTANT    
+            ________________________________________________
+            """)
     
     def exit(self):
         print("\n - Thank you for using your Habitsbox today -")
