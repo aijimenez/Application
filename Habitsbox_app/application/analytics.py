@@ -318,27 +318,27 @@ class Analytics:
             
         return habits_info
     
-    def max_streak(self, table, periodicity):
+    def max_streak(self, data, periodicity):
         return max(
             self.periodicity_info(
-                self.lists_periodicity(table,
+                self.lists_periodicity(data,
                                        periodicity),
                 periodicity),
             key=itemgetter(-1))
 
-    def lengths(self, table):
+    def lengths(self, data):
         """
         A list of lists with the lengths of each element
         Example: [[1, 4, 5, 16, 16, 10], [1, 3, 5, 10, 11, 10]]
         """
-        return [[len(str(x)) for x in row] for row in table]
+        return [[len(str(x)) for x in row] for row in data]
 
-    def max_lengths(self, lengths, table):
+    def max_lengths(self, lengths, data):
         """
         Choose the list whith the maximum of the lengths
         Example: [1, 4, 5, 16, 16, 10]
         """
-        return list(max(map(itemgetter(x), lengths)) for x in range(0, len(table[0])))
+        return list(max(map(itemgetter(x), lengths)) for x in range(0, len(data[0])))
     
     def distance_format(self, max_lengths):
         """
@@ -347,19 +347,58 @@ class Analytics:
         """
         return ''.join(map(lambda x: '%%-%ss    ' % x, max_lengths))
     
-    def table_including_distances(self, format_distance, table):
+    def list_including_distances(self, format_distance, data):
         """
         anteriormente display_table
         A list of strings with the appropriate distances
         Example: ['1    Yoga    daily    Be more flexible    Before breakfast    2021-02-22    ', 
                   '2    Run     daily    Be healthy          At weekends         2021-02-22    ']
         """
-        return map(lambda x: format_distance % x, table)
+        return map(lambda x: format_distance % x, data)
+    
+    def line(self, max_lengths):
+        """
+        Creates a line with the length of the maximum lengths
+        """
+        return '_' * (sum(max_lengths) + len(max_lengths) * 3 + 4)
+    
+    def display_table(self, data, title):
+        """
+        Display a table and 
+        """
+        print(self.line(self.max_lengths(
+            self.lengths(data), data)))
+        print("{}".format(title))
+        print(self.line(self.max_lengths(
+            self.lengths(data), data)))
+        print(self.display_list_elements(
+            self.list_including_distances(
+                self.distance_format(self.max_lengths(
+                    self.lengths(
+                        data), 
+                    data)), 
+                data)))
+        print(self.line(self.max_lengths(
+            self.lengths(data), data)))
+        
+    def table_header(self, header, data, title):
+        """
+        Display a table with header
+        """
+        return self.display_table(
+            self.add_header(header,data), 
+            title)
    
-    def strings_format(self, table, lengths):
-        return self.distance_format(
-            self.max_lengths(
-                lengths, table))
+    def table_registered_habits(self):
+        """
+        Display table with header of registered habits,
+        it includes the id and the name of the habit
+        """        
+        self.table_header(
+            ('ID', 'HABIT'), 
+            list(self.select_columns(
+                self.habits_table(), 
+                stop=2)), 'REGISTERED HABITS')
    
     def remove_habit(self, name):
         with self.connection:
@@ -370,8 +409,6 @@ class Analytics:
                              {'habitID': id_habit})
             self.cursor.execute("DELETE from habits WHERE HAbitID = :habitID",
                              {'habitID': id_habit})
-            
-            print('\nThe habit {} has been deleted.\n'.format(name))
             
     def update_motivation(self, habit, new_mot):
         with self.connection:
