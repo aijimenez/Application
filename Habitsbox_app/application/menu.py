@@ -331,7 +331,7 @@ class Menu:
                       _______________________
                               - {} - 
                        ---------------------
-                        has been delated
+                        has been deleted
                       _______________________
                       """.format(name))
                 time.sleep(2)
@@ -345,6 +345,13 @@ class Menu:
                     time.sleep(3)
                     self.choice_stay_return('delete another habit', self.delete_habit)
                 else:
+                    print("""
+                      ____________________________
+                      
+                        No more registered habits 
+                      ____________________________
+                      """)
+                    self.analytics.clear_console()
                     self.run()
             else:
                 print('This habit is not in your list')
@@ -405,8 +412,6 @@ class Menu:
                         periodicity,
                         self.analytics.start_habit(one_habit_trackings_info, col_date))
                         )
-                        self.choice_stay_return('see another habit', self.search_habit)
-                        
                         
                         if len(one_habit_trackings_info) > 1:
                             # [(2, 'Run', 'weekly', 'Faster', 'Sundays', '2021-04-27', '10:56'),
@@ -424,7 +429,7 @@ class Menu:
                         Last day of activity:   {}
                         
                         You are more active during:
-                        the {}
+                        {}
                         """.format(self.analytics.last_day(one_habit_trackings_info, col_date),
                         self.analytics.display_elements(most_active_time))
                             )
@@ -586,7 +591,7 @@ class Menu:
             for id_n in ids_without_trackings:
                 print('         {}'.format(
                     self.analytics.select_rows(habits_table_periodicity, 0, id_n)[0][1]))
-        print('_'*96)
+        print(' ')
 
         self.choice_stay_return('check other periodicity',
                                 self.habits_same_periodicity)
@@ -602,32 +607,54 @@ class Menu:
         
         habits_trackings = self.analytics.habits_trackings()
         
+        lists_periodicity = list(map(self.analytics.lists_periodicity, *zip((habits_trackings, 'daily'),
+                                             (habits_trackings, 'weekly'))))
+        #print(lists_periodicity[0])
+
+        # A list of two lists according to periodicity
+        # Each list contains information on eacn habit
+        lists_info_periodicity = list(map(self.analytics.periodicity_info, *zip((lists_periodicity[0], 'daily'),
+                                              (lists_periodicity[1], 'weekly'))))
+        #print(lists_info_periodicity)
+        # [[('Yoga', '2021-03-18', '2021-04-17', 'Evening', 5, 2), 
+        # ('Reading', '2021-03-19', '2021-04-25', 'Overnight, Afternoon', 8, 2), 
+        # ('Walk', '2021-05-04', '2021-05-04', 'Morning', 1, 1)], 
+        # [('Run', '2021-03-19', '2021-04-27', 'Evening', 5, 3), 
+        # ('Meditation', '2021-03-21', '2021-04-26', 'Overnight, Morning', 7, 7)]]
         
+        all_periodicity_habits = [ habit for l in lists_info_periodicity for habit in l ]
         
-        habits_max_streak = list(map(self.analytics.max_streak, *zip((habits_trackings, 'daily'),
-                                            (habits_trackings, 'weekly'))))
-        
-        if len(habits_max_streak) > 1:
-            max_n = max(habits_max_streak, key=itemgetter(-1))[-1]
+        if len(all_periodicity_habits) > 1:
+            # get the number of the maximum streak
+            max_n = max(all_periodicity_habits, key=itemgetter(-1))[-1]
             #print(max_n)
-            habits_with_maximus = self.analytics.select_rows(habits_max_streak, -1, max_n)
+            # get all habits which have the same number of the maximum streak
+            habits_with_maximus = self.analytics.select_rows(all_periodicity_habits, -1, max_n)
             #print(habits_with_maximus)
             
         else:
-            habits_with_maximus = habits_max_streak
+            habits_with_maximus = all_periodicity_habits
             
-        names_streaks = list(zip(self.analytics.select_column(habits_with_maximus, 0),
-                                 self.analytics.select_column(habits_with_maximus, -1)))
         
+        
+        # A table with two columns: name of the habit and the longest streak
+        names_streaks = list(zip(self.analytics.select_column(habits_with_maximus, 0),
+                                   self.analytics.select_column(habits_with_maximus, -1)))
+            
         header = ('HABIT', 'LONGEST STREAK')
         
-        habits_longest_streaks = self.analytics.add_header(header, names_streaks)
+        self.analytics.table_header(header, 
+                                    names_streaks, 
+                                    ' ')
+        print(' ')
         
-        lengths = self.analytics.lengths(habits_longest_streaks)
-        strings_format = self.analytics.strings_format(habits_longest_streaks, lengths)
-        table = self.analytics.table_including_distances(strings_format, habits_longest_streaks)
-        print(self.analytics.display_list_elements(table))
-        print('')
+        while True:
+            choice = pyip.inputNum('Press 0 (zero) to return to the main menu: ')
+            if choice == 0:
+                self.analytics.clear_console()
+                self.run()
+            else:
+                print('Please,  choose number 0 to go back')
                
     def habits_less_constant(self):
         self.analytics.clear_console()

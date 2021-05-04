@@ -290,6 +290,13 @@ class Analytics:
         return self.header_in_list(header)+table    
         
     def periodicity_info(self, lists_periodicity, periodicity, col_date=5):
+        """
+        A list containing information for each habit according 
+        to its periodicity. Name of the habit, first and last tracking,
+        most active time, activity days or weeks, and longest streak
+        Example: [('Yoga', '2021-03-18', '2021-04-17', 'Evening', 5, 2),
+                  ('Reading', '2021-03-19', '2021-04-25', 'Afternoon', 8, 2)]
+        """
         habits_info = []
         
         for l in lists_periodicity:
@@ -324,7 +331,7 @@ class Analytics:
                 self.lists_periodicity(data,
                                        periodicity),
                 periodicity),
-            key=itemgetter(-1))
+            key=itemgetter(-1))[-1]
 
     def lengths(self, data):
         """
@@ -360,7 +367,7 @@ class Analytics:
         """
         Creates a line with the length of the maximum lengths
         """
-        return '_' * (sum(max_lengths) + len(max_lengths) * 3 + 4)
+        return '_' * (sum(max_lengths) + len(max_lengths) * 3 + 3)
     
     def display_table(self, data, title):
         """
