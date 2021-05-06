@@ -19,7 +19,6 @@ class Menu:
             "5": self.show_all_habits,
             "6": self.habits_same_periodicity,
             "7": self.habit_longest_streak,
-            "8": self.habits_less_constant,
             "0": self.exit,
            
             }
@@ -72,7 +71,6 @@ class Menu:
             5. See all habits registered
             6. See habits with same periodicity
             7. See my longest streak
-            8. Which habits do I struggle at most?
             
             ----------------------------------------
                   """)
@@ -100,7 +98,7 @@ class Menu:
             elif ((number_of_trackings == 0) or (number_of_habits == 1)) and (choice in [0, 1, 2, 3, 4]):
                 action = self.menu_options.get(str(choice))
                 action()
-            elif (number_of_trackings > 1) and (choice in [0, 1, 2, 3, 4, 5, 6, 7, 8]):
+            elif (number_of_trackings > 1) and (choice in [0, 1, 2, 3, 4, 5, 6, 7]):
                 action = self.menu_options.get(str(choice))
                 action()
             else:
@@ -259,6 +257,7 @@ class Menu:
             ------------------------------------------------
             """)
         habits_info = self.analytics.habits_table()
+        # [(1, 'Yoga', 'daily', 'Be more flexible', 'Morning if possible', '2021-05-05')]
         # A list with all habit identifiers
         ids = self.analytics.get_all_ids(habits_info)
             
@@ -287,7 +286,11 @@ class Menu:
                  """.format(
                  self.analytics.select_rows(habits_info, 0, id_n)[0][1])
                  )
-                self.choice_stay_return('check another habit off', self.check_off)
+                
+                if len(habits_info) > 1:
+                    self.choice_stay_return('check another habit off', self.check_off)
+                else:
+                    self.return_menu()
             else:
                 print("Please, choose an ID from the list")
                 
@@ -312,7 +315,6 @@ class Menu:
         # print('REGISTERED HABITS')
         # print('___________________')
         # print(self.analytics.display_list_elements((habits_names)))
-        
 
         while True:
             name = input("""
@@ -364,6 +366,7 @@ class Menu:
             ________________________________________________
             """)
         habits_info = self.analytics.habits_table()
+        
         self.analytics.table_registered_habits()
         habits_trackings = self.analytics.habits_trackings()
         # ID, Name, Periodicity, Motivation,  Description,     t.Date, t.Time
@@ -463,7 +466,11 @@ class Menu:
                                         one_habit_trackings_info, 
                                         col_date))
                                     )
-                        self.choice_stay_return('see another habit', self.search_habit)
+                        #self.choice_stay_return('see another habit', self.search_habit)
+                        if len(habits_info) > 1:
+                            self.choice_stay_return('check another habit off', self.search_habit)
+                        else:
+                            self.return_menu()
 
                 else:
                     one_habit_info = self.analytics.select_rows(habits_info, 0, id_n)
@@ -491,7 +498,10 @@ class Menu:
                         one_habit_info[0][2],
                         one_habit_info[0][-1])
                         )
-                    self.choice_stay_return('see another habit', self.search_habit)
+                    if len(habits_info) > 1:
+                        self.choice_stay_return('check another habit off', self.search_habit)
+                    else:
+                        self.return_menu()
                 
     def show_all_habits(self):
         #self.analytics.see_all_habits()
@@ -636,7 +646,7 @@ class Menu:
             habits_with_maximus = all_periodicity_habits
             
         
-        
+
         # A table with two columns: name of the habit and the longest streak
         names_streaks = list(zip(self.analytics.select_column(habits_with_maximus, 0),
                                    self.analytics.select_column(habits_with_maximus, -1)))
@@ -655,18 +665,26 @@ class Menu:
                 self.run()
             else:
                 print('Please,  choose number 0 to go back')
-               
-    def habits_less_constant(self):
-        self.analytics.clear_console()
-        self.back_to_menu()
-        print("""
-                           HABITS LESS CONSTANT    
-            ________________________________________________
-            """)
+    
+    def return_menu(self):
+        while True:
+            number = pyip.inputNum("Press zero to go back to the main menu:")
+            if number == 0:
+                self.run() 
+            else:
+                print('Press the number zero to go back')
     
     def exit(self):
-        print("\n - Thank you for using your Habitsbox today -")
+        print("""\n
+            ________________________________________
+            
+                    Thank you for using
+                    your HABITSBOX today 
+            ________________________________________
+              """)
+        self.analytics.close()
         sys.exit(0)
+
         
 
 

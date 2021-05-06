@@ -13,14 +13,43 @@ class Analytics:
     """Initialize and manipulate SQLite3 database"""
     
     def __init__(self):
-        """Connect to the database"""
-        self.connection = sqlite3.connect('DB_Habitsbox_app.db')
-        self.cursor = self.connection.cursor()
+        """
+        Connect to the database
+        or create it if does not exist
+        """
+        try:
+            # Connect to database
+            self.connection = sqlite3.connect('DB_Habitsbox_app.db')
+            # Create a cursor
+            self.cursor = self.connection.cursor()
+            # Create table habits with six columns if does not exist
+            self.cursor.execute("""CREATE TABLE IF NOT EXISTS habits(
+                             HabitID INTEGER PRIMARY KEY, 
+                             Name TEXT UNIQUE,
+                             Periodicity TEXT,
+                             Motivation TEXT,
+                             Description TEXT,
+                             Creation_date TEXT      
+                          )""")
+            # Create table trackings with four columns if does not exist
+            self.cursor.execute("""CREATE TABLE IF NOT EXISTS trackings(
+                             TrackingID INTEGER PRIMARY KEY,
+                             Date TEXT,
+                             Time TEXT,
+                             HabitID INTEGER NOT NULL,
+                             FOREIGN KEY (HabitID) REFERENCES habits (HabitID)
+                          )""")
+        # print error if any error occurs  
+        except sqlite3.Error as error:
+            print('Error while connectiong to SQLite', error)
         
     def insert_habit(self, name, periodicity, motivation, description):
-        """Initialize the Habit class in the habit module"""
+        """
+        Initialize the Habit class in the habit module and 
+        insert a habit to the DB
+        """
         self.habit = Habit(name, periodicity, motivation, description)
-        """Insert a habit to the DB"""
+
         with self.connection:
             self.cursor.execute("""INSERT INTO habits (Name, Periodicity, Motivation, Description, Creation_date)
                             VALUES (:name, :periodicity, :motivation, :description, :creation_date)""", 
@@ -417,14 +446,6 @@ class Analytics:
             self.cursor.execute("DELETE from habits WHERE HAbitID = :habitID",
                              {'habitID': id_habit})
             
-    def update_motivation(self, habit, new_mot):
-        with self.connection:
-            self.cursor.execute("""UPDATE habits SET motivation = :new_mot
-                           WHERE name = :name AND periodicity = :periodicity""",
-                           {'name': habit.name, 
-                            'periodicity': habit.periodicity, 
-                            'new_mot': new_mot})
-            
     def insert_day(self, id_habit):
         """Insert the day and time in the databank
         when a habit is checked-off"""
@@ -437,16 +458,28 @@ class Analytics:
                                 VALUES (:date, :time, :habitID)""", 
                             {'date': date, 'time': time, 'habitID': id_habit})
 
-    def get_trackings_by_id(self, id_habit):
-        self.cursor.execute("SELECT * FROM trackings WHERE id_habit=:id_habit",
-                        {'id_habit': id_habit})
-        return self.cursor.fetchall()
+###No  in use__________________________________
+#     def update_motivation(self, habit, new_mot):
+#         with self.connection:
+#             self.cursor.execute("""UPDATE habits SET motivation = :new_mot
+#                            WHERE name = :name AND periodicity = :periodicity""",
+#                            {'name': habit.name, 
+#                             'periodicity': habit.periodicity, 
+#                             'new_mot': new_mot})
+
+# ###No  in use__________________________________
+#     def get_trackings_by_id(self, id_habit):
+#         self.cursor.execute("SELECT * FROM trackings WHERE id_habit=:id_habit",
+#                         {'id_habit': id_habit})
+#         return self.cursor.fetchall()
+# ###No  in use__________________________________
  
-    def remove_day(self, day):
-        with self.connection:
-            self.cursor.execute("""DELETE from trackings 
-                            WHERE id_habit = :id_habit AND date_time = :date_time""",
-                  {'id_habit': day.id_habit, 'date_time': day.date_time})
+#     def remove_day(self, day):
+#         with self.connection:
+#             self.cursor.execute("""DELETE from trackings 
+#                             WHERE id_habit = :id_habit AND date_time = :date_time""",
+#                   {'id_habit': day.id_habit, 'date_time': day.date_time})
+# ###____________________________________________
     
     # def clear_console(self):
     #     return lambda: os.system('cls' if os.name in ('nt', 'dos') else 'clear')
@@ -464,6 +497,7 @@ class Analytics:
         print('\n' * 200)
     
     
-    def __del__(self):
+    def close(self):
+        """Close sqlite3 connection"""
         self.connection.close()
 
