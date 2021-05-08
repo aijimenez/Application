@@ -467,7 +467,7 @@ class Menu:
                                     )
                         #self.choice_stay_return('see another habit', self.search_habit)
                         if len(habits_info) > 1:
-                            self.choice_stay_return('See another habit off', self.search_habit)
+                            self.choice_stay_return('See another habit off', self.see_habit)
                         else:
                             self.return_menu()
 
@@ -498,7 +498,7 @@ class Menu:
                         one_habit_info[0][-1])
                         )
                     if len(habits_info) > 1:
-                        self.choice_stay_return('Check another habit off', self.search_habit)
+                        self.choice_stay_return('Check another habit off', self.see_habit)
                     else:
                         self.return_menu()
                 
@@ -509,7 +509,7 @@ class Menu:
         self.analytics.clear_console()
         self.back_to_menu()
         print("""
-                            SHOW ALL HABITS    
+                              ALL HABITS    
             ________________________________________________
             """)
 
@@ -517,12 +517,7 @@ class Menu:
                      self.analytics.habits_table(), 
                      'HABITS INFORMATION')
         print('')
-        while True:
-            number = pyip.inputNum("Press zero to go back to the main menu:")
-            if number == 0:
-                self.run() 
-            else:
-                print('Press the number zero to go back')
+        self.return_menu()
         
     def habits_same_periodicity(self):
         self.analytics.clear_console()
@@ -536,6 +531,7 @@ class Menu:
         while True:
             print("""
                   What periodicity would you like to see?
+                  
                   1: daily
                   2: weekly
                   """)
@@ -629,10 +625,10 @@ class Menu:
                 # A list of all habits with the same periodicity and without trackings
                 habits_without_trackings = [self.analytics.select_rows(habits_table_periodicity, 0, id_n)[0] 
                                             for id_n in ids_without_trackings]
-                print(habits_without_trackings)
+                # print(habits_without_trackings)
                 
-                print(list(zip(self.analytics.select_column(habits_without_trackings, 1),
-                          self.analytics.select_columns(habits_without_trackings, 3, 6))))
+                # print(list(zip(self.analytics.select_column(habits_without_trackings, 1),
+                #          self.analytics.select_columns(habits_without_trackings, 3, 6))))
                 
                 self.analytics.table_header(('ID', 'HABIT', 'PERIODICITY', 'MOTIVATION', 'DESCRIPTION', 'CREATION DAY'), 
                                             habits_without_trackings,
@@ -699,7 +695,7 @@ class Menu:
     
     def return_menu(self):
         while True:
-            number = pyip.inputNum("0. Go back to the main menu: ")
+            number = pyip.inputNum("0. Back to the main menu: ")
             if number == 0:
                 self.analytics.clear_console()
                 self.run() 
