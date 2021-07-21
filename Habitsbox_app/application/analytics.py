@@ -62,19 +62,34 @@ class Analytics:
     def habits_table(self):
         """
         Return all the habits and all the fields
-        available in the table habits in the DB
-        example:
-        [(1, 'Yoga', 'daily', 'Be more flexible', 'Before breakfast', '2021-02-22')]
+        available in the table habits in the DB.
+        Example:
+        [(1, 'Yoga', 'daily', 'Be more flexible', 'Before lunch', '2021-04-26'), 
+         (2, 'Run', 'weekly', 'Being healthier', 'At weekends', '2021-04-26')]
         """
         self.cursor.execute("SELECT * FROM habits")
         return self.cursor.fetchall()
     
     def trackings_table(self):
+        """
+        Returns the date and time when the trackings were
+        registered, as well as to which habit-id they correspond.
+        Example:        
+        [(1, '2021-02-01', '19:52'), (2, '2021-02-03', '02:42')]
+        """
         self.cursor.execute("""SELECT HabitID, Date, Time
                             FROM trackings""")
         return self.cursor.fetchall()
     
-    def habits_trackings(self):
+    def habits_trackings_table(self):
+        """
+        Join the habits table and the trackings table using the
+        id of the habit.
+        Example:
+        [(1, 'Yoga', 'daily', 'Be more flexible', 'Mornings', '2021-06-21', '09:06'), 
+         (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-06-21', '15:26'), 
+         (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-06-22', '16:00')]
+        """
         self.cursor.execute("""SELECT h.HabitID, h.Name, h.Periodicity,
                             h.Motivation, h.Description, t.Date, t.Time
                             FROM habits h
@@ -83,9 +98,11 @@ class Analytics:
         return self.cursor.fetchall()
     
     def select_column(self, table, i):
+        """Select column i of the indicated table"""
         return map(lambda x: x[i], table)
     
     def select_columns(self, table, start=0, stop=1):
+        """Select several columns of the indicated table"""
         return map(lambda x: x[start:stop], table)
     
     # def get_dates(self, trackings_table):
@@ -93,10 +110,13 @@ class Analytics:
     
     def get_all_names(self):
         """
-        Return the names of the habits in a list
+        Return a list of habit names registered in the DB
         Example: ['Yoga', 'Run']
         """
         return list(self.select_column(self.habits_table(), 1))
+        # ['Yoga']
+        #return list(self.select_columns(self.habits_table(), 1, 2))
+        # [('Yoga',)]
     
     def get_all_ids(self, table):
         """
@@ -312,12 +332,20 @@ class Analytics:
                                          self.get_all_ids(
                                              self.select_rows(table, 2, periodicity))))
     
-    def header_in_list(self, header):
-        return [header]
-
-    def add_header(self, header, table):
-        return self.header_in_list(header)+table    
-        
+    # def colnames_in_list(self, colnames):
+    #     return [colnames]
+    
+    # def add_colnames(self, colnames, table):
+    #     """Add the name of the columns"""
+    #     return self.colnames_in_list(colnames)+table  
+    
+    def add_colnames(self, colnames, table):
+        """
+        Receives the column names in a tuple and
+        adds them to the table
+        """
+        return [colnames]+table
+       
     def periodicity_info(self, lists_periodicity, periodicity, col_date=5):
         """
         A list containing information for each habit according 
@@ -400,7 +428,7 @@ class Analytics:
     
     def display_table(self, data, title):
         """
-        Display a table and 
+        Display the data in a table
         """
         print(self.line(self.max_lengths(
             self.lengths(data), data)))
@@ -417,38 +445,46 @@ class Analytics:
         print(self.line(self.max_lengths(
             self.lengths(data), data)))
         
-    def table_header(self, header, data, title):
+    def table_header(self, colnames, data, header):
         """
-        Display a table with header
+        Displays a table with header and column names
         """
         return self.display_table(
-            self.add_header(header,data), 
-            title)
+            self.add_colnames(colnames,data), 
+            header)
    
     def table_registered_habits(self):
         """
-        Display table with header of registered habits,
-        it includes the id and the name of the habit
+        Displays the names and ids of the registered habits
+        in table format. The table has a title and the name
+        of the columns.
         """        
         self.table_header(
             ('ID', 'HABIT'), 
             list(self.select_columns(
                 self.habits_table(), 
-                stop=2)), 'REGISTERED HABITS')
+                stop=2)), 'YOUR HABIT(S)')
    
     def remove_habit(self, name):
+        """
+        The habit is removed from the DB in the habit table along
+        with all trackings related to its id.
+        """
         with self.connection:
             self.cursor.execute("SELECT HabitID FROM habits WHERE Name=:name", 
                        {'name': name})
             id_habit = self.cursor.fetchone()[0]
-            self.cursor.execute("DELETE from trackings WHERE HAbitID = :habitID",
+            self.cursor.execute("DELETE from trackings WHERE HabitID = :habitID",
                              {'habitID': id_habit})
-            self.cursor.execute("DELETE from habits WHERE HAbitID = :habitID",
+            self.cursor.execute("DELETE from habits WHERE HabitID = :habitID",
                              {'habitID': id_habit})
             
     def insert_day(self, id_habit):
-        """Insert the day and time in the databank
-        when a habit is checked-off"""
+        """
+        Registers in the trackings table the day and time
+        when the user checks a habit off, i.e. chooses
+        the id of the habit.
+        """
         
         date = datetime.now().strftime("%Y-%m-%d")
         time = datetime.now().strftime("%H:%M")
@@ -494,6 +530,9 @@ class Analytics:
        
     
     def clear_console(self):
+        """
+        Print several new lines to clean up the console
+        """
         print('\n' * 200)
     
     
