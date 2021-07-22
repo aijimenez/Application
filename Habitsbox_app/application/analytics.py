@@ -7,7 +7,8 @@ from collections import Counter
 from operator import itemgetter
 
 #from .habit import Habit
-from habit import Habit
+from .habit import Habit
+#from . import Habit
 
 class Analytics:
     """Initialize and manipulate SQLite3 database"""
@@ -241,6 +242,9 @@ class Analytics:
                                                         column))))))))))
     
     def start_habit(self, trackings, column):
+        """
+        Returns the earliest date from a column of dates
+        """
         if len(trackings) == 0:
             return []
         else:

@@ -4,6 +4,7 @@ from operator import itemgetter
 
 from analytics import Analytics
 #from .analytics import Analytics
+#from . import Analytics
 
 class Menu:
     """Show a menu and react to the user options when executed."""
@@ -417,19 +418,24 @@ class Menu:
         # A list of the existing information in the habit table of the DB
         habits_info = self.analytics.habits_table()
          # List of the names and ids of the registered habits in table format
+        #print(habits_info)
         self.analytics.table_registered_habits()
-        
-        habits_trackings = self.analytics.habits_trackings_table()
+        # Union of the habits table and the trackings table
+        #habits_trackings = self.analytics.habits_trackings_table()
         # ID, Name, Periodicity, Motivation,  Description,     t.Date, t.Time
         # [(1, 'Yoga', 'daily', 'Flexibility', 'Mornings', '2021-04-26', '17:38')]
         #habits_info = self.analytics.habits_table()
         # [(1, 'Yoga', 'weekly', 'Be more flexible', 'Before breakfast', '2021-02-22')]
         #number_of_habits = len(habits_info)
+        # A list of the trackings that have been recorded
+        #print(habits_trackings)
         trackings = self.analytics.trackings_table()
+        #print(trackings)
         # HabitID,  Date,      Time
         # [(1, '2021-04-26', '11:51')]
-        # All ids in the habits table
+        # A list with all habit identifiers in the habits table
         ids_habits_table = self.analytics.get_all_ids(habits_info)
+        # A list with all habit identifiers in the trackings table
         ids_trackings_table = self.analytics.get_all_ids(trackings)
         col_date = 5
         col_time = 6
@@ -440,13 +446,20 @@ class Menu:
              Write the ID of the habit you want to check :
                                  """)
             if id_n == 0:
+                # back to the main menu
                 self.run()
             elif id_n in ids_habits_table:
                 if id_n in ids_trackings_table:
+                    # Select all rows belonging to the given habit id
                     one_habit_trackings_info = self.analytics.select_rows(
                         habits_trackings, 0, id_n)
+                    print(one_habit_trackings_info)
+                    print(len(one_habit_trackings_info))
+                    # Gets the periodicity of the selected habit
                     periodicity = one_habit_trackings_info[0][2]
+                    print(periodicity)
                     if len(one_habit_trackings_info) >= 1:
+                        # Clean up the console
                         self.analytics.clear_console()
                         # [(2, 'Run', 'weekly', 'Faster', 'Sundays', '2021-04-27', '10:56')]
                         print(
@@ -464,8 +477,10 @@ class Menu:
                         one_habit_trackings_info[0][3],
                         one_habit_trackings_info[0][4],
                         periodicity,
+                        #
                         self.analytics.start_habit(one_habit_trackings_info, col_date))
                         )
+                        print(type(self.analytics.start_habit(one_habit_trackings_info, col_date)))
                         
                         if len(one_habit_trackings_info) > 1:
                             # [(2, 'Run', 'weekly', 'Faster', 'Sundays', '2021-04-27', '10:56'),
