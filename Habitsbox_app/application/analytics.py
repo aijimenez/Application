@@ -100,21 +100,21 @@ class Analytics:
     
     def select_column(self, table, i):
         """Select column i of the indicated table"""
-        return map(lambda x: x[i], table)
+        return list(map(lambda x: x[i], table))
     
     def select_columns(self, table, start=0, stop=1):
         """Select several columns of the indicated table"""
-        return map(lambda x: x[start:stop], table)
+        return list(map(lambda x: x[start:stop], table))
     
     # def get_dates(self, trackings_table):
     #     return select_column(trackings_table, )
     
-    def get_all_names(self):
-        """
-        Return a list of habit names registered in the DB
-        Example: ['Yoga', 'Run']
-        """
-        return list(self.select_column(self.habits_table(), 1))
+    # def get_all_names(self):
+    #     """
+    #     Return a list of habit names registered in the DB
+    #     Example: ['Yoga', 'Run']
+    #     """
+    #     return list(self.select_column(self.habits_table(), 1))
         # ['Yoga']
         #return list(self.select_columns(self.habits_table(), 1, 2))
         # [('Yoga',)]
@@ -149,7 +149,7 @@ class Analytics:
     def display_elements(self, my_list):
         return ', '.join(map(str, my_list))
     
-    def display_unique_elements_of_column(self, table, column):
+    def unique_elements(self, table, column):
         return self.display_elements(
                 self.unique_data(
                     self.select_column(
@@ -157,7 +157,7 @@ class Analytics:
                         column)))
 
     def format_to_date(self, column):
-        return map(lambda x: datetime.strptime(x, "%Y-%m-%d").date(), column)
+        return list(map(lambda x: datetime.strptime(x, "%Y-%m-%d").date(), column))
     
     def format_to_time(self, column):
         return map(lambda x: datetime.strptime(x, "%H:%M").time(), column)
@@ -371,7 +371,7 @@ class Analytics:
                                 active_time_dictionary, 
                                 max_value_active_time)
                         
-            habits_info.append((self.display_unique_elements_of_column(l, 1),
+            habits_info.append((self.unique_elements(l, 1),
                   ''.join(min(self.select_column(l, col_date))),
                   ''.join(max(self.select_column(l, col_date))),
                   self.display_elements(most_active_time), 
@@ -543,4 +543,3 @@ class Analytics:
     def close(self):
         """Close sqlite3 connection"""
         self.connection.close()
-

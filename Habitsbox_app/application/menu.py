@@ -172,7 +172,7 @@ class Menu:
             """)
 
         # A list of names of registered habits
-        habits_names = self.analytics.get_all_names()
+        habits_names = self.analytics.select_column(self.analytics.habits_table(), 1)
         # ['Yoga']
         
         if len(habits_names) == 0:
@@ -347,7 +347,8 @@ class Menu:
             ________________________________________________
             """)
         # A list of names of registered habits ['Run', 'Yoga']
-        habits_names = self.analytics.get_all_names()
+        habits_names = self.analytics.select_column(self.analytics.habits_table(), 1)
+        #habits_names = self.analytics.get_all_names()
         
         print(""" 
             -------------------------------------------------
@@ -382,13 +383,14 @@ class Menu:
                       _______________________
                       """.format(name))
                 # A list of remaining registered habit names
-                habits_names = self.analytics.get_all_names()
+                habits_names = self.analytics.select_column(self.analytics.habits_table(), 1)
+                # habits_names = self.analytics.get_all_names()
                 if len(habits_names) >= 1:
                     # List of the names and ids of the remaining habits in table format
                     self.analytics.table_header(('ID', 'HABIT'), 
-                                                list(self.analytics.select_columns(
+                                                self.analytics.select_columns(
                                                     self.analytics.habits_table(),
-                                                    stop=2)), 
+                                                    stop=2), 
                                                 'REMAINING HABITS')
                     # Return to the main menu or delete another habit
                     self.choice_stay_return('Delete another habit', self.delete_habit)
@@ -421,7 +423,7 @@ class Menu:
         #print(habits_info)
         self.analytics.table_registered_habits()
         # Union of the habits table and the trackings table
-        #habits_trackings = self.analytics.habits_trackings_table()
+        habits_trackings = self.analytics.habits_trackings_table()
         # ID, Name, Periodicity, Motivation,  Description,     t.Date, t.Time
         # [(1, 'Yoga', 'daily', 'Flexibility', 'Mornings', '2021-04-26', '17:38')]
         #habits_info = self.analytics.habits_table()
@@ -792,7 +794,7 @@ class Menu:
         self.analytics.close()
         sys.exit(0)
 
-  
+display_unique_elements_of_column
 
 
 Menu().run()
