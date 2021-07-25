@@ -1,5 +1,6 @@
 from application.analytics import Analytics
 from datetime import datetime
+from datetime import timedelta, date, time
 
 habits_table = [(1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-20'), 
                (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-21'), 
@@ -71,17 +72,84 @@ def test_unique_elements():
 def test_format_to_date():
     dates = analytics.format_to_date([('2021-07-21'), ('2021-07-21'), 
                                       ('2021-07-21'), ('2021-07-22')])
-    # assert dates == [datetime.date(2021, 7, 21), datetime.date(2021, 7, 21), 
-    #                  datetime.date(2021, 7, 21), datetime.date(2021, 7, 22)]
-    assert dates == [datetime.strptime('2021-07-21', "%Y-%m-%d").date(),
-                     datetime.strptime('2021-07-21', "%Y-%m-%d").date(),
-                     datetime.strptime('2021-07-21', "%Y-%m-%d").date(),
+    assert dates == [date(2021, 7, 21), date(2021, 7, 21), 
+                      date(2021, 7, 21), date(2021, 7, 22)]
+    # assert dates == [datetime.strptime('2021-07-21', "%Y-%m-%d").date(),
+    #                   datetime.strptime('2021-07-21', "%Y-%m-%d").date(),
+    #                   datetime.strptime('2021-07-21', "%Y-%m-%d").date(),
+    #                   datetime.strptime('2021-07-22', "%Y-%m-%d").date()]
+    
+def test_format_to_time():
+    times = analytics.format_to_time([('09:06'), ('15:26'), ('16:00'), ('17:11')])
+    assert times ==  [time(9, 6), time(15, 26), time(16, 0), time(17, 11)]
+    # assert times == [datetime.strptime('09:06', "%H:%M").time(),
+    #                  datetime.strptime('15:26', "%H:%M").time(),
+    #                  datetime.strptime('16:00', "%H:%M").time(),
+    #                  datetime.strptime('17:11', "%H:%M").time()]
+
+def test_to_calender_week():
+    calender_week = analytics.to_calender_week(
+        [datetime.strptime('2019-12-31', "%Y-%m-%d").date(),
+         datetime.strptime('2020-01-01', "%Y-%m-%d").date(),
+         datetime.strptime('2020-12-31', "%Y-%m-%d").date(),
+         datetime.strptime('2021-12-25', "%Y-%m-%d").date()])
+    assert calender_week == [1, 1, 53, 51]
+
+def test_unique_data():
+    unique_times = analytics.unique_data(
+        [datetime.strptime('2021-07-21', "%Y-%m-%d").date(),
+          datetime.strptime('2021-07-21', "%Y-%m-%d").date(),
+          datetime.strptime('2021-07-21', "%Y-%m-%d").date(),
+          datetime.strptime('2021-07-22', "%Y-%m-%d").date()])
+    assert unique_times == [datetime.strptime('2021-07-21', "%Y-%m-%d").date(),
                      datetime.strptime('2021-07-22', "%Y-%m-%d").date()]
+
+def test_zipping_unique_data():
+    zip_times = analytics.zipping_unique_data(
+        [datetime.strptime('2021-02-01', "%Y-%m-%d").date(),
+          datetime.strptime('2021-02-03', "%Y-%m-%d").date(),
+          datetime.strptime('2021-02-05', "%Y-%m-%d").date(),
+          datetime.strptime('2021-02-06', "%Y-%m-%d").date()])
+    zip_times1 = analytics.zipping_unique_data(
+        [datetime.strptime('2021-02-01', "%Y-%m-%d").date()])
+    assert zip_times == [
+        (datetime.strptime('2021-02-03', "%Y-%m-%d").date(), datetime.strptime('2021-02-01', "%Y-%m-%d").date()),
+        (datetime.strptime('2021-02-05', "%Y-%m-%d").date(), datetime.strptime('2021-02-03', "%Y-%m-%d").date()),
+        (datetime.strptime('2021-02-06', "%Y-%m-%d").date(), datetime.strptime('2021-02-05', "%Y-%m-%d").date())
+        ]
+    assert zip_times1 == []
+    
+def test_differences():
+    differences = analytics.differences ([
+        (datetime.strptime('2021-02-03', "%Y-%m-%d").date(), datetime.strptime('2021-02-01', "%Y-%m-%d").date()),
+        (datetime.strptime('2021-02-05', "%Y-%m-%d").date(), datetime.strptime('2021-02-03', "%Y-%m-%d").date()),
+        (datetime.strptime('2021-02-06', "%Y-%m-%d").date(), datetime.strptime('2021-02-05', "%Y-%m-%d").date())
+        ])
+    # assert differences == [1, 2, 3]
+    assert differences ==  [timedelta(days=2), 
+                            timedelta(days=2), 
+                            timedelta(days=1)]
+    
+    # differences = analytics.differences ([
+    #     (datetime.date(2021, 2, 3), datetime.date(2021, 2, 1)),
+    #     (datetime.date(2021, 2, 5), datetime.date(2021, 2, 3)),
+    #     (datetime.date(2021, 2, 6), datetime.date(2021, 2, 5))
+    #     ])
+    # assert differences == [datetime.timedelta(days=2), 
+    #                         datetime.timedelta(days=2), 
+    #                         datetime.timedelta(days=1)]
+    
+    # differences = analytics.differences ([
+    #     (datetime.date(2021, 2, 3), datetime.date(2021, 2, 1)),
+    #     (datetime.date(2021, 2, 5), datetime.date(2021, 2, 3)),
+    #     (datetime.date(2021, 2, 6), datetime.date(2021, 2, 5))
+    #     ])
+    # assert differences == [datetime.timedelta(days=2), 
+    #                         datetime.timedelta(days=2), 
+    #                         datetime.timedelta(days=1)]
     
 
-
-
-
+ 
 
 
 

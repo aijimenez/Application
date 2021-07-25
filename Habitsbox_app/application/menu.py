@@ -794,7 +794,7 @@ class Menu:
         self.analytics.close()
         sys.exit(0)
 
-display_unique_elements_of_column
+
 
 
 Menu().run()

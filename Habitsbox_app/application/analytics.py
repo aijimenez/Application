@@ -160,10 +160,10 @@ class Analytics:
         return list(map(lambda x: datetime.strptime(x, "%Y-%m-%d").date(), column))
     
     def format_to_time(self, column):
-        return map(lambda x: datetime.strptime(x, "%H:%M").time(), column)
+        return list(map(lambda x: datetime.strptime(x, "%H:%M").time(), column))
            
     def to_calender_week(self, dates):
-        return map(lambda x: x.isocalendar()[1], dates)
+        return list(map(lambda x: x.isocalendar()[1], dates))
     
     def unique_data(self, myobject):
         return reduce(lambda x, y: x + [y] if y not in x else x, myobject, [])
@@ -172,13 +172,13 @@ class Analytics:
         """
         Create a sequence of pairs from a list of dates that are unique
         """
-        return zip(unique[1:], unique[:-1])
+        return list(zip(unique[1:], unique[:-1]))
 
     def differences(self, pairs):
         """
         Difference of days between trackings 
         """
-        return map(lambda x: (x[0]-x[1]), pairs) 
+        return list(map(lambda x: (x[0]-x[1]), pairs)) 
     
     def difference_in_days(self, differences):
         return map(lambda x: x.days, differences)
