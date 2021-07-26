@@ -181,17 +181,19 @@ class Analytics:
         return list(map(lambda x: (x[0]-x[1]), pairs)) 
     
     def difference_in_days(self, differences):
-        return map(lambda x: x.days, differences)
+        return list(map(lambda x: x.days, differences))
 
     def cw_5152_to_1(self, differences):
-        return map(lambda x: 1 
+        return list(map(lambda x: 1 
                    if (x == -51) or (x == -52) 
-                   else x, differences)
+                   else x, differences))
 
     def grouping_differences(self, differences):
-        """
-        Group by nummer (key) and members. Example: nummer: [item1, item2]
-        [(2, 2), (1, 2), (2, 1), (1, 3), (7, 1), (1, 2), (2, 1), (1, 2)]
+        """ 
+        A list of nummers is grouped by number and how many 
+        times the number appears until a different one is presented.
+        For example [1, 1, 1, 2, 1, 1, 2, 2] is grouped into
+        [(1, 3), (2, 1), (1, 2), (2, 2)]
         """
         return groupby(differences)
 
