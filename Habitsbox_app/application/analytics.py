@@ -157,13 +157,13 @@ class Analytics:
                         column)))
 
     def format_to_date(self, column):
-        return list(map(lambda x: datetime.strptime(x, "%Y-%m-%d").date(), column))
+        return map(lambda x: datetime.strptime(x, "%Y-%m-%d").date(), column)
     
     def format_to_time(self, column):
-        return list(map(lambda x: datetime.strptime(x, "%H:%M").time(), column))
+        return map(lambda x: datetime.strptime(x, "%H:%M").time(), column)
            
     def to_calender_week(self, dates):
-        return list(map(lambda x: x.isocalendar()[1], dates))
+        return map(lambda x: x.isocalendar()[1], dates)
     
     def unique_data(self, myobject):
         return reduce(lambda x, y: x + [y] if y not in x else x, myobject, [])
@@ -172,21 +172,21 @@ class Analytics:
         """
         Create a sequence of pairs from a list of dates that are unique
         """
-        return list(zip(unique[1:], unique[:-1]))
+        return zip(unique[1:], unique[:-1])
 
     def differences(self, pairs):
         """
         Difference of days between trackings 
         """
-        return list(map(lambda x: (x[0]-x[1]), pairs)) 
+        return map(lambda x: (x[0]-x[1]), pairs)
     
     def difference_in_days(self, differences):
-        return list(map(lambda x: x.days, differences))
+        return map(lambda x: x.days, differences)
 
     def cw_5152_to_1(self, differences):
-        return list(map(lambda x: 1 
+        return map(lambda x: 1 
                    if (x == -51) or (x == -52) 
-                   else x, differences))
+                   else x, differences)
 
     def grouping_differences(self, differences):
         """ 
@@ -199,7 +199,8 @@ class Analytics:
 
     def streaks(self, grouping_differences):
         """
-        Count the number of items if the key is the number one
+        Count the number of items contained in the group
+        if the key is the number one
         """
         return [sum(group) for key, group in grouping_differences if key == 1]
 
@@ -243,7 +244,7 @@ class Analytics:
                                                         trackings,
                                                         column))))))))))
     
-    def start_habit(self, trackings, column):
+    def start_habit(self, trackings, col_date):
         """
         Returns the earliest date from a column of dates
         """
@@ -252,17 +253,17 @@ class Analytics:
         else:
             return min(
                 self.format_to_date(
-                    self.select_column(trackings, column
+                    self.select_column(trackings, col_date
                                    )))
     
-    def last_day(self, trackings, column):
+    def last_day(self, trackings, col_date):
         if len(trackings) == 0:
             return []
         else:
             return max(
                 self.format_to_date(
                     self.select_column(
-                        trackings, column
+                        trackings, col_date
                         )))
     
     def activity(self, periodicity, trackings, col_date):
@@ -280,8 +281,10 @@ class Analytics:
 
     def sort_hours(self, hours):
         """
-        Classification of hours in
-        Morning, Afternoon, Evening and Overnight
+        Each hour is renamed according to the part of the 
+        day it corresponds to.
+        Example: [3, 18, 19, 2] is 
+        ['Overnight', 'Evening', 'Evening', 'Overnight']
         """
         return map(lambda x: 'Morning' 
                    if x >= 5 and x < 12 
@@ -292,8 +295,11 @@ class Analytics:
                                else 'Overnight')), hours)
 
     def count_sorted_hours(self, sort_hours):
-        """Create a dictionary of the form:
-           {'Morning': 9, 'Afternoon': 5, 'Evening': 4, 'Overnight': 2}
+        """
+        Count the number of times the words of the parts
+        of the day appear.
+        Example: ['Overnight', 'Evening', 'Evening', 'Overnight']
+        is {'Evening': 2, 'Overnight': 2}
         """
         return Counter(sort_hours)
 

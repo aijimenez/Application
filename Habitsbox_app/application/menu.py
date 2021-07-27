@@ -794,7 +794,7 @@ class Menu:
         self.analytics.close()
         sys.exit(0)
 
-
+periodicity_info
 
 
 Menu().run()
