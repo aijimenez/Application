@@ -9,10 +9,14 @@ habits_table = [(1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morn
 trackings_table = [(1, '2021-07-21', '09:06'), (3, '2021-07-21', '15:26'), 
                    (3, '2021-07-21', '16:00'), (1, '2021-07-22', '17:11')]
 
-habits_trackings_table = [(1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-21', '09:06'), 
-                          (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-21', '15:26'), 
-                          (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-21', '16:00'), 
-                          (1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-22', '17:11')]
+habits_trackings_table = [(1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-21', '09:06'),
+                           (4, 'Run', 'weekly', 'Be faster', 'At weekends', '2021-07-21', '14:44'),
+                           (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-21', '15:26'), 
+                           (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-22', '16:00'), 
+                           (1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-22', '17:11'),  
+                           (4, 'Run', 'weekly', 'Be faster', 'At weekends', '2021-07-28', '14:56'), 
+                           (5, 'Try Sth New', 'weekly', 'Living new experiences', 'A new activity', '2021-07-28', '11:56'), 
+                           (1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-28', '14:56')]
 
 analytics = Analytics()
 trackings_one_habit = [(1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-21', '09:06'), 
@@ -67,8 +71,16 @@ def test_select_columns():
 def test_get_all_ids():
     ids_habits = analytics.get_all_ids(habits_table)
     ids_trackings = analytics.get_all_ids(trackings_table)
+    # ids_list_of_lists = [[(1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-21', '09:06'), 
+    #         (1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-22', '17:11'), 
+    #         (1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-28', '14:56')], 
+    #        [(3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-21', '15:26'), 
+    #         (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-21', '16:00')]]
     assert ids_habits == [1, 3, 4]
     assert ids_trackings == [1, 3, 3, 1]
+    # assert ids_list_of_lists == [1, 3]
+    
+
     
 def test_select_rows():
     rows_name = analytics.select_rows(habits_table, 1, 'Yoga')
@@ -76,7 +88,7 @@ def test_select_rows():
     rows_periodicity = analytics.select_rows(habits_table, 2, 'daily')    
     assert rows_name == [(1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-20')]
     assert rows_id == [(3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-21', '15:26'), 
-                      (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-21', '16:00')]
+                           (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-22', '16:00')]
     assert rows_periodicity == [(1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-20'), 
                                (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-21')]
 
@@ -90,7 +102,7 @@ def test_display_elements():
     
 def test_unique_elements():
     unique = analytics.unique_elements(habits_trackings_table, 1)
-    assert unique == 'Yoga, Read'
+    assert unique == 'Yoga, Run, Read, Try Sth New'
 
 def test_format_to_date():
     dates = analytics.format_to_date([('2021-07-21'), ('2021-07-21'), 
@@ -167,16 +179,15 @@ def test_cw_5152_to_1():
     assert list(differences_to_1) == [1, 1, 1, 2, 1, 1, 2, 2]
     
 def unpacking_group_diff(grouping_differences):
-    return [[key, len(list(group))] for key, group in grouping_differences]
+    return [[key, list(group)] for key, group in grouping_differences]
 
 def test_grouping_differences():
     grouping_cw = analytics.grouping_differences([1, 1, 1, 2, 1, 1, 2, 2])
-    assert unpacking_group_diff(grouping_cw) == [[1, 3], [2, 1], [1, 2], [2, 2]]
+    assert unpacking_group_diff(grouping_cw) == [[1, [1, 1, 1]], [2, [2]], [1, [1, 1]], [2, [2, 2]]]
     
 def test_streaks():
     streaks = analytics.streaks([[1, [1, 1, 1]], [2, [2]], [1, [1, 1]], [2, [2, 2]]])
-    assert streaks == [3, 2]
-    #streaks = analytics.streaks([[1, 3], [2, 1], [1, 2], [2, 2]])   
+    assert streaks == [3, 2]  
 
 def test_longest_streak():
     longest_streak = analytics.longest_streak([3, 2])
@@ -192,8 +203,8 @@ def test_start_date():
     start_date = analytics.start_habit(trackings_one_habit, column)
     start_dates_unordered = analytics.start_habit(
         [(1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-25', '09:06'), 
-         (1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-21', '17:11'),
-         (1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-23', '17:11')], 5)
+          (1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-21', '17:11'),
+          (1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-23', '17:11')], 5)
     assert start_date == date(2021, 7, 21)
     assert start_dates_unordered == date(2021, 7, 21)
 
@@ -223,20 +234,115 @@ def test_sort_hours():
 
 def test_count_sorted_hours():
     count_sorted_hours = analytics.count_sorted_hours(['Morning', 'Overnight', 'Overnight', 
-                                                       'Evening', 'Evening', 'Overnight', 
-                                                       'Evening', 'Overnight', 'Morning', 
-                                                       'Overnight', 'Afternoon', 'Afternoon',
-                                                       'Afternoon', 'Morning', 'Evening',
-                                                       'Morning'])
+                                                        'Evening', 'Evening', 'Overnight', 
+                                                        'Evening', 'Overnight', 'Morning', 
+                                                        'Overnight', 'Afternoon', 'Afternoon',
+                                                        'Afternoon', 'Morning', 'Evening',
+                                                        'Morning'])
     count_sorted_hours1 = analytics.count_sorted_hours(['Overnight', 'Evening', 'Evening', 'Overnight'])
     assert count_sorted_hours == {'Morning': 4, 'Afternoon': 3, 'Evening': 4, 'Overnight': 5}
     assert count_sorted_hours1 == {'Evening': 2, 'Overnight': 2}
 
-
-
-
+def test_max_value():
+    max_value = analytics.max_value({'Morning': 4, 'Afternoon': 3, 'Evening': 4, 'Overnight': 5})
+    empty_dic = analytics.max_value({})
+    assert max_value == 5
+    assert empty_dic == {}
+    
+def test_most_active_time():
+    most_active_time = analytics.most_active_time({'Morning': 4, 'Afternoon': 3, 'Evening': 4, 'Overnight': 5}, 5)
+    empty_dic = analytics.max_value({})
+    assert most_active_time == ['Overnight']
+    assert empty_dic == {}
+    
+def test_active_time_dict():
+    active_time = analytics.active_time_dict(ID_1_Week, 2)
+    assert active_time == {'Morning': 4, 'Afternoon': 3, 'Evening': 4, 'Overnight': 5}
+    
+def test_list_habits_list():
+    grouped_habits_daily = analytics.list_habits_list(habits_trackings_table, [1, 3])
+    grouped_habits = analytics.list_habits_list(habits_trackings_table, [1, 5])
+    assert grouped_habits_daily == [
+        [(1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-21', '09:06'),
+         (1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-22', '17:11'),
+         (1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-28', '14:56')],
+        [(3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-21', '15:26'), 
+         (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-22', '16:00')]
+        ]
+    assert grouped_habits == [
+        [(1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-21', '09:06'),
+         (1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-22', '17:11'),
+         (1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-28', '14:56')],
+        [(5, 'Try Sth New', 'weekly', 'Living new experiences', 'A new activity', '2021-07-28', '11:56')]
+        ]
     
 
+def test_lists_periodicity():
+    list_daily = analytics.lists_periodicity(habits_trackings_table, 'daily')
+    list_weekly = analytics.lists_periodicity(habits_trackings_table, 'weekly')
+    assert list_daily == [
+        [(1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-21', '09:06'),
+         (1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-22', '17:11'),
+         (1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-28', '14:56')],
+        [(3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-21', '15:26'), 
+         (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-22', '16:00')]
+        ]
+    assert list_weekly == [
+        [(4, 'Run', 'weekly', 'Be faster', 'At weekends', '2021-07-21', '14:44'),
+         (4, 'Run', 'weekly', 'Be faster', 'At weekends', '2021-07-28', '14:56')],
+        [(5, 'Try Sth New', 'weekly', 'Living new experiences', 'A new activity', '2021-07-28', '11:56')]
+        ]
+    
+def test_add_colnames():
+    add_colnames = analytics.add_colnames(('ID', 'Habit', 'Periodicity', 'Motivation', 'Description'),
+                                          [(1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning'),
+                                           (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons'),
+                                           (4, 'Run', 'weekly', 'Be faster', 'At weekends'),
+                                           (5, 'Try Sth New', 'weekly', 'Living new experiences', 'A new activity')])
+    assert add_colnames == [('ID', 'Habit', 'Periodicity', 'Motivation', 'Description'),
+                            (1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning'),
+                            (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons'),
+                            (4, 'Run', 'weekly', 'Be faster', 'At weekends'),
+                            (5, 'Try Sth New', 'weekly', 'Living new experiences', 'A new activity')]
+
+# def test_periodicity_info():
+    
+    
+#     self, lists_periodicity, periodicity, col_date=5):
+#         """
+#         A list containing information for each habit according 
+#         to its periodicity. Name of the habit, first and last tracking,
+#         most active time, activity days or weeks, and longest streak
+#         Example: [('Yoga', '2021-03-18', '2021-04-17', 'Evening', 5, 2),
+#                   ('Reading', '2021-03-19', '2021-04-25', 'Afternoon', 8, 2)]
+#         """
+#         habits_info = []
+        
+#         for l in lists_periodicity:
+            
+#             active_time_dictionary = self.active_time_dict(
+#                                 l, 
+#                                 6)  
+#             max_value_active_time = self.max_value(
+#                                 active_time_dictionary)
+#             most_active_time = self.most_active_time(
+#                                 active_time_dictionary, 
+#                                 max_value_active_time)
+                        
+#             habits_info.append((self.unique_elements(l, 1),
+#                   ''.join(min(self.select_column(l, col_date))),
+#                   ''.join(max(self.select_column(l, col_date))),
+#                   self.display_elements(most_active_time), 
+#                   self.activity(
+#                       periodicity, 
+#                       l, 
+#                       col_date),
+#                   self.longest_streak_periodicity(
+#                       l, 
+#                       periodicity, 
+#                       col_date)))
+            
+#         return habits_info
 
 
 

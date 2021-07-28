@@ -482,7 +482,6 @@ class Menu:
                         #
                         self.analytics.start_habit(one_habit_trackings_info, col_date))
                         )
-                        print(type(self.analytics.start_habit(one_habit_trackings_info, col_date)))
                         
                         if len(one_habit_trackings_info) > 1:
                             # [(2, 'Run', 'weekly', 'Faster', 'Sundays', '2021-04-27', '10:56'),
@@ -621,16 +620,23 @@ class Menu:
                 self.run()
             else:
                 print('Please, choose number 1, 2 or 0')
-                
+        
+        # Clean up the console
         self.analytics.clear_console()
-        #print('habits_trackings')
-        #print(self.analytics.habits_trackings())
+        print('habits_trackings')
+        print(self.analytics.habits_trackings_table())
         
         # Select all rows that have the same periodicity 
         # from the join of the habits and trackings table       
-        habits_trackings_periodicity = self.analytics.select_rows(habits_trackings, 2, periodicity)
-        #print('habits_trackings_periodicity')
-        #print(habits_trackings_periodicity)
+        habits_trackings_periodicity1 = self.analytics.select_rows(habits_trackings, 2, periodicity)
+        print('habits_trackings_periodicity1')
+        print(habits_trackings_periodicity1)
+        # Periodicity 'daily'
+        # [(1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-21', '09:06'), 
+        #  (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-21', '15:26'), 
+        #  (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-21', '16:00'), 
+        #  (1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-22', '17:11'), 
+        #  (1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-28', '14:56')]
         #print('habits table')
         #print(self.analytics.habits_table())
         # Select all rows that have the same periodicity 
@@ -645,15 +651,29 @@ class Menu:
         
         # All the ids of the join table habits-trackings 
         # which habits have the same periodicity
-        ids_trackings_periodicity = self.analytics.get_all_ids(habits_trackings_periodicity)
+        ids_trackings_periodicity = self.analytics.get_all_ids(habits_trackings_periodicity1)
+        print(ids_trackings_periodicity)
+        # [1, 3, 3, 1, 1]
         #print(ids_periodicity)
         # Only unique ids
         unique_ids_trackings_periodicity = self.analytics.unique_data(ids_trackings_periodicity)
-        # print(unique_ids_trackings_periodicity)
+        print(unique_ids_trackings_periodicity)
+        # [1, 3]
+        
+        unique_ids_trackings_periodicity_formula = self.analytics.unique_ids_periodicity(habits_trackings, 2, periodicity)
+        print(unique_ids_trackings_periodicity_formula)
+        # [1, 3]
+        
+    # def unique_ids_periodicity(self, table, col_periodicity, periodicity):
+    #     return self.unique_data(
+    #         self.get_all_ids(
+    #             self.select_rows(table, col_periodicity, periodicity)))
+    
         # Give a list of the lists of habits grouped by id
         # and with the same periodicity
         habits_trackings_periodicity = self.analytics.lists_periodicity(habits_trackings, periodicity)
-        #print(habits_trackings_periodicity)
+        print('______habits_trackings_periodicity?_')
+        print(habits_trackings_periodicity)
 
         # print(len(habits_table_periodicity))
         # print(len(habits_trackings_periodicity))
@@ -672,6 +692,7 @@ class Menu:
             #print(len(habits_table_periodicity))
             # All ids of the table with habits having the same periodicity
             ids_habits_table = self.analytics.get_all_ids(habits_table_periodicity)
+            print(ids_habits_table)
             # All ids of the habits that do not have trackings
             ids_without_trackings = list(set(ids_habits_table)-set(unique_ids_trackings_periodicity))
             #print('without')
@@ -794,7 +815,6 @@ class Menu:
         self.analytics.close()
         sys.exit(0)
 
-periodicity_info
 
 
 Menu().run()

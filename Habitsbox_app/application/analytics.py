@@ -7,7 +7,7 @@ from collections import Counter
 from operator import itemgetter
 
 #from .habit import Habit
-from .habit import Habit
+from habit import Habit
 #from . import Habit
 
 class Analytics:
@@ -190,10 +190,10 @@ class Analytics:
 
     def grouping_differences(self, differences):
         """ 
-        A list of nummers is grouped by number and how many 
-        times the number appears until a different one is presented.
+        Same numbers are grouped and designed to a key.
+        A new group is formed each time the number(key) changes.
         For example [1, 1, 1, 2, 1, 1, 2, 2] is grouped into
-        [(1, 3), (2, 1), (1, 2), (2, 2)]
+        [[1, [1, 1, 1]], [2, [2]], [1, [1, 1]], [2, [2, 2]]]
         """
         return groupby(differences)
 
@@ -326,7 +326,12 @@ class Analytics:
                 self.only_hours(
                     self.format_to_time(
                         self.select_column(
-                            trackings, col_time))))) 
+                            trackings, col_time)))))
+    
+    def unique_ids_periodicity(self, table, col_periodicity, periodicity):
+        return self.unique_data(
+            self.get_all_ids(
+                self.select_rows(table, col_periodicity, periodicity)))
     
     def list_habits_list(self,habits_trackings, unique_ids):
         """
@@ -337,7 +342,7 @@ class Analytics:
     def lists_periodicity(self, table, periodicity):
         """
         Give a list of the lists of habits grouped by id
-        and with the same periodicity
+        with the same periodicity
         """
         return self.list_habits_list(table,
                                      self.unique_data(
