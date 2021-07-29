@@ -7,7 +7,7 @@ from collections import Counter
 from operator import itemgetter
 
 #from .habit import Habit
-from habit import Habit
+from .habit import Habit
 #from . import Habit
 
 class Analytics:
@@ -329,6 +329,9 @@ class Analytics:
                             trackings, col_time)))))
     
     def unique_ids_periodicity(self, table, col_periodicity, periodicity):
+        """
+        Gets the ids of the habits with the same periodicity
+        """
         return self.unique_data(
             self.get_all_ids(
                 self.select_rows(table, col_periodicity, periodicity)))
@@ -339,15 +342,15 @@ class Analytics:
         """
         return [self.select_rows(habits_trackings, 0, id_n) for id_n in unique_ids]
     
-    def lists_periodicity(self, table, periodicity):
+    def lists_periodicity(self, table, col_periodicity, periodicity):
         """
         Give a list of the lists of habits grouped by id
         with the same periodicity
         """
-        return self.list_habits_list(table,
-                                     self.unique_data(
-                                         self.get_all_ids(
-                                             self.select_rows(table, 2, periodicity))))
+        return self.list_habits_list(table, 
+                                     self.unique_ids_periodicity(table, 
+                                                                 col_periodicity, 
+                                                                 periodicity))
     
     # def colnames_in_list(self, colnames):
     #     return [colnames]
@@ -356,12 +359,7 @@ class Analytics:
     #     """Add the name of the columns"""
     #     return self.colnames_in_list(colnames)+table  
     
-    def add_colnames(self, colnames, table):
-        """
-        Receives the column names in a tuple and
-        adds them to the table
-        """
-        return [colnames]+table
+
        
     def periodicity_info(self, lists_periodicity, periodicity, col_date=5):
         """
@@ -399,13 +397,13 @@ class Analytics:
             
         return habits_info
     
-    def max_streak(self, data, periodicity):
-        return max(
-            self.periodicity_info(
-                self.lists_periodicity(data,
-                                       periodicity),
-                periodicity),
-            key=itemgetter(-1))[-1]
+    # def max_streak(self, data, periodicity):
+    #     return max(
+    #         self.periodicity_info(
+    #             self.lists_periodicity(data,
+    #                                    periodicity),
+    #             periodicity),
+    #         key=itemgetter(-1))[-1]
 
     def lengths(self, data):
         """
@@ -416,24 +414,30 @@ class Analytics:
 
     def max_lengths(self, lengths, data):
         """
-        Choose the list whith the maximum of the lengths
-        Example: [1, 4, 5, 16, 16, 10]
+        Lists are compared and the largest number from index i
+        is picked.
+        Example: From these three lists
+        [[1, 4, 5, 16, 25, 10], [1, 4, 5, 20, 10, 10], [1, 3, 6, 9, 11, 10]]
+        the following list is formed [1, 4, 6, 20, 25, 10] which contains
+        the largest numbers in each index.
         """
         return list(max(map(itemgetter(x), lengths)) for x in range(0, len(data[0])))
     
     def distance_format(self, max_lengths):
         """
-        Use the list with maximum lenghts to create the following
-        format: %-1s   %-4s   %-5s   %-16s   %-16s   %-10s   
+        Use the list with maximum lenghts to create a string formating.
+        Example: 
+        if max_lengths = [1, 4, 6, 20, 25, 10]
+        "%-1s    %-4s    %-6s    %-20s    %-25s    %-10s    "   
         """
         return ''.join(map(lambda x: '%%-%ss    ' % x, max_lengths))
     
-    def list_including_distances(self, format_distance, data):
+    def aligned_columns(self, format_distance, data):
         """
-        anteriormente display_table
-        A list of strings with the appropriate distances
-        Example: ['1    Yoga    daily    Be more flexible    Before breakfast    2021-02-22    ', 
-                  '2    Run     daily    Be healthy          At weekends         2021-02-22    ']
+        Table data are aligned using the maximum length per column.
+        Example: 
+        ['1    Yoga    daily    Be more flexible    Before breakfast    2021-02-22    ', 
+         '2    Run     daily    Be healthy          At weekends         2021-02-22    ']
         """
         return map(lambda x: format_distance % x, data)
     
@@ -441,7 +445,14 @@ class Analytics:
         """
         Creates a line with the length of the maximum lengths
         """
-        return '_' * (sum(max_lengths) + len(max_lengths) * 3 + 3)
+        return '_' * (sum(max_lengths) + len(max_lengths) * 4 - 3)
+    
+    def add_colnames(self, colnames, table):
+        """
+        Receives the column names in a tuple and
+        adds them to the data
+        """
+        return [colnames]+table
     
     def display_table(self, data, title):
         """
@@ -453,7 +464,7 @@ class Analytics:
         print(self.line(self.max_lengths(
             self.lengths(data), data)))
         print(self.display_list_elements(
-            self.list_including_distances(
+            self.aligned_columns(
                 self.distance_format(self.max_lengths(
                     self.lengths(
                         data), 
@@ -461,7 +472,7 @@ class Analytics:
                 data)))
         print(self.line(self.max_lengths(
             self.lengths(data), data)))
-        
+         
     def table_header(self, colnames, data, header):
         """
         Displays a table with header and column names
