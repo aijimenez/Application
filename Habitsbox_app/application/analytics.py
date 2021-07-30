@@ -358,9 +358,7 @@ class Analytics:
     # def add_colnames(self, colnames, table):
     #     """Add the name of the columns"""
     #     return self.colnames_in_list(colnames)+table  
-    
-
-       
+           
     def periodicity_info(self, lists_periodicity, periodicity, col_date=5):
         """
         A list containing information for each habit according 
@@ -454,44 +452,44 @@ class Analytics:
         """
         return [colnames]+table
     
-    def display_table(self, data, title):
+    def table_line(self, data):
         """
-        Display the data in a table
+        Adjust the length of the line in relation to
+        the data in the table.
         """
-        print(self.line(self.max_lengths(
-            self.lengths(data), data)))
-        print("{}".format(title))
-        print(self.line(self.max_lengths(
-            self.lengths(data), data)))
-        print(self.display_list_elements(
-            self.aligned_columns(
-                self.distance_format(self.max_lengths(
-                    self.lengths(
-                        data), 
-                    data)), 
-                data)))
-        print(self.line(self.max_lengths(
-            self.lengths(data), data)))
-         
-    def table_header(self, colnames, data, header):
-        """
-        Displays a table with header and column names
-        """
-        return self.display_table(
-            self.add_colnames(colnames,data), 
-            header)
-   
-    def table_registered_habits(self):
-        """
-        Displays the names and ids of the registered habits
-        in table format. The table has a title and the name
-        of the columns.
-        """        
-        self.table_header(
-            ('ID', 'HABIT'), 
-            list(self.select_columns(
-                self.habits_table(), 
-                stop=2)), 'YOUR HABIT(S)')
+        return self.line(
+            self.max_lengths(
+                self.lengths(data), data))
+    
+    # def display_table(self, colnames, data, header):
+    #     """
+    #     Display the data in a table
+    #     """
+    #     data_colnames = self.add_colnames(colnames, data)
+        
+    #     print(self.table_line(data_colnames))
+    #     print("{}".format(header))
+    #     print(self.table_line(data_colnames))
+    #     print(self.display_list_elements(
+    #         self.aligned_columns(
+    #             self.distance_format(
+    #                 self.max_lengths(
+    #                     self.lengths(data_colnames), 
+    #                     data_colnames)),
+    #             data_colnames)))
+    #     print(self.table_line(data_colnames))
+            
+    # def table_registered_habits(self):
+    #     """
+    #     Displays the names and ids of the registered habits
+    #     in table format. The table has a title and the name
+    #     of the columns.
+    #     """        
+    #     self.display_table(
+    #         ('ID', 'HABIT'), 
+    #         list(self.select_columns(
+    #             self.habits_table(), 
+    #             stop=2)), 'YOUR HABIT(S)')
    
     def remove_habit(self, name):
         """
@@ -522,48 +520,6 @@ class Analytics:
                                 VALUES (:date, :time, :habitID)""", 
                             {'date': date, 'time': time, 'habitID': id_habit})
 
-###No  in use__________________________________
-#     def update_motivation(self, habit, new_mot):
-#         with self.connection:
-#             self.cursor.execute("""UPDATE habits SET motivation = :new_mot
-#                            WHERE name = :name AND periodicity = :periodicity""",
-#                            {'name': habit.name, 
-#                             'periodicity': habit.periodicity, 
-#                             'new_mot': new_mot})
-
-# ###No  in use__________________________________
-#     def get_trackings_by_id(self, id_habit):
-#         self.cursor.execute("SELECT * FROM trackings WHERE id_habit=:id_habit",
-#                         {'id_habit': id_habit})
-#         return self.cursor.fetchall()
-# ###No  in use__________________________________
- 
-#     def remove_day(self, day):
-#         with self.connection:
-#             self.cursor.execute("""DELETE from trackings 
-#                             WHERE id_habit = :id_habit AND date_time = :date_time""",
-#                   {'id_habit': day.id_habit, 'date_time': day.date_time})
-# ###____________________________________________
-    
-    # def clear_console(self):
-    #     return lambda: os.system('cls' if os.name in ('nt', 'dos') else 'clear')
-    
-    # def clear_console(self):
-    #     command = 'clear'
-    #     if os.name in ('nt', 'dos'):
-    #         print('hola')
-    #         command = 'cls'
-    #     os.system(command)
-    #     print(command)
-       
-    
-    def clear_console(self):
-        """
-        Print several new lines to clean up the console
-        """
-        print('\n' * 200)
-    
-    
     def close(self):
         """Close sqlite3 connection"""
         self.connection.close()

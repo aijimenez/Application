@@ -148,7 +148,7 @@ class Menu:
             choice = pyip.inputNum('Enter a number: ')
             if choice == 0:
                 # Clean up the console
-                self.analytics.clear_console()
+                self.clear_console()
                 # Gives the options that can be selected in the menu
                 self.run()
             elif choice == 1:
@@ -163,7 +163,7 @@ class Menu:
         and description of the habit to be recorded.
         """
         # Clean up the console
-        self.analytics.clear_console()
+        self.clear_console()
         # Prints the name of the application and instructions to the main menu
         self.back_to_menu_info()
         print("""
@@ -182,7 +182,7 @@ class Menu:
             """)
         else:
             # List of the names and ids of the registered habits in table format
-            self.analytics.table_registered_habits()
+            self.table_registered_habits()
                
         while True:
             try:
@@ -195,7 +195,7 @@ class Menu:
                     elif name_to_check.isdigit():
                         if (int(name_to_check) == 0):
                             # Clean up the console
-                            self.analytics.clear_console()
+                            self.clear_console()
                             # Gives the options that can be selected in the menu
                             self.run()
                         else:
@@ -227,7 +227,7 @@ class Menu:
                 break
             elif periodicity == 0:
                 # Clean up the console
-                self.analytics.clear_console()
+                self.clear_console()
                 # Gives the options that can be selected in the menu
                 self.run()
             else:
@@ -238,7 +238,7 @@ class Menu:
             if motivation.isdigit():
                 if int(motivation) == 0:
                     # Clean up the console
-                    self.analytics.clear_console()
+                    self.clear_console()
                     # Gives the options that can be selected in the menu
                     self.run()
                 else:
@@ -252,7 +252,7 @@ class Menu:
             if description.isdigit():
                 if int(description) == 0:
                     # Clean up the console
-                    self.analytics.clear_console()
+                    self.clear_console()
                     # Gives the options that can be selected in the menu
                     self.run()
                 else:
@@ -264,26 +264,25 @@ class Menu:
         # insert a habit to the DB            
         self.analytics.insert_habit(name, periodicity, motivation, description)        
         # Clean up the console
-        self.analytics.clear_console()
+        self.clear_console()
         # Select the row that contains the information of the newly added habit
         # [(3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-21')]
         added_habit = self.analytics.select_rows(self.analytics.habits_table(), 
                                    1, name)
         # Displays a table with header and column names and information of the added habit
-        self.analytics.table_header(('ID', 'HABIT', 'PERIODICITY', 'MOTIVATION', 'DESCRIPTION', 'CREATION DAY'), 
+        self.display_table(('ID', 'HABIT', 'PERIODICITY', 'MOTIVATION', 'DESCRIPTION', 'CREATION DAY'), 
                                     added_habit, 
                                     'ADDED HABIT')
         # Return to the main menu or adds another habit
         self.choice_stay_return('Add another habit', self.add_habit)
-
-                     
+            
     def check_off(self):
         """
         Record the date and time in the trackings table when
         the user enters the id of the habit to be marked as done.
         """
         # Clean up the console
-        self.analytics.clear_console()
+        self.clear_console()
         # Prints the name of the application and instructions to the main menu
         self.back_to_menu_info()
         print("""
@@ -305,7 +304,7 @@ class Menu:
                  Which habit do you want to check-off?"""
                 )
             # display a table with all the registered habits
-            self.analytics.table_registered_habits()
+            self.table_registered_habits()
             print('')
             id_n = pyip.inputNum("Choose the ID of your habit ")
             if id_n == 0:
@@ -339,7 +338,7 @@ class Menu:
         then delete it from the DB.
         """
         # Clean up the console
-        self.analytics.clear_console()
+        self.clear_console()
         # Prints the name of the application and instructions to the main menu
         self.back_to_menu_info()
         print("""
@@ -356,7 +355,7 @@ class Menu:
                     will also reset all progress on it!
             -------------------------------------------------""")
         # List of the names and ids of the registered habits in table format
-        self.analytics.table_registered_habits()
+        self.table_registered_habits()
 
         while True:
             name = input("""
@@ -374,7 +373,7 @@ class Menu:
                 # the habit and its respective trackings are removed from the DB
                 self.analytics.remove_habit(name)
                 # Clean up the console
-                self.analytics.clear_console()
+                self.clear_console()
                 print("""
                       _______________________
                               - {} - 
@@ -387,7 +386,7 @@ class Menu:
                 # habits_names = self.analytics.get_all_names()
                 if len(habits_names) >= 1:
                     # List of the names and ids of the remaining habits in table format
-                    self.analytics.table_header(('ID', 'HABIT'), 
+                    self.display_table(('ID', 'HABIT'), 
                                                 self.analytics.select_columns(
                                                     self.analytics.habits_table(),
                                                     stop=2), 
@@ -410,7 +409,7 @@ class Menu:
         
     def see_habit(self):
         # Clean up the console
-        self.analytics.clear_console()
+        self.clear_console()
         # Prints the name of the application and instructions to the main menu
         self.back_to_menu_info()
         print("""
@@ -421,7 +420,7 @@ class Menu:
         habits_info = self.analytics.habits_table()
          # List of the names and ids of the registered habits in table format
         #print(habits_info)
-        self.analytics.table_registered_habits()
+        self.table_registered_habits()
         # Union of the habits table and the trackings table
         habits_trackings = self.analytics.habits_trackings_table()
         # ID, Name, Periodicity, Motivation,  Description,     t.Date, t.Time
@@ -575,7 +574,7 @@ class Menu:
         """Print a table with all habits and
         its fields"""
         # Clean up the console
-        self.analytics.clear_console()
+        self.clear_console()
         # Prints the name of the application and instructions to the main menu
         self.back_to_menu_info()
         print("""
@@ -583,15 +582,16 @@ class Menu:
             ________________________________________________
             """)
 
-        self.analytics.table_header(('ID', 'HABIT', 'PERIODICITY', 'MOTIVATION', 'DESCRIPTION', 'CREATION DAY'), 
+        self.display_table(('ID', 'HABIT', 'PERIODICITY', 'MOTIVATION', 'DESCRIPTION', 'CREATION DAY'), 
                      self.analytics.habits_table(), 
                      'HABITS INFORMATION')
         print('')
+        print(self.analytics.habits_table())
         self.return_menu()
         
     def habits_same_periodicity(self):
         # Clean up the console
-        self.analytics.clear_console()
+        self.clear_console()
         # Prints the name of the application and instructions to the main menu
         self.back_to_menu_info()
         print("""
@@ -622,7 +622,7 @@ class Menu:
                 print('Please, choose number 1, 2 or 0')
         
         # Clean up the console
-        self.analytics.clear_console()
+        self.clear_console()
         # Select all rows that have the same periodicity from the habits table
         habits_table_periodicity = self.analytics.select_rows(
              self.analytics.habits_table(), 2, periodicity)
@@ -672,12 +672,12 @@ class Menu:
                 # A list containing information for each habit according to its periodicity
                 table_periodicity = self.analytics.periodicity_info(habits_trackings_periodicity, periodicity)
                 # print(table_periodicity)
-                header = ('HABIT', 'FIST TRACKING', 'LAST TRACKING', 'MOST ACTIVE TIME', 'ACTIVITY DAYS', 'LONGEST STREAK')
+                col_names = ('HABIT', 'FIST TRACKING', 'LAST TRACKING', 'MOST ACTIVE TIME', 'ACTIVITY DAYS', 'LONGEST STREAK')
         
                 if periodicity == 'weekly':
-                    header = ('HABIT', 'FIST TRACKING', 'LAST TRACKING', 'MOST ACTIVE TIME', 'ACTIVITY WEEKS', 'LONGEST STREAK')
+                    col_names = ('HABIT', 'FIST TRACKING', 'LAST TRACKING', 'MOST ACTIVE TIME', 'ACTIVITY WEEKS', 'LONGEST STREAK')
 
-                self.analytics.table_header(header,
+                self.display_table(col_names,
                                             table_periodicity, 
                                             periodicity.upper() +
                                             ' PERIODICITY')
@@ -690,7 +690,7 @@ class Menu:
                 # print(list(zip(self.analytics.select_column(habits_without_trackings, 1),
                 #          self.analytics.select_columns(habits_without_trackings, 3, 6))))
                 
-                self.analytics.table_header(('ID', 'HABIT', 'PERIODICITY', 'MOTIVATION', 'DESCRIPTION', 'CREATION DAY'), 
+                self.display_table(('ID', 'HABIT', 'PERIODICITY', 'MOTIVATION', 'DESCRIPTION', 'CREATION DAY'), 
                                             habits_without_trackings,
                                             periodicity.upper() + 
                                             ' PERIODICITY\n'+ 
@@ -702,7 +702,7 @@ class Menu:
 
     def habit_longest_streak(self):
         # Clean up the console
-        self.analytics.clear_console()
+        self.clear_console()
         # Prints the name of the application and instructions to the main menu
         self.back_to_menu_info()
         print("""
@@ -746,15 +746,45 @@ class Menu:
         names_streaks = list(zip(self.analytics.select_column(habits_with_maximus, 0),
                                    self.analytics.select_column(habits_with_maximus, -1)))
             
-        header = ('HABIT', 'LONGEST STREAK')
+        col_names = ('HABIT', 'LONGEST STREAK')
         
-        self.analytics.table_header(header, 
+        self.display_table(col_names, 
                                     names_streaks, 
                                     ' ')
         print(' ')
         
         self.return_menu()
-    
+        
+    def display_table(self, colnames, data, header):
+        """
+        Display the data in a table
+        """
+        data_colnames = self.analytics.add_colnames(colnames, data)
+        
+        print(self.analytics.table_line(data_colnames))
+        print("{}".format(header))
+        print(self.analytics.table_line(data_colnames))
+        print(self.analytics.display_list_elements(
+            self.analytics.aligned_columns(
+                self.analytics.distance_format(
+                    self.analytics.max_lengths(
+                        self.analytics.lengths(data_colnames), 
+                        data_colnames)),
+                data_colnames)))
+        print(self.analytics.table_line(data_colnames))
+        
+    def table_registered_habits(self):
+        """
+        Displays the names and ids of the registered habits
+        in table format. The table has a title and the name
+        of the columns.
+        """        
+        self.display_table(
+            ('ID', 'HABIT'), 
+            list(self.analytics.select_columns(
+                self.analytics.habits_table(), 
+                stop=2)), 'YOUR HABIT(S)')
+
     def return_menu(self):
         """
         Return to the main menu by selecting the key with
@@ -764,7 +794,7 @@ class Menu:
             number = pyip.inputNum("0. Back to the main menu: ")
             if number == 0:
                 # Clean up the console
-                self.analytics.clear_console()
+                self.clear_console()
                 # back to the main menu
                 self.run() 
             else:
@@ -780,6 +810,24 @@ class Menu:
               """)
         self.analytics.close()
         sys.exit(0)
+        
+    # def clear_console(self):
+    #     return lambda: os.system('cls' if os.name in ('nt', 'dos') else 'clear')
+    
+    # def clear_console(self):
+    #     command = 'clear'
+    #     if os.name in ('nt', 'dos'):
+    #         print('hola')
+    #         command = 'cls'
+    #     os.system(command)
+    #     print(command)
+       
+    
+    def clear_console(self):
+        """
+        Print several new lines to clean up the console
+        """
+        print('\n' * 200)
 
 
 Menu().run()

@@ -1,6 +1,7 @@
 from application.analytics import Analytics
-#from datetime import datetime
 from datetime import timedelta, date, time
+
+analytics = Analytics()
 
 habits_table = [(1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-20'), 
                (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-21'), 
@@ -18,12 +19,10 @@ habits_trackings_table = [(1, 'Yoga', 'daily', 'Be more flexible', 'Preferably i
                            (5, 'Try Sth New', 'weekly', 'Living new experiences', 'A new activity', '2021-07-28', '11:56'), 
                            (1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-28', '14:56')]
 
-analytics = Analytics()
+
 trackings_one_habit = [(1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-21', '09:06'), 
                        (1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-22', '17:11'),
                        (1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-23', '17:11')]
-
-column = 5
 
 ID_1_Week = [(1, '2019-12-24', '09:52'),(1, '2019-12-29', '03:42'),
         (1, '2019-12-31', '03:42'), (1, '2020-01-07', '18:00'),
@@ -71,16 +70,8 @@ def test_select_columns():
 def test_get_all_ids():
     ids_habits = analytics.get_all_ids(habits_table)
     ids_trackings = analytics.get_all_ids(trackings_table)
-    # ids_list_of_lists = [[(1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-21', '09:06'), 
-    #         (1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-22', '17:11'), 
-    #         (1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-28', '14:56')], 
-    #        [(3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-21', '15:26'), 
-    #         (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-21', '16:00')]]
     assert ids_habits == [1, 3, 4]
     assert ids_trackings == [1, 3, 3, 1]
-    # assert ids_list_of_lists == [1, 3]
-    
-
     
 def test_select_rows():
     rows_name = analytics.select_rows(habits_table, 1, 'Yoga')
@@ -200,7 +191,7 @@ def test_longest_streak_periodicity():
     assert longest_streak_daily == 5
     
 def test_start_date():
-    start_date = analytics.start_habit(trackings_one_habit, column)
+    start_date = analytics.start_habit(trackings_one_habit, 5)
     start_dates_unordered = analytics.start_habit(
         [(1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-25', '09:06'), 
           (1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-21', '17:11'),
@@ -209,7 +200,7 @@ def test_start_date():
     assert start_dates_unordered == date(2021, 7, 21)
 
 def test_last_day():
-    last_day = analytics.last_day(trackings_one_habit, column)
+    last_day = analytics.last_day(trackings_one_habit, 5)
     assert last_day == date(2021, 7, 23)
     
 def test_activity():
@@ -372,22 +363,24 @@ def test_add_colnames():
                             (4, 'Run', 'weekly', 'Be faster', 'At weekends'),
                             (5, 'Try Sth New', 'weekly', 'Living new experiences', 'A new activity')]
 
-def test_display_table():
-    display_table = analytics.display_table(habits_table, 'HABITS')
-    assert display_table == ''
-    
+def test_table_line():
+    table_line = analytics.table_line(
+        [('ID', 'Habit', 'Periodicity', 'Motivation', 'Description'),
+         (1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning'),
+         (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons'),
+         (4, 'Run', 'weekly', 'Be faster', 'At weekends'),
+         (5, 'Try Sth New', 'weekly', 'Living new experiences', 'A new activity')]
+        )
+    assert table_line == '________________________________________________________________________________________'
 
-# habits_table = [
-#     (1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-20'), 
-#     (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-21'), 
-#     (4, 'Run', 'weekly', 'Be faster', 'At weekends', '2021-07-22')]
-
-# def test_table_header():
-#     display_table = analytics.table_header(
-#         ('ID', 'HABIT', 'PERIODICITY', 'MOTIVATION', 'DESCRIPTION', 'CREATION DAY'), 
+# def test_display_table():
+#     display_table = analytics.display_table(
+#         ('ID', 'HABIT', 'PERIODICITY', 'MOTIVATION', 'DESCRIPTION', 'CREATION DAY'),
 #         habits_table,
-#         'HABITS INFORMATION')
-#     assert display_table == 'hoal'  
+#         'HABITS')
+#     assert display_table == ''
+    
+ 
         
         
         
