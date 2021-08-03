@@ -182,7 +182,7 @@ class Menu:
             """)
         else:
             # List of the names and ids of the registered habits in table format
-            self.table_registered_habits()
+            self.analytics.table_registered_habits()
                
         while True:
             try:
@@ -270,7 +270,7 @@ class Menu:
         added_habit = self.analytics.select_rows(self.analytics.habits_table(), 
                                    1, name)
         # Displays a table with header and column names and information of the added habit
-        self.display_table(('ID', 'HABIT', 'PERIODICITY', 'MOTIVATION', 'DESCRIPTION', 'CREATION DAY'), 
+        self.analytics.display_table(('ID', 'HABIT', 'PERIODICITY', 'MOTIVATION', 'DESCRIPTION', 'CREATION DAY'), 
                                     added_habit, 
                                     'ADDED HABIT')
         # Return to the main menu or adds another habit
@@ -304,7 +304,7 @@ class Menu:
                  Which habit do you want to check-off?"""
                 )
             # display a table with all the registered habits
-            self.table_registered_habits()
+            self.analytics.table_registered_habits()
             print('')
             id_n = pyip.inputNum("Choose the ID of your habit ")
             if id_n == 0:
@@ -355,7 +355,7 @@ class Menu:
                     will also reset all progress on it!
             -------------------------------------------------""")
         # List of the names and ids of the registered habits in table format
-        self.table_registered_habits()
+        self.analytics.table_registered_habits()
 
         while True:
             name = input("""
@@ -386,7 +386,7 @@ class Menu:
                 # habits_names = self.analytics.get_all_names()
                 if len(habits_names) >= 1:
                     # List of the names and ids of the remaining habits in table format
-                    self.display_table(('ID', 'HABIT'), 
+                    self.analytics.display_table(('ID', 'HABIT'), 
                                                 self.analytics.select_columns(
                                                     self.analytics.habits_table(),
                                                     stop=2), 
@@ -408,6 +408,14 @@ class Menu:
                       """)
         
     def see_habit(self):
+        """
+        Displays individual information for each habit registrado.
+        Habit name, motivation, description, periodicity, the date
+        of the first tracking if any, the last day of activity, last
+        day of activity, in which part of the day the habit is mostly
+        checked off, the longest streak and the number of days or
+        weeks of activity.
+        """
         # Clean up the console
         self.clear_console()
         # Prints the name of the application and instructions to the main menu
@@ -416,20 +424,20 @@ class Menu:
                              SEE A HABIT    
             ________________________________________________
             """)
-        # A list of the existing information in the habit table of the DB
+        # Gets the habits table of the DB
         habits_info = self.analytics.habits_table()
-         # List of the names and ids of the registered habits in table format
-        #print(habits_info)
-        self.table_registered_habits()
-        # Union of the habits table and the trackings table
+        # print(habits_info)
+        # List of the names and ids of the registered habits in table format
+        self.analytics.table_registered_habits()
+        # Union of the habits table and the trackings table from the DB
         habits_trackings = self.analytics.habits_trackings_table()
         # ID, Name, Periodicity, Motivation,  Description,     t.Date, t.Time
         # [(1, 'Yoga', 'daily', 'Flexibility', 'Mornings', '2021-04-26', '17:38')]
         #habits_info = self.analytics.habits_table()
         # [(1, 'Yoga', 'weekly', 'Be more flexible', 'Before breakfast', '2021-02-22')]
         #number_of_habits = len(habits_info)
-        # A list of the trackings that have been recorded
         #print(habits_trackings)
+        # A list of the trackings that have been recorded in the trackings table of the DB
         trackings = self.analytics.trackings_table()
         #print(trackings)
         # HabitID,  Date,      Time
@@ -451,17 +459,20 @@ class Menu:
                 self.run()
             elif id_n in ids_habits_table:
                 if id_n in ids_trackings_table:
-                    # Select all rows belonging to the given habit id
+                    # Select all rows belonging to the given habit id from the join of 
+                    # habits table and trackings table
                     one_habit_trackings_info = self.analytics.select_rows(
                         habits_trackings, 0, id_n)
-                    print(one_habit_trackings_info)
-                    print(len(one_habit_trackings_info))
+                    # print(one_habit_trackings_info)
+                    # [(1, 'Yoga', 'daily', 'Be more flexible', 'Mornings', '2021-07-31', '16:41'), 
+                    # (1, 'Yoga', 'daily', 'Be more flexible', 'Mornings', '2021-08-02', '18:44')]
+                    # print(len(one_habit_trackings_info))
                     # Gets the periodicity of the selected habit
                     periodicity = one_habit_trackings_info[0][2]
-                    print(periodicity)
+                    # print(periodicity)
                     if len(one_habit_trackings_info) >= 1:
                         # Clean up the console
-                        self.analytics.clear_console()
+                        self.clear_console()
                         # [(2, 'Run', 'weekly', 'Faster', 'Sundays', '2021-04-27', '10:56')]
                         print(
                         """
@@ -478,29 +489,55 @@ class Menu:
                         one_habit_trackings_info[0][3],
                         one_habit_trackings_info[0][4],
                         periodicity,
-                        #
+                        # Gives the date when the first tracking was recorded
                         self.analytics.start_habit(one_habit_trackings_info, col_date))
                         )
                         
                         if len(one_habit_trackings_info) > 1:
                             # [(2, 'Run', 'weekly', 'Faster', 'Sundays', '2021-04-27', '10:56'),
                             # (2, 'Run', 'weekly', 'Faster', 'Sundays', '2021-04-27', '11:40')]
+                            
+                            # A dictionary whose keys are the parts of the day in which
+                            # the habit was checked and whose values indicate the frecuency
                             active_time_dictionary = self.analytics.active_time_dict(
                                 one_habit_trackings_info, 
-                                col_time)  
+                                col_time) 
+                            # print(active_time_dictionary)
+                            # Counter({'Afternoon': 1, 'Evening': 1})
+                            # The highest value from the active time dictionary
                             max_value_active_time = self.analytics.max_value(
                                 active_time_dictionary)
+                            # print(max_value_active_time)
+                            # 1
+                            # Most frequently part(s) of the day when the habit is checked off.
                             most_active_time = self.analytics.most_active_time(
                                 active_time_dictionary, 
                                 max_value_active_time)
+                            # print(most_active_time)
+                            # ['Afternoon', 'Evening']
+                            
+                            # print(self.analytics.most_active_time(
+                            #     self.analytics.active_time_dict(
+                            #         one_habit_trackings_info, col_time
+                            #         ),
+                            #     self.analytics.max_value(
+                            #         self.analytics.active_time_dict(
+                            #             one_habit_trackings_info, col_time
+                            #             )
+                            #         )
+                            #     ))
                             print(
                             """
                         Last day of activity:   {}
                         
                         You are more active during:
                         {}
-                        """.format(self.analytics.last_day(one_habit_trackings_info, col_date),
-                        self.analytics.display_elements(most_active_time))
+                        """.format(
+                        # The date of the last tracking
+                        self.analytics.last_day(one_habit_trackings_info, col_date),
+                        # Parts of the day separated by commas
+                        self.analytics.display_elements(most_active_time)
+                        )
                             )
                             if periodicity == 'daily':
                                 print(
@@ -508,10 +545,12 @@ class Menu:
                         Longest streak: {}
                         Days of activity: {}
                                     """.format(
+                                    # the longest streak of a daily habit
                                     self.analytics.longest_streak_periodicity(
                                         one_habit_trackings_info, 
                                         'daily', 
                                         col_date),
+                                    # Number of days in which the habit has been checked off
                                     self.analytics.activity(
                                         'daily', 
                                         one_habit_trackings_info, 
@@ -523,24 +562,30 @@ class Menu:
                         Longest streak: {}
                         Weeks of activity: {}
                                     """.format(
+                                    # the longest streak of a weekly habit
                                     self.analytics.longest_streak_periodicity(
                                         one_habit_trackings_info, 
                                         'weekly',
                                         col_date),
+                                    # Number of weeks in which the habit has been checked off
                                     self.analytics.activity(
                                         'weekly',
                                         one_habit_trackings_info, 
                                         col_date))
                                     )
-                        #self.choice_stay_return('see another habit', self.search_habit)
+
                         if len(habits_info) > 1:
-                            self.choice_stay_return('See another habit off', self.see_habit)
+                            # Return to the main menu or see another habit
+                            self.choice_stay_return('See another habit', self.see_habit)
                         else:
+                            # Return to the main menu by selecting the number zero
                             self.return_menu()
 
                 else:
+                    # Select the row in the habits table that corresponds to the selected id 
                     one_habit_info = self.analytics.select_rows(habits_info, 0, id_n)
-                    self.analytics.clear_console()
+                    # Clean up the console
+                    self.clear_console()
                     print(
                         """
                         ___________________________________
@@ -555,7 +600,7 @@ class Menu:
                         Description:  {}
                         Periodicity:  {}
                         
-                        Registration day: {}
+                        Creation day: {}
                         ___________________________________
                         """.format(one_habit_info[0][1],
                         one_habit_info[0][1],
@@ -565,14 +610,18 @@ class Menu:
                         one_habit_info[0][-1])
                         )
                     if len(habits_info) > 1:
-                        self.choice_stay_return('Check another habit off', self.see_habit)
+                        # Return to the main menu or see another habit
+                        self.choice_stay_return('See another habit', self.see_habit)
                     else:
+                        # Return to the main menu by selecting the number zero
                         self.return_menu()
                 
     def show_all_habits(self):
-        #self.analytics.see_all_habits()
-        """Print a table with all habits and
-        its fields"""
+        """
+        Gives a table with information about all recorded habits.
+        ID and name of the habit, periodicity, motivation, description,
+        and the day it was recorded.
+        """
         # Clean up the console
         self.clear_console()
         # Prints the name of the application and instructions to the main menu
@@ -581,15 +630,21 @@ class Menu:
                               ALL HABITS    
             ________________________________________________
             """)
-
-        self.display_table(('ID', 'HABIT', 'PERIODICITY', 'MOTIVATION', 'DESCRIPTION', 'CREATION DAY'), 
-                     self.analytics.habits_table(), 
-                     'HABITS INFORMATION')
+        # Displays the information contained in the habits table in table format
+        self.analytics.display_table(
+            ('ID', 'HABIT', 'PERIODICITY', 'MOTIVATION', 'DESCRIPTION', 'CREATION DAY'),
+            # Gets the habits table of the DB
+            self.analytics.habits_table(), 
+            'HABITS INFORMATION'
+            )
         print('')
-        print(self.analytics.habits_table())
+        # Return to the main menu by selecting the number zero
         self.return_menu()
         
     def habits_same_periodicity(self):
+        """
+        
+        """
         # Clean up the console
         self.clear_console()
         # Prints the name of the application and instructions to the main menu
@@ -598,7 +653,16 @@ class Menu:
                     HABITS WITH THE SAME PERIODICITY    
             ________________________________________________
             """)
+        # Join of the habits table and the trackings table from the DB
         habits_trackings = self.analytics.habits_trackings_table()
+        print('habits trackings')
+        print(habits_trackings)
+        # [(1, 'Yoga', 'daily', 'Be more flexible', 'Mornings', '2021-07-31', '16:41'), 
+        #  (2, 'Run', 'weekly', 'Be faster', 'At weekends', '2021-07-31', '16:46'), 
+        #  (1, 'Yoga', 'daily', 'Be more flexible', 'Mornings', '2021-08-02', '18:44'), 
+        #  (1, 'Yoga', 'daily', 'Be more flexible', 'Mornings', '2021-08-03', '13:43'), 
+        #  (2, 'Run', 'weekly', 'Be faster', 'At weekends', '2021-08-03', '14:36'), 
+        #  (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-08-03', '15:44')]
         
         while True:
             print("""
@@ -617,6 +681,7 @@ class Menu:
                 periodicity = 'weekly'
                 break
             elif periodicity == 0:
+                # back to the main menu
                 self.run()
             else:
                 print('Please, choose number 1, 2 or 0')
@@ -625,23 +690,52 @@ class Menu:
         self.clear_console()
         # Select all rows that have the same periodicity from the habits table
         habits_table_periodicity = self.analytics.select_rows(
-             self.analytics.habits_table(), 2, periodicity)
-        #print('habits_table_periodicity')
-        #print(habits_table_periodicity)
-        # [(1, 'Yoga', 'daily', 'Be more flexible', 'Mornings', '2021-05-03'), 
-        # (2, 'Run', 'daily', 'Be faster', 'Mornings', '2021-05-03'), 
-        # (3, 'Meditation', 'daily', 'Concentration', 'Mornings', '2021-05-03')
+             self.analytics.habits_table(), 
+             2, 
+             periodicity)
+        print('habits table')
+        print(self.analytics.habits_table())
+        # [(1, 'Yoga', 'daily', 'Be more flexible', 'Mornings', '2021-07-31'), 
+        #  (2, 'Run', 'weekly', 'Be faster', 'At weekends', '2021-07-31'), 
+        #  (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-31'), 
+        #  (4, 'Try Sth New', 'weekly', 'New experiences', 'A new activity', '2021-07-31')]
+        print('habits table periodicity')
+        print(habits_table_periodicity)
+        # daily
+        # [(1, 'Yoga', 'daily', 'Be more flexible', 'Mornings', '2021-07-31'), 
+        #  (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-31')]
+        # weekly
+        # [(2, 'Run', 'weekly', 'Be faster', 'At weekends', '2021-07-31'), 
+        #  (4, 'Try Sth New', 'weekly', 'New experiences', 'A new activity', '2021-07-31')]
         
-        unique_ids_trackings_periodicity = self.analytics.unique_ids_periodicity(habits_trackings, 2, periodicity)
-        # print(unique_ids_trackings_periodicity)
-        # [1, 3]
+        # IDs of the habits with the same periodicity from the join of habits and trackings tables
+        unique_ids_trackings_periodicity = self.analytics.unique_ids_periodicity(
+            habits_trackings, 
+            2, 
+            periodicity)
+        print(unique_ids_trackings_periodicity)
+        # [1, 3] daily
+        # [2] weekly
     
-        # Give a list of the lists of habits grouped by id with the same periodicity
-        habits_trackings_periodicity = self.analytics.lists_periodicity(habits_trackings, 2, periodicity)
-        # print(habits_trackings_periodicity)
+        # Gives a list of habits with the same periodicity. Information and
+        # trackings for each habit are grouped together in a list.
+        habits_trackings_periodicity = self.analytics.lists_periodicity(
+            habits_trackings, 
+            2, 
+            periodicity)
+        print('habits_trackings_periodicity')
+        print(habits_trackings_periodicity)
+        # daily
+        # [[(1, 'Yoga', 'daily', 'Be more flexible', 'Mornings', '2021-07-31', '16:41'), 
+        #   (1, 'Yoga', 'daily', 'Be more flexible', 'Mornings', '2021-08-02', '18:44'), 
+        #   (1, 'Yoga', 'daily', 'Be more flexible', 'Mornings', '2021-08-03', '13:43')], 
+        #  [(3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-08-03', '15:44')]]
+        # weekly
+        # [[(2, 'Run', 'weekly', 'Be faster', 'At weekends', '2021-07-31', '16:46'), 
+        #   (2, 'Run', 'weekly', 'Be faster', 'At weekends', '2021-08-03', '14:36')]]
 
-        # print(len(habits_table_periodicity))
-        # print(len(habits_trackings_periodicity))
+        print(len(habits_table_periodicity))
+        print(len(habits_trackings_periodicity))
         
         if len(habits_table_periodicity) == 0:
             print("""
@@ -677,7 +771,7 @@ class Menu:
                 if periodicity == 'weekly':
                     col_names = ('HABIT', 'FIST TRACKING', 'LAST TRACKING', 'MOST ACTIVE TIME', 'ACTIVITY WEEKS', 'LONGEST STREAK')
 
-                self.display_table(col_names,
+                self.analytics.display_table(col_names,
                                             table_periodicity, 
                                             periodicity.upper() +
                                             ' PERIODICITY')
@@ -690,11 +784,11 @@ class Menu:
                 # print(list(zip(self.analytics.select_column(habits_without_trackings, 1),
                 #          self.analytics.select_columns(habits_without_trackings, 3, 6))))
                 
-                self.display_table(('ID', 'HABIT', 'PERIODICITY', 'MOTIVATION', 'DESCRIPTION', 'CREATION DAY'), 
+                self.analytics.display_table(('ID', 'HABIT', 'PERIODICITY', 'MOTIVATION', 'DESCRIPTION', 'CREATION DAY'), 
                                             habits_without_trackings,
                                             periodicity.upper() + 
                                             ' PERIODICITY\n'+ 
-                                            'No trackings available yet')
+                                            'Habits without trackings')
 
         self.choice_stay_return('See other periodicity',
                                 self.habits_same_periodicity)
@@ -710,6 +804,7 @@ class Menu:
             ________________________________________________
             """)
         
+        # Join of the habits table and the trackings table from the DB
         habits_trackings = self.analytics.habits_trackings_table()
         
         lists_periodicity = list(map(self.analytics.lists_periodicity, *zip((habits_trackings, 2, 'daily'),
@@ -748,42 +843,42 @@ class Menu:
             
         col_names = ('HABIT', 'LONGEST STREAK')
         
-        self.display_table(col_names, 
+        self.analytics.display_table(col_names, 
                                     names_streaks, 
                                     ' ')
         print(' ')
         
         self.return_menu()
         
-    def display_table(self, colnames, data, header):
-        """
-        Display the data in a table
-        """
-        data_colnames = self.analytics.add_colnames(colnames, data)
+    # def display_table(self, colnames, data, header):
+    #     """
+    #     Display the data in a table
+    #     """
+    #     data_colnames = self.analytics.add_colnames(colnames, data)
         
-        print(self.analytics.table_line(data_colnames))
-        print("{}".format(header))
-        print(self.analytics.table_line(data_colnames))
-        print(self.analytics.display_list_elements(
-            self.analytics.aligned_columns(
-                self.analytics.distance_format(
-                    self.analytics.max_lengths(
-                        self.analytics.lengths(data_colnames), 
-                        data_colnames)),
-                data_colnames)))
-        print(self.analytics.table_line(data_colnames))
+    #     print(self.analytics.table_line(data_colnames))
+    #     print("{}".format(header))
+    #     print(self.analytics.table_line(data_colnames))
+    #     print(self.analytics.display_list_elements(
+    #         self.analytics.aligned_columns(
+    #             self.analytics.distance_format(
+    #                 self.analytics.max_lengths(
+    #                     self.analytics.lengths(data_colnames), 
+    #                     data_colnames)),
+    #             data_colnames)))
+    #     print(self.analytics.table_line(data_colnames))
         
-    def table_registered_habits(self):
-        """
-        Displays the names and ids of the registered habits
-        in table format. The table has a title and the name
-        of the columns.
-        """        
-        self.display_table(
-            ('ID', 'HABIT'), 
-            list(self.analytics.select_columns(
-                self.analytics.habits_table(), 
-                stop=2)), 'YOUR HABIT(S)')
+    # def table_registered_habits(self):
+    #     """
+    #     Displays the names and ids of the registered habits
+    #     in table format. The table has a title and the name
+    #     of the columns.
+    #     """        
+    #     self.display_table(
+    #         ('ID', 'HABIT'), 
+    #         list(self.analytics.select_columns(
+    #             self.analytics.habits_table(), 
+    #             stop=2)), 'YOUR HABIT(S)')
 
     def return_menu(self):
         """

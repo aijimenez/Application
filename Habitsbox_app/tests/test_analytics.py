@@ -19,7 +19,6 @@ habits_trackings_table = [(1, 'Yoga', 'daily', 'Be more flexible', 'Preferably i
                            (5, 'Try Sth New', 'weekly', 'Living new experiences', 'A new activity', '2021-07-28', '11:56'), 
                            (1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-28', '14:56')]
 
-
 trackings_one_habit = [(1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-21', '09:06'), 
                        (1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-22', '17:11'),
                        (1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-23', '17:11')]
@@ -47,6 +46,7 @@ ID_2_daily = [(2, '2020-02-18', '09:52'),(2, '2020-02-18', '03:42'),
         (2, '2020-03-04', '16:09'),  (2, '2020-03-04', '06:59'),
         (2, '2020-03-11', '21:32'), (2, '2020-03-12', '06:59'),
         (2, '2020-03-13', '21:32'), (2, '2020-03-14', '06:59')]
+
 
 def test_select_column():
     names_habits_table = analytics.select_column(habits_table, 1)
@@ -79,9 +79,9 @@ def test_select_rows():
     rows_periodicity = analytics.select_rows(habits_table, 2, 'daily')    
     assert rows_name == [(1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-20')]
     assert rows_id == [(3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-21', '15:26'), 
-                           (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-22', '16:00')]
+                            (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-22', '16:00')]
     assert rows_periodicity == [(1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-20'), 
-                               (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-21')]
+                                (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-21')]
 
 def test_display_list_elements():
     names = analytics.display_list_elements(['Yoga', 'Read', 'Run'])
@@ -102,17 +102,17 @@ def test_format_to_date():
     assert list(dates) == [date(2021, 7, 21), date(2021, 7, 21), 
                       date(2021, 7, 21), date(2021, 7, 22)]
     assert list(dates_ID_1_Week) ==  [date(2019, 12, 24), date(2019, 12, 29), date(2019, 12, 31),
-                             date(2020, 1, 7), date(2020, 1, 16), date(2020, 1, 28),
-                             date(2020, 2, 1), date(2020, 2, 3), date(2020, 2, 3), 
-                             date(2020, 2, 11), date(2020, 2, 11), date(2020, 2, 11), 
-                             date(2020, 2, 12), date(2020, 3, 1), date(2020, 3, 10), 
-                             date(2020, 3, 14)]
+                              date(2020, 1, 7), date(2020, 1, 16), date(2020, 1, 28),
+                              date(2020, 2, 1), date(2020, 2, 3), date(2020, 2, 3), 
+                              date(2020, 2, 11), date(2020, 2, 11), date(2020, 2, 11), 
+                              date(2020, 2, 12), date(2020, 3, 1), date(2020, 3, 10), 
+                              date(2020, 3, 14)]
     
 def test_format_to_time():
     times = analytics.format_to_time([('09:52'), ('03:42'), ('03:42'), ('18:00'), 
-                                       ('19:52'), ('02:42'), ('19:52'), ('02:42'), 
-                                       ('08:25'), ('00:14'), ('12:28'), ('17:07'), 
-                                       ('16:09'),  ('06:59'), ('21:32'), ('06:59')])
+                                        ('19:52'), ('02:42'), ('19:52'), ('02:42'), 
+                                        ('08:25'), ('00:14'), ('12:28'), ('17:07'), 
+                                        ('16:09'),  ('06:59'), ('21:32'), ('06:59')])
     assert list(times) == [time(9, 52), time(3, 42), time(3, 42), time(18, 0),
                             time(19, 52), time(2, 42), time(19, 52), time(2, 42),
                             time(8, 25), time(0, 14), time(12, 28), time(17, 7),
@@ -122,11 +122,11 @@ def test_to_calender_week():
     calender_week = analytics.to_calender_week([date(2019, 12, 31), date(2020, 1, 1), 
                                                 date(2020, 12, 31), date(2021, 12, 25)])
     cw_dec_march = analytics.to_calender_week([date(2019, 12, 24), date(2019, 12, 29), date(2019, 12, 31),
-                             date(2020, 1, 7), date(2020, 1, 16), date(2020, 1, 28),
-                             date(2020, 2, 1), date(2020, 2, 3), date(2020, 2, 3), 
-                             date(2020, 2, 11), date(2020, 2, 11), date(2020, 2, 11), 
-                             date(2020, 2, 12), date(2020, 3, 1), date(2020, 3, 10), 
-                             date(2020, 3, 14)])
+                              date(2020, 1, 7), date(2020, 1, 16), date(2020, 1, 28),
+                              date(2020, 2, 1), date(2020, 2, 3), date(2020, 2, 3), 
+                              date(2020, 2, 11), date(2020, 2, 11), date(2020, 2, 11), 
+                              date(2020, 2, 12), date(2020, 3, 1), date(2020, 3, 10), 
+                              date(2020, 3, 14)])
     assert list(calender_week) == [1, 1, 53, 51]
     assert list(cw_dec_march) == [52, 52, 1, 2, 3, 5, 5, 6, 6, 7, 7, 7, 7, 9, 11, 11]
 
@@ -139,12 +139,12 @@ def test_unique_data():
 
 def test_zipping_unique_data():
     zip_times = analytics.zipping_unique_data([date(2021, 2, 1), date(2021, 2, 3), 
-                                               date(2021, 2, 5), date(2021, 2, 6)])
+                                                date(2021, 2, 5), date(2021, 2, 6)])
     zip_one_date = analytics.zipping_unique_data([date(2021, 2, 1)])
     zip_unique_cw = analytics.zipping_unique_data([52, 1, 2, 3, 5, 6, 7, 9, 11])
     assert list(zip_times) == [(date(2021, 2, 3), date(2021, 2, 1)),
-                         (date(2021, 2, 5), date(2021, 2, 3)),
-                         (date(2021, 2, 6), date(2021, 2, 5))]
+                          (date(2021, 2, 5), date(2021, 2, 3)),
+                          (date(2021, 2, 6), date(2021, 2, 5))]
     assert list(zip_one_date) == []
     assert list(zip_unique_cw) == [(1, 52), (2, 1), (3, 2), (5, 3), (6, 5), (7, 6), (9, 7), (11, 9)]
     
@@ -182,7 +182,9 @@ def test_streaks():
 
 def test_longest_streak():
     longest_streak = analytics.longest_streak([3, 2])
+    longest_streak_empty_list = analytics.longest_streak([])
     assert longest_streak == 4
+    assert longest_streak_empty_list == 1
 
 def test_longest_streak_periodicity():
     longest_streak_weekly = analytics.longest_streak_periodicity(ID_1_Week, 'weekly', 1)
@@ -230,9 +232,11 @@ def test_count_sorted_hours():
                                                         'Overnight', 'Afternoon', 'Afternoon',
                                                         'Afternoon', 'Morning', 'Evening',
                                                         'Morning'])
-    count_sorted_hours1 = analytics.count_sorted_hours(['Overnight', 'Evening', 'Evening', 'Overnight'])
     assert count_sorted_hours == {'Morning': 4, 'Afternoon': 3, 'Evening': 4, 'Overnight': 5}
-    assert count_sorted_hours1 == {'Evening': 2, 'Overnight': 2}
+
+def test_active_time_dict():
+    active_time = analytics.active_time_dict(ID_1_Week, 2)
+    assert active_time == {'Morning': 4, 'Afternoon': 3, 'Evening': 4, 'Overnight': 5}
 
 def test_max_value():
     max_value = analytics.max_value({'Morning': 4, 'Afternoon': 3, 'Evening': 4, 'Overnight': 5})
@@ -245,10 +249,6 @@ def test_most_active_time():
     empty_dic = analytics.max_value({})
     assert most_active_time == ['Overnight']
     assert empty_dic == {}
-    
-def test_active_time_dict():
-    active_time = analytics.active_time_dict(ID_1_Week, 2)
-    assert active_time == {'Morning': 4, 'Afternoon': 3, 'Evening': 4, 'Overnight': 5}
     
 def test_unique_ids_periodicity():
     unique_ids_daily = analytics.unique_ids_periodicity(habits_trackings_table, 2, 'daily')
@@ -321,13 +321,13 @@ def test_periodicity_info():
     assert daily_info == [('Yoga', '2021-07-21', '2021-07-28', 'Afternoon', 3, 2),
                           ('Read', '2021-07-21', '2021-07-22', 'Afternoon', 2, 2)]
     assert weekly_info == [('Run', '2021-07-21', '2021-07-28', 'Afternoon', 2, 2),
-                           ('Try Sth New', '2021-07-28', '2021-07-28', 'Morning', 1, 1)]
+                            ('Try Sth New', '2021-07-28', '2021-07-28', 'Morning', 1, 1)]
         
 def test_lengths():
     lengths = analytics.lengths(habits_table)
     assert lengths == [[1, 4, 5, 16, 25, 10], 
-                       [1, 4, 5, 20, 10, 10], 
-                       [1, 3, 6, 9, 11, 10]]
+                        [1, 4, 5, 20, 10, 10], 
+                        [1, 3, 6, 9, 11, 10]]
 
 def test_max_lengths():
     max_lengths = analytics.max_lengths(
@@ -349,7 +349,7 @@ def test_aligned_columns():
     
 def test_line():
     line = analytics.line([1, 4, 6, 20, 25, 10])
-    assert line == '_______________________________________________________________________________________'
+    assert line == '__________________________________________________________________________________________'
 
 def test_add_colnames():
     add_colnames = analytics.add_colnames(('ID', 'Habit', 'Periodicity', 'Motivation', 'Description'),
@@ -366,20 +366,34 @@ def test_add_colnames():
 def test_table_line():
     table_line = analytics.table_line(
         [('ID', 'Habit', 'Periodicity', 'Motivation', 'Description'),
-         (1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning'),
-         (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons'),
-         (4, 'Run', 'weekly', 'Be faster', 'At weekends'),
-         (5, 'Try Sth New', 'weekly', 'Living new experiences', 'A new activity')]
+          (1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning'),
+          (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons'),
+          (4, 'Run', 'weekly', 'Be faster', 'At weekends'),
+          (5, 'Try Sth New', 'weekly', 'Living new experiences', 'A new activity')]
         )
-    assert table_line == '________________________________________________________________________________________'
+    assert table_line == '___________________________________________________________________________________________'
 
 # def test_display_table():
 #     display_table = analytics.display_table(
 #         ('ID', 'HABIT', 'PERIODICITY', 'MOTIVATION', 'DESCRIPTION', 'CREATION DAY'),
 #         habits_table,
 #         'HABITS')
-#     assert display_table == ''
-    
+#     assert display_table == ' '
+            
+    # def table_registered_habits(self):
+    #     """
+    #     Displays the names and ids of the registered habits
+    #     in table format. The table has a title and the name
+    #     of the columns.
+    #     """        
+    #     self.display_table(
+    #         ('ID', 'HABIT'), 
+    #         list(self.select_columns(
+    #             self.habits_table(), 
+    #             stop=2)), 'YOUR HABIT(S)')
+
+
+
  
         
         

@@ -7,7 +7,7 @@ from collections import Counter
 from operator import itemgetter
 
 #from .habit import Habit
-from .habit import Habit
+from habit import Habit
 #from . import Habit
 
 class Analytics:
@@ -62,8 +62,9 @@ class Analytics:
             
     def habits_table(self):
         """
-        Return all the habits and all the fields
-        available in the table habits in the DB.
+        Return all the habits with its information contained in 
+        the table habits in the DB. ID and name of the habit, 
+        periodicity, motivation, description, and the day it was recorded.        
         Example:
         [(1, 'Yoga', 'daily', 'Be more flexible', 'Before lunch', '2021-04-26'), 
          (2, 'Run', 'weekly', 'Being healthier', 'At weekends', '2021-04-26')]
@@ -147,6 +148,9 @@ class Analytics:
         return '\n'.join(map(str, my_list))
     
     def display_elements(self, my_list):
+        """
+        List items are separated by commas.
+        """
         return ', '.join(map(str, my_list))
     
     def unique_elements(self, table, column):
@@ -206,8 +210,8 @@ class Analytics:
 
     def longest_streak(self, streaks):
         """
-        Select the longest streak if the list given is not empty,
-        if the list is empty gives a default value of 1
+        Returns the maximum number in a list of numbers.
+        If the list is empty, returns the number one.
         """
         if len(streaks) != 0:
             return max(streaks) + 1
@@ -215,6 +219,10 @@ class Analytics:
             return 1
     
     def longest_streak_periodicity(self, trackings, periodicity, column):
+        """
+        Returns the longest streak of a habit depending on 
+        the habit's periodicity.
+        """
         if len(trackings) == 0:
             return []
         else:
@@ -257,6 +265,9 @@ class Analytics:
                                    )))
     
     def last_day(self, trackings, col_date):
+        """
+        Returns the most recent data in a column of dates.
+        """
         if len(trackings) == 0:
             return []
         else:
@@ -267,9 +278,17 @@ class Analytics:
                         )))
     
     def activity(self, periodicity, trackings, col_date):
+        """
+        Returns the number of days or weeks in which the habit
+        has been checked off, depending on whether the habit 
+        is weekly or daily.
+        """
         date_column = self.format_to_date(
             self.select_column(
-                trackings, col_date))
+                trackings, col_date
+                )
+            )
+        
         if periodicity == 'daily':
             return len(self.unique_data(date_column))
         elif periodicity == 'weekly':
@@ -298,13 +317,29 @@ class Analytics:
         """
         Count the number of times the words of the parts
         of the day appear.
-        Example: ['Overnight', 'Evening', 'Evening', 'Overnight']
-        is {'Evening': 2, 'Overnight': 2}
+        Example: ['Overnight', 'Evening', 'Evening', 'Overnight', 'Evening']
+        is {'Evening': 3, 'Overnight': 2}
         """
         return Counter(sort_hours)
+    
+    def active_time_dict(self, trackings, col_time):
+        """
+        Return a dictionary whose keys are the parts of the day
+        (Morning, Afternoon, Evening and Overnight) in which a
+        habit was checked and whose values indicate how often 
+        the activity is performed in these parts of the day. 
+        """
+        return self.count_sorted_hours(
+            self.sort_hours(
+                self.only_hours(
+                    self.format_to_time(
+                        self.select_column(
+                            trackings, col_time)))))
 
     def max_value(self, active_time_dict):
-        """Get the maximum value of a dictionary"""
+        """
+        Returns the highest value from the dictionary.
+        """
         if len(active_time_dict) == 0:
             return {}
         else:
@@ -312,7 +347,8 @@ class Analytics:
 
     def most_active_time(self, active_time_dict, max_value):
         """
-        Get the keys with the maximum value for example:
+        Get the dictionary key(s) with the maximum value.
+        Example: {'Morning':4, 'Evening': 3, 'Overnight': 2}
         ['Morning']
         """
         if len(active_time_dict) == 0:
@@ -320,32 +356,36 @@ class Analytics:
         else:
             return [k for k, v in active_time_dict.items() if v == max_value]
     
-    def active_time_dict(self, trackings, col_time):
-        return self.count_sorted_hours(
-            self.sort_hours(
-                self.only_hours(
-                    self.format_to_time(
-                        self.select_column(
-                            trackings, col_time)))))
-    
     def unique_ids_periodicity(self, table, col_periodicity, periodicity):
         """
         Gets the ids of the habits with the same periodicity
         """
         return self.unique_data(
             self.get_all_ids(
-                self.select_rows(table, col_periodicity, periodicity)))
+                self.select_rows(table, col_periodicity, periodicity)
+                )
+            )
     
     def list_habits_list(self,habits_trackings, unique_ids):
         """
-        Give a list of the lists of habits grouped by id
+        Give a list of lists of habits grouped by id
         """
         return [self.select_rows(habits_trackings, 0, id_n) for id_n in unique_ids]
     
     def lists_periodicity(self, table, col_periodicity, periodicity):
         """
-        Give a list of the lists of habits grouped by id
-        with the same periodicity
+        Gives a list of habits with the same periodicity. Information and
+        trackings for each habit are grouped together in a list.
+        Example:
+        For the daily periodicity in the join of the habits and trackings 
+        table gives the following 
+        [
+            [(1, 'Yoga', 'daily', 'Be more flexible', 'Mornings', '2021-07-31', '16:41'), 
+             (1, 'Yoga', 'daily', 'Be more flexible', 'Mornings', '2021-08-02', '18:44'), 
+             (1, 'Yoga', 'daily', 'Be more flexible', 'Mornings', '2021-08-03', '13:43')], 
+            [(3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-08-03', '15:44')]
+        ]
+        
         """
         return self.list_habits_list(table, 
                                      self.unique_ids_periodicity(table, 
@@ -443,7 +483,7 @@ class Analytics:
         """
         Creates a line with the length of the maximum lengths
         """
-        return '_' * (sum(max_lengths) + len(max_lengths) * 4 - 3)
+        return '_' * (sum(max_lengths) + len(max_lengths) * 4)
     
     def add_colnames(self, colnames, table):
         """
@@ -460,36 +500,36 @@ class Analytics:
         return self.line(
             self.max_lengths(
                 self.lengths(data), data))
-    
-    # def display_table(self, colnames, data, header):
-    #     """
-    #     Display the data in a table
-    #     """
-    #     data_colnames = self.add_colnames(colnames, data)
         
-    #     print(self.table_line(data_colnames))
-    #     print("{}".format(header))
-    #     print(self.table_line(data_colnames))
-    #     print(self.display_list_elements(
-    #         self.aligned_columns(
-    #             self.distance_format(
-    #                 self.max_lengths(
-    #                     self.lengths(data_colnames), 
-    #                     data_colnames)),
-    #             data_colnames)))
-    #     print(self.table_line(data_colnames))
+    def display_table(self, colnames, data, header):
+        """
+        Display the data in a table
+        """
+        data_colnames = self.add_colnames(colnames, data)
+        
+        print(self.table_line(data_colnames))
+        print("{}".format(header))
+        print(self.table_line(data_colnames))
+        print(self.display_list_elements(
+            self.aligned_columns(
+                self.distance_format(
+                    self.max_lengths(
+                        self.lengths(data_colnames), 
+                        data_colnames)),
+                data_colnames)))
+        print(self.table_line(data_colnames))
             
-    # def table_registered_habits(self):
-    #     """
-    #     Displays the names and ids of the registered habits
-    #     in table format. The table has a title and the name
-    #     of the columns.
-    #     """        
-    #     self.display_table(
-    #         ('ID', 'HABIT'), 
-    #         list(self.select_columns(
-    #             self.habits_table(), 
-    #             stop=2)), 'YOUR HABIT(S)')
+    def table_registered_habits(self):
+        """
+        Displays the names and ids of the registered habits
+        in table format. The table has a title and the name
+        of the columns.
+        """        
+        self.display_table(
+            ('ID', 'HABIT'), 
+            list(self.select_columns(
+                self.habits_table(), 
+                stop=2)), 'YOUR HABIT(S)')
    
     def remove_habit(self, name):
         """
