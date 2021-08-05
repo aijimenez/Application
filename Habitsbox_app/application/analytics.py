@@ -16,7 +16,7 @@ class Analytics:
     def __init__(self):
         """
         Connect to the database
-        or create it if does not exist
+        or create it if does not exist.
         """
         try:
             # Connect to database
@@ -47,7 +47,7 @@ class Analytics:
     def insert_habit(self, name, periodicity, motivation, description):
         """
         Initialize the Habit class in the habit module and 
-        insert a habit to the DB
+        insert a habit to the DB.
         """
         self.habit = Habit(name, periodicity, motivation, description)
 
@@ -74,7 +74,7 @@ class Analytics:
     
     def trackings_table(self):
         """
-        Returns the date and time when the trackings were
+        Return the date and time when the trackings were
         registered, as well as to which habit-id they correspond.
         Example:        
         [(1, '2021-02-01', '19:52'), (2, '2021-02-03', '02:42')]
@@ -100,11 +100,15 @@ class Analytics:
         return self.cursor.fetchall()
     
     def select_column(self, table, i):
-        """Select column i of the indicated table"""
+        """
+        Select column i of the indicated table.
+        """
         return list(map(lambda x: x[i], table))
     
     def select_columns(self, table, start=0, stop=1):
-        """Select several columns of the indicated table"""
+        """
+        Select several columns of the indicated table.
+        """
         return list(map(lambda x: x[start:stop], table))
     
     # def get_dates(self, trackings_table):
@@ -122,38 +126,39 @@ class Analytics:
     
     def get_all_ids(self, table):
         """
-        Return the first column of a table in a list
+        Return the first column of a table in a list.
         """
         return list(self.select_column(table, 0))
-
-    # def one_habit_info_by_id(self, table, id_n):
-    #     """
-    #     Select all rows with the corresponding id
-    #     """
-    #     return list(filter(lambda x: x[0]==id_n, table))
-    
-    # def habits_same_periodicity(self, table, periodicity):
-    #     """
-    #     Select all rows with the same periodicity
-    #     """
-    #     return list(filter(lambda x: x[2]==periodicity, table))
-    
+  
     def select_rows(self, table, number_column, feature):
         """
-        Select all rows with the same feature
+        Select all rows with the same feature.
         """
         return list(filter(lambda x: x[number_column]==feature, table))
             
     def display_list_elements(self, my_list):
+        """
+        Elements of a list are placed on separate lines.
+        """
         return '\n'.join(map(str, my_list))
     
     def display_elements(self, my_list):
         """
-        List items are separated by commas.
+        List elements are separated by commas.
         """
         return ', '.join(map(str, my_list))
     
+    def unique_data(self, myobject):
+        """
+        Return unique values from a list of data.
+        """
+        return reduce(lambda x, y: x + [y] if y not in x else x, myobject, [])    
+    
     def unique_elements(self, table, column):
+        """
+        Return unique elements of a column and
+        separated them by commas in a string.
+        """
         return self.display_elements(
                 self.unique_data(
                     self.select_column(
@@ -161,33 +166,66 @@ class Analytics:
                         column)))
 
     def format_to_date(self, column):
+        """
+        Convert a list of strings of time to date format.
+        """
         return map(lambda x: datetime.strptime(x, "%Y-%m-%d").date(), column)
     
     def format_to_time(self, column):
+        """
+        Convert a list of strings of time to time format.
+        """
         return map(lambda x: datetime.strptime(x, "%H:%M").time(), column)
            
     def to_calender_week(self, dates):
+        """
+        Return the calendar week number for each date.
+        """
         return map(lambda x: x.isocalendar()[1], dates)
-    
-    def unique_data(self, myobject):
-        return reduce(lambda x, y: x + [y] if y not in x else x, myobject, [])
-    
-    def zipping_unique_data(self, unique):
+
+    def zipping_unique_data(self, data):
         """
-        Create a sequence of pairs from a list of dates that are unique
+        A list is sliced into one list without the first element 
+        and into another list without the last element.  
+        The first elements of each list are matched in a tuple, 
+        then the second and so on. 
+        Example:
+        [52, 1, 2, 3, 5]
+        
+        [(1, 52), 
+         (2, 1), 
+         (3, 2), 
+         (5, 3)]
         """
-        return zip(unique[1:], unique[:-1])
+        return zip(data[1:], data[:-1])
 
     def differences(self, pairs):
         """
-        Difference of days between trackings 
+        Return the differences between the numbers or dates
+        found in each tuple.
+        Example:
+        [(1, 52), (2, 1), (5, 3)]
+        
+        [-51, 1, 2]
         """
         return map(lambda x: (x[0]-x[1]), pairs)
     
     def difference_in_days(self, differences):
+        """
+        Return the number of days from a 
+        datetime.timedelta() object.
+        Example:
+        [timedelta(days=2), timedelta(days=1)]
+        
+        [2, 1]
+        """
         return map(lambda x: x.days, differences)
 
     def cw_5152_to_1(self, differences):
+        """
+        Change the number to 1 if the number in the list
+        is -51 o -52.
+        """
         return map(lambda x: 1 
                    if (x == -51) or (x == -52) 
                    else x, differences)
@@ -196,7 +234,9 @@ class Analytics:
         """ 
         Same numbers are grouped and designed to a key.
         A new group is formed each time the number(key) changes.
-        For example [1, 1, 1, 2, 1, 1, 2, 2] is grouped into
+        Example: 
+        [1, 1, 1, 2, 1, 1, 2, 2] is grouped into
+        
         [[1, [1, 1, 1]], [2, [2]], [1, [1, 1]], [2, [2, 2]]]
         """
         return groupby(differences)
@@ -210,7 +250,7 @@ class Analytics:
 
     def longest_streak(self, streaks):
         """
-        Returns the maximum number in a list of numbers.
+        Return the maximum number in a list of numbers.
         If the list is empty, returns the number one.
         """
         if len(streaks) != 0:
@@ -220,7 +260,7 @@ class Analytics:
     
     def longest_streak_periodicity(self, trackings, periodicity, column):
         """
-        Returns the longest streak of a habit depending on 
+        Return the longest streak of a habit depending on 
         the habit's periodicity.
         """
         if len(trackings) == 0:
@@ -254,7 +294,7 @@ class Analytics:
     
     def start_habit(self, trackings, col_date):
         """
-        Returns the earliest date from a column of dates
+        Return the earliest date from a column of dates
         """
         if len(trackings) == 0:
             return []
@@ -266,7 +306,7 @@ class Analytics:
     
     def last_day(self, trackings, col_date):
         """
-        Returns the most recent data in a column of dates.
+        Return the most recent data in a column of dates.
         """
         if len(trackings) == 0:
             return []
@@ -279,7 +319,7 @@ class Analytics:
     
     def activity(self, periodicity, trackings, col_date):
         """
-        Returns the number of days or weeks in which the habit
+        Return the number of days or weeks in which the habit
         has been checked off, depending on whether the habit 
         is weekly or daily.
         """
@@ -295,14 +335,18 @@ class Analytics:
             return len(self.unique_data(self.to_calender_week(date_column))) 
         
     def only_hours(self, time):
-        """Get hours without minutes"""
+        """
+        Get hours without minutes
+        """
         return map(lambda x: x.hour, time)
 
     def sort_hours(self, hours):
         """
         Each hour is renamed according to the part of the 
         day it corresponds to.
-        Example: [3, 18, 19, 2] is 
+        Example: 
+        [3, 18, 19, 2] is 
+        
         ['Overnight', 'Evening', 'Evening', 'Overnight']
         """
         return map(lambda x: 'Morning' 
@@ -317,7 +361,9 @@ class Analytics:
         """
         Count the number of times the words of the parts
         of the day appear.
-        Example: ['Overnight', 'Evening', 'Evening', 'Overnight', 'Evening']
+        Example: 
+        ['Overnight', 'Evening', 'Evening', 'Overnight', 'Evening']
+        
         is {'Evening': 3, 'Overnight': 2}
         """
         return Counter(sort_hours)
@@ -338,7 +384,7 @@ class Analytics:
 
     def max_value(self, active_time_dict):
         """
-        Returns the highest value from the dictionary.
+        Return the highest value from the dictionary.
         """
         if len(active_time_dict) == 0:
             return {}
@@ -348,7 +394,9 @@ class Analytics:
     def most_active_time(self, active_time_dict, max_value):
         """
         Get the dictionary key(s) with the maximum value.
-        Example: {'Morning':4, 'Evening': 3, 'Overnight': 2}
+        Example: 
+        {'Morning':4, 'Evening': 3, 'Overnight': 2}
+        
         ['Morning']
         """
         if len(active_time_dict) == 0:
@@ -358,7 +406,7 @@ class Analytics:
     
     def unique_ids_periodicity(self, table, col_periodicity, periodicity):
         """
-        Gets the ids of the habits with the same periodicity
+        Get the ids of the habits with the same periodicity
         """
         return self.unique_data(
             self.get_all_ids(
@@ -374,7 +422,7 @@ class Analytics:
     
     def lists_periodicity(self, table, col_periodicity, periodicity):
         """
-        Gives a list of habits with the same periodicity. Information and
+        Give a list of habits with the same periodicity. Information and
         trackings for each habit are grouped together in a list.
         Example:
         For the daily periodicity in the join of the habits and trackings 
@@ -390,22 +438,17 @@ class Analytics:
         return self.list_habits_list(table, 
                                      self.unique_ids_periodicity(table, 
                                                                  col_periodicity, 
-                                                                 periodicity))
-    
-    # def colnames_in_list(self, colnames):
-    #     return [colnames]
-    
-    # def add_colnames(self, colnames, table):
-    #     """Add the name of the columns"""
-    #     return self.colnames_in_list(colnames)+table  
+                                                                 periodicity)) 
            
     def periodicity_info(self, lists_periodicity, periodicity, col_date=5):
         """
-        A list containing information for each habit according 
-        to its periodicity. Name of the habit, first and last tracking,
-        most active time, activity days or weeks, and longest streak
-        Example: [('Yoga', '2021-03-18', '2021-04-17', 'Evening', 5, 2),
-                  ('Reading', '2021-03-19', '2021-04-25', 'Afternoon', 8, 2)]
+        A list containing information on each habit according 
+        to its periodicity. Name of the habit, date of the first and 
+        last tracking, part of the day when the user is most active to
+        perform this habit, days or weeks activity, and the longest streak.
+        Example: 
+        [('Yoga', '2021-03-18', '2021-04-17', 'Evening', 5, 2),
+         ('Reading', '2021-03-19', '2021-04-25', 'Afternoon', 8, 2)]
         """
         habits_info = []
         
@@ -419,75 +462,92 @@ class Analytics:
             most_active_time = self.most_active_time(
                                 active_time_dictionary, 
                                 max_value_active_time)
-                        
-            habits_info.append((self.unique_elements(l, 1),
-                  ''.join(min(self.select_column(l, col_date))),
-                  ''.join(max(self.select_column(l, col_date))),
-                  self.display_elements(most_active_time), 
-                  self.activity(
-                      periodicity, 
-                      l, 
-                      col_date),
-                  self.longest_streak_periodicity(
-                      l, 
-                      periodicity, 
-                      col_date)))
+            
+            habits_info.append(
+                (
+                    self.unique_elements(l, 0),
+                    self.unique_elements(l, 1),
+                    ''.join(min(self.select_column(l, col_date))),
+                    ''.join(max(self.select_column(l, col_date))),
+                    self.display_elements(most_active_time), 
+                    self.activity(
+                        periodicity, 
+                        l, 
+                        col_date),
+                    self.longest_streak_periodicity(
+                        l, 
+                        periodicity, 
+                        col_date))
+                )
             
         return habits_info
-    
-    # def max_streak(self, data, periodicity):
-    #     return max(
-    #         self.periodicity_info(
-    #             self.lists_periodicity(data,
-    #                                    periodicity),
-    #             periodicity),
-    #         key=itemgetter(-1))[-1]
 
     def lengths(self, data):
         """
-        A list of lists with the lengths of each element
-        Example: [[1, 4, 5, 16, 16, 10], [1, 3, 5, 10, 11, 10]]
+        For each tuple in the list of data, it gives the length
+        of each elememt in the tuple.
+        Example: 
+        [(1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-20'), 
+         (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-21')]
+            
+        [[1, 4, 5, 16, 25, 10], 
+         [1, 4, 5, 20, 10, 10]]
         """
         return [[len(str(x)) for x in row] for row in data]
 
     def max_lengths(self, lengths, data):
         """
-        Lists are compared and the largest number from index i
-        is picked.
-        Example: From these three lists
-        [[1, 4, 5, 16, 25, 10], [1, 4, 5, 20, 10, 10], [1, 3, 6, 9, 11, 10]]
-        the following list is formed [1, 4, 6, 20, 25, 10] which contains
-        the largest numbers in each index.
+        Receive a list of lists of numbers (lengths).
+        The longest length of index i is chosen to form a list
+        with the longest lengths of all lists.
+        Example: 
+        [[1, 4, 5, 16, 25, 10], 
+         [1, 4, 5, 20, 10, 10], 
+         [1, 3, 6, 9, 11, 10]
+        
+        Results in [1, 4, 6, 20, 25, 10].
         """
         return list(max(map(itemgetter(x), lengths)) for x in range(0, len(data[0])))
     
     def distance_format(self, max_lengths):
         """
-        Use the list with maximum lenghts to create a string formating.
+        Receive a list of numbers (maximum lenghts)
+        to create a string formating.
         Example: 
         if max_lengths = [1, 4, 6, 20, 25, 10]
+        
         "%-1s    %-4s    %-6s    %-20s    %-25s    %-10s    "   
         """
         return ''.join(map(lambda x: '%%-%ss    ' % x, max_lengths))
     
     def aligned_columns(self, format_distance, data):
         """
-        Table data are aligned using the maximum length per column.
+        Elements in the tuples are aligned and separated in 
+        a string format.
         Example: 
-        ['1    Yoga    daily    Be more flexible    Before breakfast    2021-02-22    ', 
-         '2    Run     daily    Be healthy          At weekends         2021-02-22    ']
+        [(1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-20'), 
+         (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-21')]
+        
+        ['1    Yoga    daily     Be more flexible        Preferably in the morning    2021-07-20    ', 
+         '3    Read    daily     Read 12 books a year    Afternoons                   2021-07-21    ']
         """
         return map(lambda x: format_distance % x, data)
     
     def line(self, max_lengths):
         """
-        Creates a line with the length of the maximum lengths
+        Create a line by adding the elements of a list
+        of numbers (maximum lengths) and the spaces between 
+        the elements.
+        Example: 
+        max_lengths = [1, 4, 6, 20, 25, 10]
+        
+        the resulting line is '_' * 90
         """
         return '_' * (sum(max_lengths) + len(max_lengths) * 4)
     
     def add_colnames(self, colnames, table):
         """
-        Receives the column names in a tuple and
+        Receive the column names in a tuple and
         adds them to the data
         """
         return [colnames]+table
@@ -521,7 +581,7 @@ class Analytics:
             
     def table_registered_habits(self):
         """
-        Displays the names and ids of the registered habits
+        Display the names and ids of the registered habits
         in table format. The table has a title and the name
         of the columns.
         """        
@@ -547,7 +607,7 @@ class Analytics:
             
     def insert_day(self, id_habit):
         """
-        Registers in the trackings table the day and time
+        Register in the trackings table the day and time
         when the user checks a habit off, i.e. chooses
         the id of the habit.
         """
@@ -561,5 +621,7 @@ class Analytics:
                             {'date': date, 'time': time, 'habitID': id_habit})
 
     def close(self):
-        """Close sqlite3 connection"""
+        """
+        Close SQLite3 connection
+        """
         self.connection.close()
