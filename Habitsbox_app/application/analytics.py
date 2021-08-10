@@ -1,5 +1,5 @@
 import sqlite3
-#import os
+# import os
 from datetime import datetime
 from itertools import groupby
 from functools import reduce
@@ -7,7 +7,7 @@ from collections import Counter
 from operator import itemgetter
 
 #from .habit import Habit
-from habit import Habit
+from .habit import Habit
 #from . import Habit
 
 class Analytics:
@@ -20,6 +20,9 @@ class Analytics:
         """
         try:
             # Connect to database
+            # self.path = os.path.dirname(os.path.abspath(__file__))
+            # self.db = os.path.join(self.path, 'DB_Habitsbox_app.db')
+            # self.connection = sqlite3.connect(self.db)
             self.connection = sqlite3.connect('DB_Habitsbox_app.db')
             # Create a cursor
             self.cursor = self.connection.cursor()
@@ -258,7 +261,7 @@ class Analytics:
         else:
             return 1
     
-    def longest_streak_periodicity(self, trackings, periodicity, column):
+    def longest_streak_periodicity(self, trackings, periodicity, col_date):
         """
         Return the longest streak of a habit depending on 
         the habit's periodicity.
@@ -277,7 +280,7 @@ class Analytics:
                                             self.format_to_date(
                                                 self.select_column(
                                                     trackings,
-                                                    column)))))))))
+                                                    col_date)))))))))
             elif periodicity == 'weekly':
                 return self.longest_streak(
                     self.streaks(
@@ -290,7 +293,7 @@ class Analytics:
                                                 self.format_to_date(
                                                     self.select_column(
                                                         trackings,
-                                                        column))))))))))
+                                                        col_date))))))))))
     
     def start_habit(self, trackings, col_date):
         """

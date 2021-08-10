@@ -321,10 +321,10 @@ def test_periodicity_info():
                 ]
             ],
         'weekly')
-    assert daily_info == [('Yoga', '2021-07-21', '2021-07-28', 'Afternoon', 3, 2),
-                          ('Read', '2021-07-21', '2021-07-22', 'Afternoon', 2, 2)]
-    assert weekly_info == [('Run', '2021-07-21', '2021-07-28', 'Afternoon', 2, 2),
-                            ('Try Sth New', '2021-07-28', '2021-07-28', 'Morning', 1, 1)]
+    assert daily_info == [('1', 'Yoga', '2021-07-21', '2021-07-28', 'Afternoon', 3, 2),
+                          ('3', 'Read', '2021-07-21', '2021-07-22', 'Afternoon', 2, 2)]
+    assert weekly_info == [('4', 'Run', '2021-07-21', '2021-07-28', 'Afternoon', 2, 2),
+                            ('5', 'Try Sth New', '2021-07-28', '2021-07-28', 'Morning', 1, 1)]
         
 def test_lengths():
     lengths = analytics.lengths(habits_table)
