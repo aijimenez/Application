@@ -1,6 +1,5 @@
 from application.analytics import Analytics
 from datetime import date
-# from datetime import timedelta, date, time
 
 analytics = Analytics()
 
@@ -236,7 +235,7 @@ def test_days_activity():
     assert analytics.activity('daily', Meditation_trackings, 1) == 15
     assert analytics.activity('weekly', French_trackings, 1) == 5
     
-def test_all_habits():
+def test_all_habits_registered():
     habits_table = analytics.habits_table()
     assert habits_table ==  [
         (1, 'Yoga', 'daily', 'Be more flexible', 'A low-impact activity', '2021-06-25'),
@@ -246,7 +245,7 @@ def test_all_habits():
         (5, 'Learn French', 'weekly', 'Fluent in french', 'Practice the 4 skills', '2021-06-29')
         ]
 
-def test_habits_info_periodicity():
+def test_habits_info_same_periodicity():
     habits_trackings_table = analytics.habits_trackings_table()
     list_daily = analytics.lists_periodicity(habits_trackings_table, 2, 'daily')
     list_weekly = analytics.lists_periodicity(habits_trackings_table, 2, 'weekly')
@@ -260,7 +259,10 @@ def test_habits_info_periodicity():
         ('5', 'Learn French', '2021-06-29', '2021-07-26', 'Afternoon, Morning', 5, 5)
         ]
 
-
+def test_longest_streak_all_habits():
+    habits_trackings_table = analytics.habits_trackings_table()
+    habit_info_longest_streak = analytics.habit_info_longest_streak(habits_trackings_table)
+    assert analytics.name_habit_longest_streak(habit_info_longest_streak) == [('Yoga', 9)]
     
     
     

@@ -325,7 +325,90 @@ def test_periodicity_info():
                           ('3', 'Read', '2021-07-21', '2021-07-22', 'Afternoon', 2, 2)]
     assert weekly_info == [('4', 'Run', '2021-07-21', '2021-07-28', 'Afternoon', 2, 2),
                             ('5', 'Try Sth New', '2021-07-28', '2021-07-28', 'Morning', 1, 1)]
-        
+
+def test_lists_both_periodicities():
+    lists_both_periodicities = analytics.lists_both_periodicities(habits_trackings_table)
+    assert lists_both_periodicities == [
+        [
+            [(1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-21', '09:06'),
+             (1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-22', '17:11'),
+             (1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-28', '14:56')
+             ],
+            [(3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-21', '15:26'), 
+             (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-22', '16:00')
+             ]
+        ],
+        [
+            [(4, 'Run', 'weekly', 'Be faster', 'At weekends', '2021-07-21', '14:44'),
+             (4, 'Run', 'weekly', 'Be faster', 'At weekends', '2021-07-28', '14:56')
+             ],
+            [(5, 'Try Sth New', 'weekly', 'Living new experiences', 'A new activity', '2021-07-28', '11:56')
+             ]
+        ]]
+           
+def test_both_periodicities_info():
+    both_periodicities_info = analytics.both_periodicities_info([
+        [
+            [(1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-21', '09:06'),
+             (1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-22', '17:11'),
+             (1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-28', '14:56')
+             ],
+            [(3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-21', '15:26'), 
+             (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-22', '16:00')
+             ]
+        ],
+        [
+            [(4, 'Run', 'weekly', 'Be faster', 'At weekends', '2021-07-21', '14:44'),
+             (4, 'Run', 'weekly', 'Be faster', 'At weekends', '2021-07-28', '14:56')
+             ],
+            [(5, 'Try Sth New', 'weekly', 'Living new experiences', 'A new activity', '2021-07-28', '11:56')
+             ]
+        ]])
+    assert both_periodicities_info == [
+        [('1', 'Yoga', '2021-07-21', '2021-07-28', 'Afternoon', 3, 2),
+         ('3', 'Read', '2021-07-21', '2021-07-22', 'Afternoon', 2, 2)],
+        [('4', 'Run', '2021-07-21', '2021-07-28', 'Afternoon', 2, 2),
+         ('5', 'Try Sth New', '2021-07-28', '2021-07-28', 'Morning', 1, 1)]]
+
+
+def test_info_all_habits():
+    info_habits = analytics.info_all_habits([
+        [('1', 'Yoga', '2021-07-21', '2021-07-28', 'Afternoon', 3, 2),
+         ('3', 'Read', '2021-07-21', '2021-07-22', 'Afternoon', 2, 2)],
+        [('4', 'Run', '2021-07-21', '2021-07-28', 'Afternoon', 2, 2),
+         ('5', 'Try Sth New', '2021-07-28', '2021-07-28', 'Morning', 1, 1)]
+        ])
+    assert info_habits == [
+        ('1', 'Yoga', '2021-07-21', '2021-07-28', 'Afternoon', 3, 2),
+        ('3', 'Read', '2021-07-21', '2021-07-22', 'Afternoon', 2, 2),
+        ('4', 'Run', '2021-07-21', '2021-07-28', 'Afternoon', 2, 2),
+        ('5', 'Try Sth New', '2021-07-28', '2021-07-28', 'Morning', 1, 1)
+        ]
+
+def test_habit_info_longest_streak():
+    habit_info_longest_streak = analytics.habit_info_longest_streak(habits_trackings_table)
+    one_habit_info_longest_streak = analytics.habit_info_longest_streak(trackings_one_habit)
+    assert habit_info_longest_streak == [
+        ('1', 'Yoga', '2021-07-21', '2021-07-28', 'Afternoon', 3, 2),
+        ('3', 'Read', '2021-07-21', '2021-07-22', 'Afternoon', 2, 2),
+        ('4', 'Run', '2021-07-21', '2021-07-28', 'Afternoon', 2, 2)
+        ]
+    assert one_habit_info_longest_streak == [
+        ('1', 'Yoga', '2021-07-21', '2021-07-23', 'Afternoon', 3, 3)
+        ]
+    
+def test_name_habit_longest_streak():
+    names_habits_streaks = analytics.name_habit_longest_streak([
+        ('1', 'Yoga', '2021-07-21', '2021-07-28', 'Afternoon', 3, 2),
+        ('3', 'Read', '2021-07-21', '2021-07-22', 'Afternoon', 2, 2),
+        ('4', 'Run', '2021-07-21', '2021-07-28', 'Afternoon', 2, 2)
+        ])
+    one_name_streak =  analytics.name_habit_longest_streak(
+        [('1', 'Yoga', '2021-07-21', '2021-07-23', 'Afternoon', 3, 3)]
+        )
+    assert names_habits_streaks == [('Yoga', 2), ('Read', 2), ('Run', 2)]
+    assert one_name_streak == [('Yoga', 3)]
+    
 def test_lengths():
     lengths = analytics.lengths(habits_table)
     assert lengths == [[1, 4, 5, 16, 25, 10], 
