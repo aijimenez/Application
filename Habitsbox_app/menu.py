@@ -1,10 +1,17 @@
+"""
+This module shows the different options that the user
+has when adding his/her habits and trackings of each
+habit.
+"""
+
 import sys
 import pyinputplus as pyip
-
 from application.analytics import Analytics
 
 class Menu:
-    """Show a menu and react to the user options when executed."""
+    """
+    Show a menu and react to the user options when executed.
+    """
 
     def __init__(self):
         self.analytics = Analytics()
@@ -114,7 +121,8 @@ class Menu:
             else:
                 print('Choose a number from the list')
 
-    def back_to_menu_info(self):
+    @classmethod
+    def back_to_menu_info(cls):
         """
         Displays the name of the application and indicates which
         key to press to return to the main menu.
@@ -146,7 +154,6 @@ class Menu:
                 # Gives the options that can be selected in the menu
                 self.run()
             elif choice == 1:
-               # action == action
                 action()
             else:
                 print('Please, choose number 0 or 1')
@@ -215,10 +222,10 @@ class Menu:
             if periodicity == 1:
                 periodicity = 'daily'
                 break
-            elif periodicity == 2:
+            if periodicity == 2:
                 periodicity = 'weekly'
                 break
-            elif periodicity == 0:
+            if periodicity == 0:
                 # Clean up the console
                 self.clear_console()
                 # Gives the options that can be selected in the menu
@@ -808,6 +815,5 @@ class Menu:
               """)
         self.analytics.close()
         sys.exit(0)
-
 
 Menu().run()

@@ -223,7 +223,8 @@ class Analytics:
         is -51 o -52.
         """
         return map(lambda x: 1
-                   if (x == -51) or (x == -52)
+                   if x in (-51, -52)
+                   #if (x == -51) or (x == -52)
                    else x, differences)
 
     def grouping_differences(self, differences):
