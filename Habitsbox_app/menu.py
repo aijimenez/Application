@@ -443,8 +443,6 @@ class Menu:
         ids_habits_table = self.analytics.get_all_ids(habits_info)
         # A list with all habit identifiers in the trackings table
         ids_trackings_table = self.analytics.get_all_ids(trackings)
-        col_date = 5
-        col_time = 6
 
         while True:
             print('')
@@ -482,15 +480,14 @@ class Menu:
                         one_habit_trackings_info[0][4],
                         periodicity,
                         # Gives the date when the first tracking was recorded
-                        self.analytics.start_habit(one_habit_trackings_info, col_date))
+                        self.analytics.start_habit(one_habit_trackings_info))
                         )
 
                         if len(one_habit_trackings_info) > 1:
                             # A dictionary whose keys are the parts of the day in which
                             # the habit was checked and whose values indicate the frecuency
                             active_time_dictionary = self.analytics.active_time_dict(
-                                one_habit_trackings_info,
-                                col_time)
+                                one_habit_trackings_info)
                             # The highest value from the active time dictionary
                             max_value_active_time = self.analytics.max_value(
                                 active_time_dictionary)
@@ -507,7 +504,7 @@ class Menu:
                         {}
                         """.format(
                         # The date of the last tracking
-                        self.analytics.last_day(one_habit_trackings_info, col_date),
+                        self.analytics.last_day(one_habit_trackings_info),
                         # Parts of the day separated by commas
                         self.analytics.display_elements(most_active_time)
                         )
@@ -521,13 +518,11 @@ class Menu:
                                     # the longest streak of a daily habit
                                     self.analytics.longest_streak_periodicity(
                                         one_habit_trackings_info,
-                                        'daily',
-                                        col_date),
+                                        'daily'),
                                     # Number of days in which the habit has been checked off
                                     self.analytics.activity(
                                         'daily',
-                                        one_habit_trackings_info,
-                                        col_date))
+                                        one_habit_trackings_info))
                                       )
                             elif periodicity == 'weekly':
                                 print(
@@ -538,13 +533,11 @@ class Menu:
                                     # the longest streak of a weekly habit
                                     self.analytics.longest_streak_periodicity(
                                         one_habit_trackings_info,
-                                        'weekly',
-                                        col_date),
+                                        'weekly'),
                                     # Number of weeks in which the habit has been checked off
                                     self.analytics.activity(
                                         'weekly',
-                                        one_habit_trackings_info,
-                                        col_date))
+                                        one_habit_trackings_info))
                                     )
 
                         if len(habits_info) > 1:

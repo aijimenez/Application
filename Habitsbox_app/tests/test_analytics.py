@@ -283,16 +283,21 @@ def test_start_date():
     start_dates_unordered = analytics.start_habit(
         [(1, 'Yoga', 'daily', 'Be more flexible', 'Low-impact sport', '2021-07-25', '09:06'),
          (1, 'Yoga', 'daily', 'Be more flexible', 'Low-impact sport', '2021-07-21', '17:11'),
-         (1, 'Yoga', 'daily', 'Be more flexible', 'Low-impact sport', '2021-07-23', '17:11')], 5)
+         (1, 'Yoga', 'daily', 'Be more flexible', 'Low-impact sport', '2021-07-23', '17:11')],
+        )
+    empty_table = analytics.start_habit([])
     assert start_date == date(2021, 7, 21)
     assert start_dates_unordered == date(2021, 7, 21)
+    assert empty_table == []
 
 def test_last_day():
     """
     The most recent date in a column of dates.
     """
     last_day = analytics.last_day(trackings_one_habit, 5)
+    empty_table = analytics.last_day([], 5)
     assert last_day == date(2021, 7, 23)
+    assert empty_table == []
 
 def test_activity():
     """
@@ -321,10 +326,12 @@ def test_sort_hours():
     day it corresponds to.
     """
     sort_hours = analytics.sort_hours([9, 3, 3, 18, 19, 2, 19, 2, 8, 0, 12, 17, 16, 6, 21, 6])
+    extrem_hours = analytics.sort_hours([5, 12, 18, 24])
     assert list(sort_hours) == ['Morning', 'Overnight', 'Overnight', 'Evening', 'Evening',
                                 'Overnight', 'Evening', 'Overnight', 'Morning', 'Overnight',
                                 'Afternoon', 'Afternoon', 'Afternoon', 'Morning', 'Evening',
                                 'Morning']
+    assert list(extrem_hours) == ['Morning', 'Afternoon', 'Evening', 'Overnight']
 
 def test_count_sorted_hours():
     """
@@ -346,8 +353,18 @@ def test_active_time_dict():
     habit was checked and whose values indicate how often
     the activity is performed in these parts of the day.
     """
-    active_time = analytics.active_time_dict(ID_1_Week, 2)
-    assert active_time == {'Morning': 4, 'Afternoon': 3, 'Evening': 4, 'Overnight': 5}
+    active_time_id1 = analytics.active_time_dict(ID_1_Week, 2)
+    active_time_yoga = analytics.active_time_dict(
+        [
+        (1, 'Yoga', 'daily', 'Be more flexible', 'A low-impact activity', '2021-06-26', '20:09'),
+        (1, 'Yoga', 'daily', 'Be more flexible', 'A low-impact activity', '2021-06-27', '10:44'),
+        (1, 'Yoga', 'daily', 'Be more flexible', 'A low-impact activity', '2021-06-29', '08:25'),
+        (1, 'Yoga', 'daily', 'Be more flexible', 'A low-impact activity', '2021-06-30', '05:54'),
+        (1, 'Yoga', 'daily', 'Be more flexible', 'A low-impact activity', '2021-07-01', '07:17')
+        ]
+        )
+    assert active_time_id1 == {'Morning': 4, 'Afternoon': 3, 'Evening': 4, 'Overnight': 5}
+    assert active_time_yoga == {'Morning': 4, 'Evening': 1}
 
 def test_max_value():
     """
@@ -426,9 +443,9 @@ def test_lists_periodicity():
 def test_periodicity_info():
     """
     A list containing information on each habit according
-    to its periodicity. ID and name of the habit, date of 
-    the first and last tracking, part of the day when the 
-    user is most active to perform this habit, days or weeks 
+    to its periodicity. ID and name of the habit, date of
+    the first and last tracking, part of the day when the
+    user is most active to perform this habit, days or weeks
     of activity, and the longest streak.
     """
     daily_info = analytics.periodicity_info(
@@ -539,7 +556,7 @@ def test_info_all_habits():
 
 def test_habit_info_longest_streak():
     """
-    Information of the habit(s) that has(have) the 
+    Information of the habit(s) that has(have) the
     maximum streak.
     """
     habit_info_longest_streak = analytics.habit_info_longest_streak(habits_trackings_table)
@@ -590,7 +607,7 @@ def test_max_lengths():
 def test_distance_format():
     """
     Create a string formating that represents
-    the distance to be maintained between each 
+    the distance to be maintained between each
     element.
     """
     distance_format = analytics.distance_format([1, 4, 6, 20, 25, 10])
@@ -598,7 +615,7 @@ def test_distance_format():
 
 def test_aligned_columns():
     """
-    Elements of the db table are separated and 
+    Elements of the db table are separated and
     aligned.
     """
     data_with_distances = analytics.aligned_columns(

@@ -234,9 +234,9 @@ def test_first_tracking():
     """
     yoga_start_date = analytics.start_habit(yoga_habits_trackings(), 5)
     run_start_date = analytics.start_habit(run_habits_trackings(), 5)
-    read_start_date = analytics.start_habit(read_habits_trackings(), 5)
-    meditation_start_date = analytics.start_habit(meditation_habits_trackings(), 5)
-    french_start_date = analytics.start_habit(french_habits_trackings(), 5)
+    read_start_date = analytics.start_habit(read_habits_trackings())
+    meditation_start_date = analytics.start_habit(meditation_habits_trackings())
+    french_start_date = analytics.start_habit(french_habits_trackings())
 
     assert yoga_start_date == date(2021, 6, 26)
     assert run_start_date == date(2021, 6, 25)
@@ -248,10 +248,10 @@ def test_last_tracking():
     """
     Gives the date of the last tracking.
     """
-    yoga_last_day = analytics.last_day(yoga_habits_trackings(), 5)
-    run_last_day = analytics.last_day(run_habits_trackings(), 5)
-    read_last_day = analytics.last_day(read_habits_trackings(), 5)
-    meditation_last_day = analytics.last_day(meditation_habits_trackings(), 5)
+    yoga_last_day = analytics.last_day(yoga_habits_trackings())
+    run_last_day = analytics.last_day(run_habits_trackings())
+    read_last_day = analytics.last_day(read_habits_trackings())
+    meditation_last_day = analytics.last_day(meditation_habits_trackings())
     french_last_day = analytics.last_day(french_habits_trackings(), 5)
 
     assert yoga_last_day == date(2021, 7, 23)
