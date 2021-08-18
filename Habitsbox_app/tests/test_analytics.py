@@ -24,7 +24,7 @@ habits_trackings_table = [
     (5, 'Try Sth New', 'weekly', 'Experiences', 'A new activity', '2021-07-28', '11:56'),
     (1, 'Yoga', 'daily', 'Be more flexible', 'Low-impact sport', '2021-07-28', '14:56')]
 
-trackings_one_habit = [
+info_trackings_yoga = [
     (1, 'Yoga', 'daily', 'Be more flexible', 'Low-impact sport', '2021-07-21', '09:06'),
     (1, 'Yoga', 'daily', 'Be more flexible', 'Low-impact sport', '2021-07-22', '17:11'),
     (1, 'Yoga', 'daily', 'Be more flexible', 'Low-impact sport', '2021-07-23', '17:11')]
@@ -73,7 +73,7 @@ def test_select_columns():
     """
     ids_names = analytics.select_columns(habits_table, stop = 2)
     names_periodicity = analytics.select_columns(trackings_table, start = 1, stop = 3)
-    names_trackings_one_habit = analytics.select_columns(trackings_one_habit, start = 1, stop = 2)
+    names_trackings_one_habit = analytics.select_columns(info_trackings_yoga, start = 1, stop = 2)
     assert ids_names == [(1, 'Yoga'), (3, 'Read'), (4, 'Run')]
     assert names_periodicity == [('2021-07-21', '09:06'), ('2021-07-21', '15:26'),
                                  ('2021-07-21', '16:00'), ('2021-07-22', '17:11')]
@@ -272,14 +272,18 @@ def test_longest_streak_periodicity():
     """
     longest_streak_weekly = analytics.longest_streak_periodicity(ID_1_Week, 'weekly', 1)
     longest_streak_daily = analytics.longest_streak_periodicity(ID_2_daily, 'daily', 1)
+    longest_streak_yoga = analytics.longest_streak_periodicity(info_trackings_yoga, 'daily')
+    empty_table = []
     assert longest_streak_weekly == 4
     assert longest_streak_daily == 5
+    assert longest_streak_yoga == 3
+    assert empty_table == []
 
 def test_start_date():
     """
     The earliest date from a column of dates.
     """
-    start_date = analytics.start_habit(trackings_one_habit, 5)
+    start_date = analytics.start_habit(info_trackings_yoga, 5)
     start_dates_unordered = analytics.start_habit(
         [(1, 'Yoga', 'daily', 'Be more flexible', 'Low-impact sport', '2021-07-25', '09:06'),
          (1, 'Yoga', 'daily', 'Be more flexible', 'Low-impact sport', '2021-07-21', '17:11'),
@@ -294,7 +298,7 @@ def test_last_day():
     """
     The most recent date in a column of dates.
     """
-    last_day = analytics.last_day(trackings_one_habit, 5)
+    last_day = analytics.last_day(info_trackings_yoga, 5)
     empty_table = analytics.last_day([], 5)
     assert last_day == date(2021, 7, 23)
     assert empty_table == []
@@ -560,7 +564,7 @@ def test_habit_info_longest_streak():
     maximum streak.
     """
     habit_info_longest_streak = analytics.habit_info_longest_streak(habits_trackings_table)
-    one_habit_info_longest_streak = analytics.habit_info_longest_streak(trackings_one_habit)
+    one_habit_info_longest_streak = analytics.habit_info_longest_streak(info_trackings_yoga)
     assert habit_info_longest_streak == [
         ('1', 'Yoga', '2021-07-21', '2021-07-28', 'Afternoon', 3, 2),
         ('3', 'Read', '2021-07-21', '2021-07-22', 'Afternoon', 2, 2),

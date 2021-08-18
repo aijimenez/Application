@@ -1,3 +1,9 @@
+"""
+This module contains methods that analyse the data
+of the habits and trackings that the user has saved.
+It also contains methods that have a connection to
+the database.
+"""
 import sqlite3
 from datetime import datetime
 from itertools import groupby
@@ -17,9 +23,6 @@ class Analytics:
         """
         try:
             # Connect to database
-            # self.path = os.path.dirname(os.path.abspath(__file__))
-            # self.db = os.path.join(self.path, 'DB_Habitsbox_app.db')
-            # self.connection = sqlite3.connect(self.db)
             self.connection = sqlite3.connect('DB_Habitsbox_app.db')
             # Create a cursor
             self.cursor = self.connection.cursor()
@@ -99,7 +102,8 @@ class Analytics:
         Return the date and time when the trackings were
         registered, as well as to which habit-id they correspond.
 
-        Example of the result
+        Example
+        -------
         [(1, '2021-02-01', '19:52'), (2, '2021-02-03', '02:42')]
         """
         self.cursor.execute("""SELECT HabitID, Date, Time
@@ -114,8 +118,7 @@ class Analytics:
         Example
         -------
         [(1, 'Yoga', 'daily', 'Be more flexible', 'Mornings', '2021-06-21', '09:06'),
-         (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-06-21', '15:26'),
-         (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-06-22', '16:00')]
+         (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-06-21', '15:26')]
         """
         self.cursor.execute("""SELECT h.HabitID, h.Name, h.Periodicity,
                             h.Motivation, h.Description, t.Date, t.Time
@@ -161,7 +164,6 @@ class Analytics:
         -------
         list
             a list of tuples with selected columns
-
         """
         return list(map(lambda x: x[start:stop], table))
 
@@ -178,7 +180,6 @@ class Analytics:
         -------
         list
             a list of numbers representing habit ids
-
         """
         return list(self.select_column(table, 0))
 
@@ -201,7 +202,6 @@ class Analytics:
         list
             a list of tuples with all rows that
             satisfy the condition
-
         """
         return list(filter(lambda x: x[number_column]==feature, table))
 
@@ -331,13 +331,9 @@ class Analytics:
 
         Example
         -------
-        [52, 1, 2, 3, 5]
+        [52, 1, 2, 3, 5] has the following result
 
-        has the following result
-        [(1, 52),
-         (2, 1),
-         (3, 2),
-         (5, 3)]
+        [(1, 52), (2, 1), (3, 2), (5, 3)]
         """
         return zip(data[1:], data[:-1])
 
@@ -468,19 +464,18 @@ class Analytics:
         """
         if len(streaks) != 0:
             return max(streaks) + 1
-        else:
-            return 1
+        return 1
 
-    def longest_streak_periodicity(self, trackings, periodicity, col_date=5):
+    def longest_streak_periodicity(self, habits_trackings_table, periodicity, col_date=5):
         """
         The longest streak of a habit depending on
         the habit's periodicity.
 
         Parameters
         ----------
-        trackings : list of tuples
-            a list with the information of the trackings
-            registered for a certain habit
+        habits_trackings_table : list of tuples
+            a list with the information of the habits and
+            its trackings
         periodicity : str
             periodicity of the habit, 'weekly' or 'daily'
         col_date : int
@@ -493,22 +488,21 @@ class Analytics:
             a number representing the longest streak of a
             habit
         """
-        if len(trackings) == 0:
+        if len(habits_trackings_table) == 0:
             return []
-        else:
-            if periodicity == 'daily':
-                return self.longest_streak(
-                    self.streaks(
-                        self.grouping_differences(
-                            self.difference_in_days(
-                                self.differences(
-                                    self.zipping_unique_data(
-                                       self.unique_data(
-                                            self.format_to_date(
-                                                self.select_column(
-                                                    trackings,
-                                                    col_date
-                                                    )))))))))
+        if periodicity == 'daily':
+            return self.longest_streak(
+                self.streaks(
+                    self.grouping_differences(
+                        self.difference_in_days(
+                            self.differences(
+                                self.zipping_unique_data(
+                                    self.unique_data(
+                                        self.format_to_date(
+                                            self.select_column(
+                                                habits_trackings_table,
+                                                col_date
+                                                )))))))))
         return self.longest_streak(
             self.streaks(
                 self.grouping_differences(
@@ -519,23 +513,10 @@ class Analytics:
                                     self.to_calender_week(
                                         self.format_to_date(
                                             self.select_column(
-                                                trackings,
+                                                habits_trackings_table,
                                                 col_date
                                                 ))))))))))
-            # elif periodicity == 'weekly':
-            #     return self.longest_streak(
-            #         self.streaks(
-            #             self.grouping_differences(
-            #                 self.cw_5152_to_1(
-            #                     self.differences(
-            #                         self.zipping_unique_data(
-            #                             self.unique_data(
-            #                                 self.to_calender_week(
-            #                                     self.format_to_date(
-            #                                         self.select_column(
-            #                                             trackings,
-            #                                             col_date))))))))))
-            
+
     def start_habit(self, habits_trackings_table, col_date = 5):
         """
         The earliest date from a column of dates.
@@ -842,17 +823,10 @@ class Analytics:
         -------
         For the daily periodicity in the join of the habits and trackings
         table gives the following
-        [
-            [
-                (1, 'Yoga', 'daily', 'Be more flexible', 'Mornings', '2021-07-31', '16:41'),
-                (1, 'Yoga', 'daily', 'Be more flexible', 'Mornings', '2021-08-02', '18:44'),
-                (1, 'Yoga', 'daily', 'Be more flexible', 'Mornings', '2021-08-03', '13:43')
-             ],
-            [
-                (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-08-03', '15:44')
-             ]
-        ]
-
+        [[(1, 'Yoga', 'daily', 'Be more flexible', 'Mornings', '2021-07-31', '16:41'),
+          (1, 'Yoga', 'daily', 'Be more flexible', 'Mornings', '2021-08-02', '18:44'),
+          (1, 'Yoga', 'daily', 'Be more flexible', 'Mornings', '2021-08-03', '13:43')],
+         [(3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-08-03', '15:44')]]
         """
         return self.list_habits_list(table,
                                      self.unique_ids_periodicity(table,
@@ -941,18 +915,11 @@ class Analytics:
 
         Example
         -------
-        [
-            [
-                [(1, 'Yoga', 'daily', 'Be more flexible', 'Mornings', '2021-07-31', '16:41'),
-                 (1, 'Yoga', 'daily', 'Be more flexible', 'Mornings', '2021-08-02', '18:44'),
-                 (1, 'Yoga', 'daily', 'Be more flexible', 'Mornings', '2021-08-03', '13:43')],
-                [(3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-08-03', '15:44')]
-            ],
-            [
-                [(2, 'Run', 'weekly', 'Be faster', 'At weekends', '2021-07-31', '16:46'),
-                 (2, 'Run', 'weekly', 'Be faster', 'At weekends', '2021-08-03', '14:36')]
-            ]
-        ]
+        [[[(1, 'Yoga', 'daily', 'Be more flexible', 'Mornings', '2021-07-31', '16:41'),
+           (1, 'Yoga', 'daily', 'Be more flexible', 'Mornings', '2021-08-02', '18:44')],
+          [(3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-08-03', '15:44')]],
+         [[(2, 'Run', 'weekly', 'Be faster', 'At weekends', '2021-07-31', '16:46'),
+           (2, 'Run', 'weekly', 'Be faster', 'At weekends', '2021-08-03', '14:36')]]]
         """
         return list(map(self.lists_periodicity, *zip((habits_trackings_table, 2, 'daily'),
                                              (habits_trackings_table, 2, 'weekly'))))
@@ -979,16 +946,9 @@ class Analytics:
 
         Example
         -------
-        The result is the following
-        [
-            [
-                ('1', 'Yoga', '2021-07-31', '2021-08-03', 'Afternoon', 3, 2),
-                ('3', 'Read', '2021-08-03', '2021-08-03', 'Afternoon', 1, 1)
-            ],
-            [
-                ('2', 'Run', '2021-07-31', '2021-08-03', 'Afternoon', 2, 2)
-            ]
-        ]
+        [[('1', 'Yoga', '2021-07-31', '2021-08-03', 'Afternoon', 3, 2),
+          ('3', 'Read', '2021-08-03', '2021-08-03', 'Afternoon', 1, 1)],
+         [('2', 'Run', '2021-07-31', '2021-08-03', 'Afternoon', 2, 2)]]
         """
         return list(map(self.periodicity_info, *zip((lists_both_periodicities[0], 'daily'),
                                               (lists_both_periodicities[1], 'weekly'))))
@@ -1009,22 +969,8 @@ class Analytics:
 
         Example
         -------
-        Given two lists in a list
-        [
-            [
-                ('1', 'Yoga', '2021-07-31', '2021-08-03', 'Afternoon', 3, 2),
-                ('3', 'Read', '2021-08-03', '2021-08-03', 'Afternoon', 1, 1)
-            ],
-            [
-                ('2', 'Run', '2021-07-31', '2021-08-03', 'Afternoon', 2, 2)
-            ]
-        ]
-        A list of tuples is obtained:
-        [
-            ('1', 'Yoga', '2021-07-31', '2021-08-03', 'Afternoon', 3, 2),
-            ('3', 'Read', '2021-08-03', '2021-08-03', 'Afternoon', 1, 1),
-            ('2', 'Run', '2021-07-31', '2021-08-03', 'Afternoon', 2, 2)
-        ]
+        [('1', 'Yoga', '2021-07-31', '2021-08-03', 'Afternoon', 3, 2),
+         ('3', 'Read', '2021-08-03', '2021-08-03', 'Afternoon', 1, 1)]
         """
         return [habit for l in both_periodicities_info for habit in l]
 
@@ -1080,17 +1026,7 @@ class Analytics:
 
         Example
         -------
-        Given the list with three habits with the longest streak of 3
-        [
-        ('1', 'Yoga', '2021-07-21', '2021-07-28', 'Afternoon', 3, 2),
-        ('3', 'Read', '2021-07-21', '2021-07-22', 'Afternoon', 2, 2),
-        ('4', 'Run', '2021-07-21', '2021-07-28', 'Afternoon', 2, 2)
-        ]
-
-        The following list is obtained:
-        [
-            ('Yoga', 2), ('Read', 2), ('Run', 2)
-        ]
+        [('Yoga', 2), ('Read', 2), ('Run', 2)]
         """
         return list(zip(self.select_column(habit_info_longest_streak, 1),
                         self.select_column(habit_info_longest_streak, -1)))
@@ -1189,14 +1125,6 @@ class Analytics:
         list
             a list of strings whose elements are aligned with
             the given distance
-
-        Example
-        -------
-        [(1, 'Yoga', 'daily', 'Be more flexible', 'Preferably in the morning', '2021-07-20'),
-         (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-21')]
-
-        ['1    Yoga    daily     Be more flexible        Preferably in the morning    2021-07-20    ',
-         '3    Read    daily     Read 12 books a year    Afternoons                   2021-07-21    ']
         """
         return map(lambda x: format_distance % x, table)
 
@@ -1215,12 +1143,6 @@ class Analytics:
         -------
         str:
             a line with the given length
-
-        Example
-        -------
-        max_lengths = [1, 4, 6, 20, 25, 10]
-
-        the resulting line is '_' * 90
         """
         return '_' * (sum(max_lengths) + len(max_lengths) * 4)
 
@@ -1320,7 +1242,6 @@ class Analytics:
         when the user checks a habit off, i.e. chooses
         the id of the habit.
         """
-
         date = datetime.now().strftime("%Y-%m-%d")
         time = datetime.now().strftime("%H:%M")
 

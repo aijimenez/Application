@@ -809,4 +809,5 @@ class Menu:
         self.analytics.close()
         sys.exit(0)
 
-Menu().run()
+if __name__=="__main__":
+    Menu().run()

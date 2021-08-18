@@ -1,10 +1,14 @@
-import pytest
+"""
+The Habit class in the habit module is tested.
+"""
 from application.habit import Habit
 
 def test_print():
-    habit1 = Habit('Yoga', 'weekly', 'flexibility', 'Before lunch')
-    assert habit1.name == 'Yoga'
-    assert habit1.periodicity == 'weekly'
-    assert habit1.motivation == 'flexibility'
-    assert habit1.description == 'Before lunch'
-
+    """
+    Attributes of the habit
+    """
+    habit_yoga = Habit('Yoga', 'weekly', 'flexibility', 'Before lunch')
+    assert habit_yoga.name == 'Yoga'
+    assert habit_yoga.periodicity == 'weekly'
+    assert habit_yoga.motivation == 'flexibility'
+    assert habit_yoga.description == 'Before lunch'
