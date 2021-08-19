@@ -1,0 +1,899 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module analytics</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>analytics</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:d%3A%5Ciubh%5C2semester%5Coofp_python%5Capplication%5Chabitsbox_app%5Capplication%5Canalytics.py">d:\iubh\2semester\oofp_python\application\habitsbox_app\application\analytics.py</a></font></td></tr></table>
+    <p><tt>This&nbsp;module&nbsp;contains&nbsp;methods&nbsp;that&nbsp;analyse&nbsp;the&nbsp;data<br>
+of&nbsp;the&nbsp;habits&nbsp;and&nbsp;trackings&nbsp;that&nbsp;the&nbsp;user&nbsp;has&nbsp;saved.<br>
+It&nbsp;also&nbsp;contains&nbsp;methods&nbsp;that&nbsp;have&nbsp;a&nbsp;connection&nbsp;to<br>
+the&nbsp;database.</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="sqlite3.html">sqlite3</a><br>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="analytics.html#Analytics">Analytics</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Analytics">class <strong>Analytics</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>Initialize&nbsp;and&nbsp;manipulate&nbsp;SQLite3&nbsp;database<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="Analytics-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Connect&nbsp;to&nbsp;the&nbsp;database<br>
+or&nbsp;create&nbsp;it&nbsp;if&nbsp;does&nbsp;not&nbsp;exist.</tt></dd></dl>
+
+<dl><dt><a name="Analytics-active_time_dict"><strong>active_time_dict</strong></a>(self, trackings, col_time=6)</dt><dd><tt>A&nbsp;dictionary&nbsp;whose&nbsp;keys&nbsp;are&nbsp;the&nbsp;parts&nbsp;of&nbsp;the&nbsp;day<br>
+(Morning,&nbsp;Afternoon,&nbsp;Evening&nbsp;and&nbsp;Overnight)&nbsp;in&nbsp;which&nbsp;a<br>
+habit&nbsp;was&nbsp;checked&nbsp;and&nbsp;whose&nbsp;values&nbsp;indicate&nbsp;how&nbsp;often<br>
+the&nbsp;activity&nbsp;is&nbsp;performed&nbsp;in&nbsp;these&nbsp;parts&nbsp;of&nbsp;the&nbsp;day.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+trackings&nbsp;:&nbsp;list&nbsp;of&nbsp;tuples<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;with&nbsp;the&nbsp;information&nbsp;of&nbsp;the&nbsp;trackings<br>
+&nbsp;&nbsp;&nbsp;&nbsp;registered&nbsp;for&nbsp;a&nbsp;certain&nbsp;habit<br>
+col_time&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;index&nbsp;number&nbsp;i.e.&nbsp;column&nbsp;containing&nbsp;the&nbsp;times<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(default&nbsp;is&nbsp;number&nbsp;6)<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+counter<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;dictionary&nbsp;whose&nbsp;keys&nbsp;are&nbsp;the&nbsp;parts&nbsp;of&nbsp;the&nbsp;day&nbsp;and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;values&nbsp;are&nbsp;the&nbsp;frequencies&nbsp;with&nbsp;which&nbsp;the&nbsp;habit&nbsp;is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;performed</tt></dd></dl>
+
+<dl><dt><a name="Analytics-activity"><strong>activity</strong></a>(self, periodicity, trackings, col_date=5)</dt><dd><tt>Return&nbsp;the&nbsp;number&nbsp;of&nbsp;days&nbsp;or&nbsp;weeks&nbsp;in&nbsp;which&nbsp;the&nbsp;habit<br>
+has&nbsp;been&nbsp;checked&nbsp;off,&nbsp;depending&nbsp;on&nbsp;whether&nbsp;the&nbsp;habit<br>
+is&nbsp;weekly&nbsp;or&nbsp;daily.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+periodicity&nbsp;:&nbsp;str<br>
+&nbsp;&nbsp;&nbsp;&nbsp;periodicity&nbsp;of&nbsp;the&nbsp;habit,&nbsp;'weekly'&nbsp;or&nbsp;'daily'<br>
+trackings&nbsp;:&nbsp;list&nbsp;of&nbsp;tuples<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;with&nbsp;the&nbsp;information&nbsp;of&nbsp;the&nbsp;trackings<br>
+&nbsp;&nbsp;&nbsp;&nbsp;registered&nbsp;for&nbsp;a&nbsp;certain&nbsp;habit<br>
+col_date&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;index&nbsp;number&nbsp;i.e.&nbsp;column&nbsp;containing&nbsp;the&nbsp;dates<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(default&nbsp;is&nbsp;number&nbsp;5)<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;number&nbsp;of&nbsp;days&nbsp;or&nbsp;weeks&nbsp;in&nbsp;which&nbsp;the&nbsp;habit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;has&nbsp;been&nbsp;checked&nbsp;off</tt></dd></dl>
+
+<dl><dt><a name="Analytics-add_colnames"><strong>add_colnames</strong></a>(self, col_names, table)</dt><dd><tt>Add&nbsp;the&nbsp;names&nbsp;of&nbsp;each&nbsp;column.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+col_names&nbsp;:&nbsp;str<br>
+&nbsp;&nbsp;&nbsp;&nbsp;contains&nbsp;the&nbsp;names&nbsp;of&nbsp;each&nbsp;column<br>
+table&nbsp;:&nbsp;list&nbsp;of&nbsp;tuples<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;of&nbsp;the&nbsp;table<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;of&nbsp;tuples</tt></dd></dl>
+
+<dl><dt><a name="Analytics-aligned_columns"><strong>aligned_columns</strong></a>(self, format_distance, table)</dt><dd><tt>Elements&nbsp;of&nbsp;the&nbsp;db&nbsp;table&nbsp;are&nbsp;separated&nbsp;and<br>
+aligned.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+format_distance&nbsp;:&nbsp;str<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;string&nbsp;formating&nbsp;that&nbsp;represents&nbsp;the&nbsp;distance<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to&nbsp;be&nbsp;maintained&nbsp;between&nbsp;each&nbsp;element<br>
+table&nbsp;:&nbsp;list&nbsp;of&nbsp;tuples<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;of&nbsp;the&nbsp;table<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;of&nbsp;strings&nbsp;whose&nbsp;elements&nbsp;are&nbsp;aligned&nbsp;with<br>
+&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;given&nbsp;distance</tt></dd></dl>
+
+<dl><dt><a name="Analytics-both_periodicities_info"><strong>both_periodicities_info</strong></a>(self, lists_both_periodicities)</dt><dd><tt>Habits&nbsp;separated&nbsp;by&nbsp;periodicity&nbsp;with&nbsp;general&nbsp;information<br>
+about&nbsp;each&nbsp;habit.&nbsp;ID&nbsp;and&nbsp;Name&nbsp;of&nbsp;the&nbsp;habit,&nbsp;date&nbsp;of&nbsp;the<br>
+first&nbsp;and&nbsp;last&nbsp;tracking,&nbsp;part&nbsp;of&nbsp;the&nbsp;day&nbsp;when&nbsp;the&nbsp;user<br>
+is&nbsp;most&nbsp;active&nbsp;to&nbsp;perform&nbsp;this&nbsp;habit,&nbsp;days&nbsp;or&nbsp;weeks&nbsp;of<br>
+activity,&nbsp;and&nbsp;the&nbsp;longest&nbsp;streak.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+lists_both_periodicities&nbsp;:&nbsp;list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Information&nbsp;and&nbsp;trackings&nbsp;for&nbsp;each&nbsp;habit&nbsp;grouped<br>
+&nbsp;&nbsp;&nbsp;&nbsp;together.&nbsp;Habits&nbsp;with&nbsp;the&nbsp;same&nbsp;periodicity<br>
+&nbsp;&nbsp;&nbsp;&nbsp;grouped&nbsp;together&nbsp;as&nbsp;well.<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;list&nbsp;of&nbsp;lists&nbsp;with&nbsp;general&nbsp;information&nbsp;about&nbsp;each&nbsp;habit<br>
+&nbsp;<br>
+Example<br>
+-------<br>
+[[('1',&nbsp;'Yoga',&nbsp;'2021-07-31',&nbsp;'2021-08-03',&nbsp;'Afternoon',&nbsp;3,&nbsp;2),<br>
+&nbsp;&nbsp;('3',&nbsp;'Read',&nbsp;'2021-08-03',&nbsp;'2021-08-03',&nbsp;'Afternoon',&nbsp;1,&nbsp;1)],<br>
+&nbsp;[('2',&nbsp;'Run',&nbsp;'2021-07-31',&nbsp;'2021-08-03',&nbsp;'Afternoon',&nbsp;2,&nbsp;2)]]</tt></dd></dl>
+
+<dl><dt><a name="Analytics-close"><strong>close</strong></a>(self)</dt><dd><tt>Close&nbsp;SQLite3&nbsp;connection</tt></dd></dl>
+
+<dl><dt><a name="Analytics-count_sorted_hours"><strong>count_sorted_hours</strong></a>(self, sort_hours)</dt><dd><tt>Count&nbsp;the&nbsp;number&nbsp;of&nbsp;times&nbsp;the&nbsp;words&nbsp;of&nbsp;the&nbsp;parts<br>
+of&nbsp;the&nbsp;day&nbsp;appear.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+sort_hours&nbsp;:&nbsp;list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;of&nbsp;strings&nbsp;representing&nbsp;different&nbsp;parts<br>
+&nbsp;&nbsp;&nbsp;&nbsp;of&nbsp;the&nbsp;day<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+counter<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;dictionary&nbsp;whose&nbsp;keys&nbsp;are&nbsp;the&nbsp;parts&nbsp;of&nbsp;the&nbsp;day&nbsp;and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;values&nbsp;are&nbsp;the&nbsp;frequencies&nbsp;with&nbsp;which&nbsp;they&nbsp;appear&nbsp;in<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;list<br>
+&nbsp;<br>
+Example<br>
+-------<br>
+['Overnight',&nbsp;'Evening',&nbsp;'Evening',&nbsp;'Overnight',&nbsp;'Evening']<br>
+&nbsp;<br>
+results&nbsp;in&nbsp;{'Evening':&nbsp;3,&nbsp;'Overnight':&nbsp;2}</tt></dd></dl>
+
+<dl><dt><a name="Analytics-cw_5152_to_1"><strong>cw_5152_to_1</strong></a>(self, differences)</dt><dd><tt>Change&nbsp;the&nbsp;number&nbsp;to&nbsp;1&nbsp;if&nbsp;the&nbsp;number&nbsp;in&nbsp;the&nbsp;list<br>
+is&nbsp;-51&nbsp;o&nbsp;-52.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+differences&nbsp;:&nbsp;list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;of&nbsp;numbers<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+iterator<br>
+&nbsp;&nbsp;&nbsp;&nbsp;numbers&nbsp;representing&nbsp;calender&nbsp;week&nbsp;numbers</tt></dd></dl>
+
+<dl><dt><a name="Analytics-difference_in_days"><strong>difference_in_days</strong></a>(self, differences)</dt><dd><tt>Number&nbsp;of&nbsp;days&nbsp;from&nbsp;a&nbsp;datetime.timedelta&nbsp;<a href="builtins.html#object">object</a>.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+differences&nbsp;:&nbsp;list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;of&nbsp;datetime.timedelta&nbsp;elements<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+iterator<br>
+&nbsp;&nbsp;&nbsp;&nbsp;number&nbsp;of&nbsp;days<br>
+&nbsp;<br>
+Example<br>
+-------<br>
+[timedelta(days=2),&nbsp;timedelta(days=1)]<br>
+&nbsp;<br>
+results&nbsp;in&nbsp;[2,&nbsp;1]</tt></dd></dl>
+
+<dl><dt><a name="Analytics-differences"><strong>differences</strong></a>(self, pairs)</dt><dd><tt>Differences&nbsp;between&nbsp;numbers&nbsp;or&nbsp;dates.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+pairs&nbsp;:&nbsp;list&nbsp;of&nbsp;tuples<br>
+&nbsp;&nbsp;&nbsp;&nbsp;pairs&nbsp;of&nbsp;numbers&nbsp;or&nbsp;dates<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+iterator<br>
+&nbsp;&nbsp;&nbsp;&nbsp;difference&nbsp;between&nbsp;the&nbsp;first&nbsp;element&nbsp;and&nbsp;the&nbsp;second<br>
+&nbsp;<br>
+Example<br>
+-------<br>
+[(1,&nbsp;52),&nbsp;(2,&nbsp;1),&nbsp;(5,&nbsp;3)]<br>
+&nbsp;<br>
+results&nbsp;in&nbsp;[-51,&nbsp;1,&nbsp;2]</tt></dd></dl>
+
+<dl><dt><a name="Analytics-display_elements"><strong>display_elements</strong></a>(self, my_list, separator='\n')</dt><dd><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Each&nbsp;item&nbsp;in&nbsp;the&nbsp;list&nbsp;is&nbsp;separated&nbsp;by&nbsp;a&nbsp;separator.<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Parameters<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;----------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;my_list&nbsp;:&nbsp;list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;List&nbsp;of&nbsp;elements&nbsp;to&nbsp;be&nbsp;separated<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;separator&nbsp;:&nbsp;str,&nbsp;optional<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(default&nbsp;is&nbsp;'<br>
+')<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;str<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;string&nbsp;with&nbsp;elements&nbsp;separated&nbsp;by&nbsp;the&nbsp;separator</tt></dd></dl>
+
+<dl><dt><a name="Analytics-display_table"><strong>display_table</strong></a>(self, col_names, table, header)</dt><dd><tt>Display&nbsp;the&nbsp;data&nbsp;in&nbsp;a&nbsp;table.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+col_names&nbsp;:&nbsp;str<br>
+&nbsp;&nbsp;&nbsp;&nbsp;contains&nbsp;the&nbsp;names&nbsp;of&nbsp;each&nbsp;column<br>
+table&nbsp;:&nbsp;list&nbsp;of&nbsp;tuples<br>
+&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;of&nbsp;the&nbsp;table<br>
+header&nbsp;:&nbsp;list&nbsp;of&nbsp;tuples<br>
+&nbsp;&nbsp;&nbsp;&nbsp;title&nbsp;of&nbsp;the&nbsp;table</tt></dd></dl>
+
+<dl><dt><a name="Analytics-display_unique_elements"><strong>display_unique_elements</strong></a>(self, table, column)</dt><dd><tt>Unique&nbsp;elements&nbsp;of&nbsp;a&nbsp;column&nbsp;are<br>
+separated&nbsp;by&nbsp;commas&nbsp;in&nbsp;a&nbsp;string.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+table&nbsp;:&nbsp;list&nbsp;of&nbsp;tuples<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Name&nbsp;of&nbsp;the&nbsp;table<br>
+column&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Index&nbsp;number,&nbsp;i.e.&nbsp;column<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+str<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Elements&nbsp;separated&nbsp;by&nbsp;comma</tt></dd></dl>
+
+<dl><dt><a name="Analytics-distance_format"><strong>distance_format</strong></a>(self, max_lengths)</dt><dd><tt>Create&nbsp;a&nbsp;string&nbsp;formating&nbsp;that&nbsp;represents<br>
+the&nbsp;distance&nbsp;to&nbsp;be&nbsp;maintained&nbsp;between&nbsp;each<br>
+element.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+max_lengths&nbsp;:&nbsp;list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;with&nbsp;the&nbsp;longest&nbsp;lengths<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+str<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;string&nbsp;formating<br>
+&nbsp;<br>
+Example<br>
+-------<br>
+if&nbsp;max_lengths&nbsp;=&nbsp;[1,&nbsp;4,&nbsp;6,&nbsp;20,&nbsp;25,&nbsp;10]<br>
+&nbsp;<br>
+"%-1s&nbsp;&nbsp;&nbsp;&nbsp;%-4s&nbsp;&nbsp;&nbsp;&nbsp;%-6s&nbsp;&nbsp;&nbsp;&nbsp;%-20s&nbsp;&nbsp;&nbsp;&nbsp;%-25s&nbsp;&nbsp;&nbsp;&nbsp;%-10s&nbsp;&nbsp;&nbsp;&nbsp;"</tt></dd></dl>
+
+<dl><dt><a name="Analytics-format_to_date"><strong>format_to_date</strong></a>(self, column)</dt><dd><tt>Items&nbsp;are&nbsp;converted&nbsp;to&nbsp;datetime.date.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+column&nbsp;:&nbsp;list&nbsp;of&nbsp;tuples<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;of&nbsp;strings&nbsp;containing&nbsp;the&nbsp;dates&nbsp;to<br>
+&nbsp;&nbsp;&nbsp;&nbsp;be&nbsp;converted<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+iterator<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dates&nbsp;in&nbsp;datetime.date</tt></dd></dl>
+
+<dl><dt><a name="Analytics-format_to_time"><strong>format_to_time</strong></a>(self, column)</dt><dd><tt>Items&nbsp;are&nbsp;converted&nbsp;to&nbsp;datetime.time.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+column&nbsp;:&nbsp;list&nbsp;of&nbsp;tuples<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;of&nbsp;strings&nbsp;containing&nbsp;the&nbsp;times&nbsp;to<br>
+&nbsp;&nbsp;&nbsp;&nbsp;be&nbsp;converted<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+iterator<br>
+&nbsp;&nbsp;&nbsp;&nbsp;times&nbsp;in&nbsp;datetime.time</tt></dd></dl>
+
+<dl><dt><a name="Analytics-get_all_ids"><strong>get_all_ids</strong></a>(self, table)</dt><dd><tt>First&nbsp;column&nbsp;of&nbsp;a&nbsp;table&nbsp;in&nbsp;a&nbsp;list.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+table&nbsp;:&nbsp;list&nbsp;of&nbsp;tuples<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Name&nbsp;of&nbsp;the&nbsp;table<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;of&nbsp;numbers&nbsp;representing&nbsp;habit&nbsp;ids</tt></dd></dl>
+
+<dl><dt><a name="Analytics-grouping_differences"><strong>grouping_differences</strong></a>(self, differences)</dt><dd><tt>Same&nbsp;numbers&nbsp;are&nbsp;grouped&nbsp;and&nbsp;designed&nbsp;to&nbsp;a&nbsp;key.<br>
+A&nbsp;new&nbsp;group&nbsp;is&nbsp;formed&nbsp;each&nbsp;time&nbsp;the&nbsp;number(key)<br>
+changes.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+differences&nbsp;:&nbsp;list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;of&nbsp;numbers<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+sub-iterators<br>
+&nbsp;&nbsp;&nbsp;&nbsp;keys&nbsp;and&nbsp;groups&nbsp;from&nbsp;the&nbsp;list<br>
+&nbsp;<br>
+Example<br>
+-------<br>
+[1,&nbsp;1,&nbsp;1,&nbsp;2,&nbsp;1,&nbsp;1,&nbsp;2,&nbsp;2]&nbsp;is&nbsp;grouped&nbsp;into<br>
+&nbsp;<br>
+[[1,&nbsp;[1,&nbsp;1,&nbsp;1]],&nbsp;[2,&nbsp;[2]],&nbsp;[1,&nbsp;[1,&nbsp;1]],&nbsp;[2,&nbsp;[2,&nbsp;2]]]</tt></dd></dl>
+
+<dl><dt><a name="Analytics-habit_info_longest_streak"><strong>habit_info_longest_streak</strong></a>(self, habits_trackings_table)</dt><dd><tt>Information&nbsp;of&nbsp;the&nbsp;habit(s)&nbsp;that&nbsp;has(have)&nbsp;the<br>
+maximum&nbsp;streak.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+habits_trackings_table&nbsp;:&nbsp;list&nbsp;of&nbsp;tuples<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;with&nbsp;the&nbsp;information&nbsp;of&nbsp;the&nbsp;habits&nbsp;and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;its&nbsp;trackings<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;with&nbsp;general&nbsp;information&nbsp;of&nbsp;the&nbsp;habit(s)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;that&nbsp;has(have)&nbsp;the&nbsp;maximum&nbsp;streak.<br>
+&nbsp;<br>
+Example<br>
+-------<br>
+[('1',&nbsp;'Yoga',&nbsp;'2021-06-26',&nbsp;'2021-07-23',&nbsp;'Morning',&nbsp;17,&nbsp;9)]</tt></dd></dl>
+
+<dl><dt><a name="Analytics-habits_table"><strong>habits_table</strong></a>(self)</dt><dd><tt>Return&nbsp;all&nbsp;the&nbsp;habits&nbsp;with&nbsp;its&nbsp;information&nbsp;contained&nbsp;in<br>
+the&nbsp;table&nbsp;habits&nbsp;in&nbsp;the&nbsp;DB.&nbsp;ID&nbsp;and&nbsp;name&nbsp;of&nbsp;the&nbsp;habit,<br>
+periodicity,&nbsp;motivation,&nbsp;description,&nbsp;and&nbsp;the&nbsp;day&nbsp;it&nbsp;was&nbsp;recorded.<br>
+&nbsp;<br>
+Example<br>
+-------<br>
+[(1,&nbsp;'Yoga',&nbsp;'daily',&nbsp;'Be&nbsp;more&nbsp;flexible',&nbsp;'Before&nbsp;lunch',&nbsp;'2021-04-26'),<br>
+&nbsp;(2,&nbsp;'Run',&nbsp;'weekly',&nbsp;'Being&nbsp;healthier',&nbsp;'At&nbsp;weekends',&nbsp;'2021-04-26')]</tt></dd></dl>
+
+<dl><dt><a name="Analytics-habits_trackings_table"><strong>habits_trackings_table</strong></a>(self)</dt><dd><tt>Join&nbsp;the&nbsp;habits&nbsp;table&nbsp;and&nbsp;the&nbsp;trackings&nbsp;table&nbsp;using&nbsp;the<br>
+id&nbsp;of&nbsp;the&nbsp;habit.<br>
+&nbsp;<br>
+Example<br>
+-------<br>
+[(1,&nbsp;'Yoga',&nbsp;'daily',&nbsp;'Be&nbsp;more&nbsp;flexible',&nbsp;'Mornings',&nbsp;'2021-06-21',&nbsp;'09:06'),<br>
+&nbsp;(3,&nbsp;'Read',&nbsp;'daily',&nbsp;'Read&nbsp;12&nbsp;books&nbsp;a&nbsp;year',&nbsp;'Afternoons',&nbsp;'2021-06-21',&nbsp;'15:26')]</tt></dd></dl>
+
+<dl><dt><a name="Analytics-info_all_habits"><strong>info_all_habits</strong></a>(self, both_periodicities_info)</dt><dd><tt>Information&nbsp;on&nbsp;the&nbsp;habits&nbsp;is&nbsp;merged&nbsp;into&nbsp;a&nbsp;single&nbsp;list.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+both_periodicities_info&nbsp;:&nbsp;list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;list&nbsp;of&nbsp;lists&nbsp;with&nbsp;general&nbsp;information&nbsp;about&nbsp;each&nbsp;habit<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;with&nbsp;general&nbsp;information&nbsp;about&nbsp;each&nbsp;habit<br>
+&nbsp;<br>
+Example<br>
+-------<br>
+[('1',&nbsp;'Yoga',&nbsp;'2021-07-31',&nbsp;'2021-08-03',&nbsp;'Afternoon',&nbsp;3,&nbsp;2),<br>
+&nbsp;('3',&nbsp;'Read',&nbsp;'2021-08-03',&nbsp;'2021-08-03',&nbsp;'Afternoon',&nbsp;1,&nbsp;1)]</tt></dd></dl>
+
+<dl><dt><a name="Analytics-insert_day"><strong>insert_day</strong></a>(self, id_habit)</dt><dd><tt>Register&nbsp;in&nbsp;the&nbsp;trackings&nbsp;table&nbsp;the&nbsp;day&nbsp;and&nbsp;time<br>
+when&nbsp;the&nbsp;user&nbsp;checks&nbsp;a&nbsp;habit&nbsp;off,&nbsp;i.e.&nbsp;chooses<br>
+the&nbsp;id&nbsp;of&nbsp;the&nbsp;habit.</tt></dd></dl>
+
+<dl><dt><a name="Analytics-insert_habit"><strong>insert_habit</strong></a>(self, name, periodicity, motivation, description)</dt><dd><tt>Initialize&nbsp;the&nbsp;Habit&nbsp;class&nbsp;in&nbsp;the&nbsp;habit&nbsp;module&nbsp;and<br>
+insert&nbsp;a&nbsp;habit&nbsp;to&nbsp;the&nbsp;DB.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+name&nbsp;:&nbsp;str<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Name&nbsp;of&nbsp;the&nbsp;habit<br>
+periodicity&nbsp;:&nbsp;str<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Periodicity&nbsp;of&nbsp;the&nbsp;habit,&nbsp;daily&nbsp;or&nbsp;weekly<br>
+motivation&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Motivation&nbsp;of&nbsp;the&nbsp;user&nbsp;to&nbsp;perform&nbsp;the&nbsp;habit<br>
+description&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Description&nbsp;of&nbsp;the&nbsp;habit</tt></dd></dl>
+
+<dl><dt><a name="Analytics-last_day"><strong>last_day</strong></a>(self, habits_trackings_table, col_date=5)</dt><dd><tt>The&nbsp;most&nbsp;recent&nbsp;date&nbsp;in&nbsp;a&nbsp;column&nbsp;of&nbsp;dates.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+habits_trackings_table&nbsp;:&nbsp;list&nbsp;of&nbsp;tuples<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;with&nbsp;the&nbsp;information&nbsp;of&nbsp;the&nbsp;habits&nbsp;and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;its&nbsp;trackings<br>
+col_date&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;index&nbsp;number&nbsp;i.e.&nbsp;column&nbsp;containing&nbsp;the&nbsp;dates<br>
+&nbsp;&nbsp;&nbsp;&nbsp;((default&nbsp;is&nbsp;number&nbsp;5))<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+datetime.date<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;most&nbsp;recent&nbsp;date</tt></dd></dl>
+
+<dl><dt><a name="Analytics-lengths"><strong>lengths</strong></a>(self, habits_info)</dt><dd><tt>Length&nbsp;of&nbsp;each&nbsp;element<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+habits_info&nbsp;:&nbsp;list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;of&nbsp;tuples&nbsp;with&nbsp;general&nbsp;information<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;about&nbsp;each&nbsp;habit<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;of&nbsp;lists&nbsp;of&nbsp;numbers&nbsp;representing&nbsp;lenghts<br>
+&nbsp;<br>
+Example<br>
+-------<br>
+[(1,&nbsp;'Yoga',&nbsp;'daily',&nbsp;'Be&nbsp;more&nbsp;flexible',&nbsp;'Preferably&nbsp;in&nbsp;the&nbsp;morning',&nbsp;'2021-07-20'),<br>
+&nbsp;(3,&nbsp;'Read',&nbsp;'daily',&nbsp;'Read&nbsp;12&nbsp;books&nbsp;a&nbsp;year',&nbsp;'Afternoons',&nbsp;'2021-07-21')]<br>
+&nbsp;<br>
+Results&nbsp;in<br>
+[[1,&nbsp;4,&nbsp;5,&nbsp;16,&nbsp;25,&nbsp;10],<br>
+&nbsp;[1,&nbsp;4,&nbsp;5,&nbsp;20,&nbsp;10,&nbsp;10]]</tt></dd></dl>
+
+<dl><dt><a name="Analytics-line"><strong>line</strong></a>(self, max_lengths)</dt><dd><tt>Create&nbsp;a&nbsp;line&nbsp;by&nbsp;adding&nbsp;the&nbsp;elements&nbsp;of&nbsp;a&nbsp;list<br>
+of&nbsp;numbers&nbsp;(maximum&nbsp;lengths)&nbsp;and&nbsp;the&nbsp;spaces&nbsp;between<br>
+the&nbsp;elements.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+max_lengths&nbsp;:&nbsp;list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;with&nbsp;the&nbsp;longest&nbsp;lengths<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+str:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;line&nbsp;with&nbsp;the&nbsp;given&nbsp;length</tt></dd></dl>
+
+<dl><dt><a name="Analytics-list_habits_list"><strong>list_habits_list</strong></a>(self, habits_trackings_table, unique_ids)</dt><dd><tt>Give&nbsp;a&nbsp;list&nbsp;of&nbsp;lists&nbsp;of&nbsp;habits&nbsp;grouped&nbsp;by&nbsp;id.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+habits_trackings_table&nbsp;:&nbsp;list&nbsp;of&nbsp;tuples<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;with&nbsp;the&nbsp;information&nbsp;of&nbsp;the&nbsp;habits&nbsp;and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;its&nbsp;trackings<br>
+unique_ids&nbsp;:&nbsp;list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;of&nbsp;numbers&nbsp;representing&nbsp;ids<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Habits&nbsp;are&nbsp;grouped&nbsp;by&nbsp;id</tt></dd></dl>
+
+<dl><dt><a name="Analytics-lists_both_periodicities"><strong>lists_both_periodicities</strong></a>(self, habits_trackings_table)</dt><dd><tt>Information&nbsp;and&nbsp;trackings&nbsp;for&nbsp;each&nbsp;habit&nbsp;are&nbsp;grouped&nbsp;together<br>
+in&nbsp;a&nbsp;list.&nbsp;In&nbsp;addition,&nbsp;habits&nbsp;with&nbsp;the&nbsp;same&nbsp;periodicity&nbsp;are<br>
+grouped&nbsp;together.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+habits_trackings_table&nbsp;:&nbsp;list&nbsp;of&nbsp;tuples<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;with&nbsp;the&nbsp;information&nbsp;of&nbsp;the&nbsp;habits&nbsp;and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;its&nbsp;trackings<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;list&nbsp;of&nbsp;lists.&nbsp;Information&nbsp;and&nbsp;trackings&nbsp;for&nbsp;each&nbsp;habit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;are&nbsp;grouped&nbsp;together,&nbsp;and&nbsp;habits&nbsp;with&nbsp;the&nbsp;same&nbsp;periodicity<br>
+&nbsp;&nbsp;&nbsp;&nbsp;are&nbsp;grouped&nbsp;together&nbsp;as&nbsp;well.<br>
+&nbsp;<br>
+Example<br>
+-------<br>
+[[[(1,&nbsp;'Yoga',&nbsp;'daily',&nbsp;'Be&nbsp;more&nbsp;flexible',&nbsp;'Mornings',&nbsp;'2021-07-31',&nbsp;'16:41'),<br>
+&nbsp;&nbsp;&nbsp;(1,&nbsp;'Yoga',&nbsp;'daily',&nbsp;'Be&nbsp;more&nbsp;flexible',&nbsp;'Mornings',&nbsp;'2021-08-02',&nbsp;'18:44')],<br>
+&nbsp;&nbsp;[(3,&nbsp;'Read',&nbsp;'daily',&nbsp;'Read&nbsp;12&nbsp;books&nbsp;a&nbsp;year',&nbsp;'Afternoons',&nbsp;'2021-08-03',&nbsp;'15:44')]],<br>
+&nbsp;[[(2,&nbsp;'Run',&nbsp;'weekly',&nbsp;'Be&nbsp;faster',&nbsp;'At&nbsp;weekends',&nbsp;'2021-07-31',&nbsp;'16:46'),<br>
+&nbsp;&nbsp;&nbsp;(2,&nbsp;'Run',&nbsp;'weekly',&nbsp;'Be&nbsp;faster',&nbsp;'At&nbsp;weekends',&nbsp;'2021-08-03',&nbsp;'14:36')]]]</tt></dd></dl>
+
+<dl><dt><a name="Analytics-lists_periodicity"><strong>lists_periodicity</strong></a>(self, table, col_periodicity, periodicity)</dt><dd><tt>A&nbsp;list&nbsp;of&nbsp;habits&nbsp;with&nbsp;the&nbsp;same&nbsp;periodicity.&nbsp;Information&nbsp;and<br>
+trackings&nbsp;for&nbsp;each&nbsp;habit&nbsp;are&nbsp;grouped&nbsp;together&nbsp;in&nbsp;a&nbsp;list.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+table&nbsp;:&nbsp;list&nbsp;of&nbsp;tuples<br>
+&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;of&nbsp;the&nbsp;table<br>
+col_periodicity&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;index&nbsp;number&nbsp;i.e.&nbsp;column&nbsp;containing&nbsp;the&nbsp;periodicity<br>
+periodicity&nbsp;:&nbsp;str<br>
+&nbsp;&nbsp;&nbsp;&nbsp;periodicity&nbsp;of&nbsp;the&nbsp;habit,&nbsp;'weekly'&nbsp;or&nbsp;'daily'<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;of&nbsp;lists.&nbsp;Each&nbsp;list&nbsp;has&nbsp;information&nbsp;and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;trackings&nbsp;for&nbsp;each&nbsp;habit&nbsp;with&nbsp;the&nbsp;same&nbsp;periodicity<br>
+&nbsp;<br>
+Example<br>
+-------<br>
+For&nbsp;the&nbsp;daily&nbsp;periodicity&nbsp;in&nbsp;the&nbsp;join&nbsp;of&nbsp;the&nbsp;habits&nbsp;and&nbsp;trackings<br>
+table&nbsp;gives&nbsp;the&nbsp;following<br>
+[[(1,&nbsp;'Yoga',&nbsp;'daily',&nbsp;'Be&nbsp;more&nbsp;flexible',&nbsp;'Mornings',&nbsp;'2021-07-31',&nbsp;'16:41'),<br>
+&nbsp;&nbsp;(1,&nbsp;'Yoga',&nbsp;'daily',&nbsp;'Be&nbsp;more&nbsp;flexible',&nbsp;'Mornings',&nbsp;'2021-08-02',&nbsp;'18:44'),<br>
+&nbsp;&nbsp;(1,&nbsp;'Yoga',&nbsp;'daily',&nbsp;'Be&nbsp;more&nbsp;flexible',&nbsp;'Mornings',&nbsp;'2021-08-03',&nbsp;'13:43')],<br>
+&nbsp;[(3,&nbsp;'Read',&nbsp;'daily',&nbsp;'Read&nbsp;12&nbsp;books&nbsp;a&nbsp;year',&nbsp;'Afternoons',&nbsp;'2021-08-03',&nbsp;'15:44')]]</tt></dd></dl>
+
+<dl><dt><a name="Analytics-longest_streak"><strong>longest_streak</strong></a>(self, streaks)</dt><dd><tt>Give&nbsp;the&nbsp;maximum&nbsp;number&nbsp;in&nbsp;a&nbsp;list&nbsp;of&nbsp;numbers.<br>
+If&nbsp;the&nbsp;list&nbsp;is&nbsp;empty,&nbsp;returns&nbsp;the&nbsp;number&nbsp;one.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+streaks&nbsp;:&nbsp;list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;of&nbsp;numbers<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;number&nbsp;representing&nbsp;the&nbsp;longest&nbsp;streak</tt></dd></dl>
+
+<dl><dt><a name="Analytics-longest_streak_periodicity"><strong>longest_streak_periodicity</strong></a>(self, habits_trackings_table, periodicity, col_date=5)</dt><dd><tt>The&nbsp;longest&nbsp;streak&nbsp;of&nbsp;a&nbsp;habit&nbsp;depending&nbsp;on<br>
+the&nbsp;habit's&nbsp;periodicity.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+habits_trackings_table&nbsp;:&nbsp;list&nbsp;of&nbsp;tuples<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;with&nbsp;the&nbsp;information&nbsp;of&nbsp;the&nbsp;habits&nbsp;and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;its&nbsp;trackings<br>
+periodicity&nbsp;:&nbsp;str<br>
+&nbsp;&nbsp;&nbsp;&nbsp;periodicity&nbsp;of&nbsp;the&nbsp;habit,&nbsp;'weekly'&nbsp;or&nbsp;'daily'<br>
+col_date&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;index&nbsp;number&nbsp;i.e.&nbsp;column&nbsp;containing&nbsp;the&nbsp;dates<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(default&nbsp;is&nbsp;number&nbsp;5)<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;number&nbsp;representing&nbsp;the&nbsp;longest&nbsp;streak&nbsp;of&nbsp;a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;habit</tt></dd></dl>
+
+<dl><dt><a name="Analytics-max_lengths"><strong>max_lengths</strong></a>(self, lengths, table)</dt><dd><tt>The&nbsp;longest&nbsp;lengths<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+lengths&nbsp;:&nbsp;list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;of&nbsp;lists&nbsp;of&nbsp;numbers&nbsp;representing&nbsp;lenghts<br>
+table&nbsp;:&nbsp;list&nbsp;of&nbsp;tuples<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;of&nbsp;the&nbsp;table<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;with&nbsp;the&nbsp;longest&nbsp;lengths<br>
+&nbsp;<br>
+Example<br>
+-------<br>
+[[1,&nbsp;4,&nbsp;5,&nbsp;16,&nbsp;25,&nbsp;10],<br>
+&nbsp;[1,&nbsp;4,&nbsp;5,&nbsp;20,&nbsp;10,&nbsp;10],<br>
+&nbsp;[1,&nbsp;3,&nbsp;6,&nbsp;9,&nbsp;11,&nbsp;10]]<br>
+&nbsp;<br>
+Results&nbsp;in&nbsp;[1,&nbsp;4,&nbsp;6,&nbsp;20,&nbsp;25,&nbsp;10].</tt></dd></dl>
+
+<dl><dt><a name="Analytics-max_value"><strong>max_value</strong></a>(self, active_time_dict)</dt><dd><tt>The&nbsp;highest&nbsp;value&nbsp;from&nbsp;a&nbsp;dictionary.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+active_time_dict&nbsp;:&nbsp;dict<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;dictionary&nbsp;whose&nbsp;keys&nbsp;are&nbsp;the&nbsp;parts&nbsp;of&nbsp;the&nbsp;day<br>
+&nbsp;&nbsp;&nbsp;&nbsp;and&nbsp;values&nbsp;are&nbsp;the&nbsp;frequencies&nbsp;with&nbsp;which&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;habit&nbsp;is&nbsp;performed<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;number&nbsp;which&nbsp;is&nbsp;the&nbsp;highest&nbsp;value</tt></dd></dl>
+
+<dl><dt><a name="Analytics-most_active_time"><strong>most_active_time</strong></a>(self, active_time_dict, max_value)</dt><dd><tt>Get&nbsp;the&nbsp;dictionary&nbsp;key(s)&nbsp;with&nbsp;the&nbsp;maximum&nbsp;value.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+active_time_dict&nbsp;:&nbsp;dict<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;dictionary&nbsp;whose&nbsp;keys&nbsp;are&nbsp;the&nbsp;parts&nbsp;of&nbsp;the&nbsp;day<br>
+&nbsp;&nbsp;&nbsp;&nbsp;and&nbsp;values&nbsp;are&nbsp;the&nbsp;frequencies&nbsp;with&nbsp;which&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;habit&nbsp;is&nbsp;performed<br>
+max_value&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;number&nbsp;which&nbsp;is&nbsp;the&nbsp;highest&nbsp;value&nbsp;of&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dictionary<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;of&nbsp;string(s)&nbsp;representing&nbsp;the&nbsp;part(s)&nbsp;of<br>
+&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;day&nbsp;when&nbsp;a&nbsp;habit&nbsp;is&nbsp;most&nbsp;frequently&nbsp;checked&nbsp;off<br>
+&nbsp;<br>
+Example<br>
+-------<br>
+{'Morning':4,&nbsp;'Evening':&nbsp;3,&nbsp;'Overnight':&nbsp;2}<br>
+&nbsp;<br>
+results&nbsp;in&nbsp;['Morning']</tt></dd></dl>
+
+<dl><dt><a name="Analytics-name_habit_longest_streak"><strong>name_habit_longest_streak</strong></a>(self, habit_info_longest_streak)</dt><dd><tt>Give&nbsp;the&nbsp;name(s)&nbsp;of&nbsp;the&nbsp;habit(s)&nbsp;with&nbsp;the&nbsp;longest&nbsp;streak<br>
+and&nbsp;the&nbsp;streak.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+habit_info_longest_streak&nbsp;:&nbsp;list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;with&nbsp;general&nbsp;information&nbsp;of&nbsp;the&nbsp;habit(s)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;that&nbsp;has(have)&nbsp;the&nbsp;maximum&nbsp;streak.<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;with&nbsp;the&nbsp;name&nbsp;and&nbsp;longest&nbsp;streak&nbsp;of<br>
+&nbsp;&nbsp;&nbsp;&nbsp;habit(s)&nbsp;with&nbsp;the&nbsp;longest&nbsp;streak<br>
+&nbsp;<br>
+Example<br>
+-------<br>
+[('Yoga',&nbsp;2),&nbsp;('Read',&nbsp;2),&nbsp;('Run',&nbsp;2)]</tt></dd></dl>
+
+<dl><dt><a name="Analytics-only_hours"><strong>only_hours</strong></a>(self, time)</dt><dd><tt>Get&nbsp;hours&nbsp;without&nbsp;minutes<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+time&nbsp;:&nbsp;list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;of&nbsp;times<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+iterator<br>
+&nbsp;&nbsp;&nbsp;&nbsp;numbers&nbsp;representing&nbsp;the&nbsp;hours</tt></dd></dl>
+
+<dl><dt><a name="Analytics-periodicity_info"><strong>periodicity_info</strong></a>(self, lists_periodicity, periodicity, col_date=5)</dt><dd><tt>A&nbsp;list&nbsp;containing&nbsp;information&nbsp;on&nbsp;each&nbsp;habit&nbsp;according<br>
+to&nbsp;its&nbsp;periodicity.&nbsp;ID&nbsp;and&nbsp;name&nbsp;of&nbsp;the&nbsp;habit,&nbsp;date&nbsp;of<br>
+the&nbsp;first&nbsp;and&nbsp;last&nbsp;tracking,&nbsp;part&nbsp;of&nbsp;the&nbsp;day&nbsp;when&nbsp;the<br>
+user&nbsp;is&nbsp;most&nbsp;active&nbsp;to&nbsp;perform&nbsp;this&nbsp;habit,&nbsp;days&nbsp;or&nbsp;weeks<br>
+of&nbsp;activity,&nbsp;and&nbsp;the&nbsp;longest&nbsp;streak.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+lists_periodicity&nbsp;:&nbsp;list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;of&nbsp;lists&nbsp;of&nbsp;habits&nbsp;with&nbsp;the&nbsp;same&nbsp;periodicity.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Each&nbsp;list&nbsp;has&nbsp;information&nbsp;of&nbsp;the&nbsp;habit&nbsp;and&nbsp;its&nbsp;trackings<br>
+periodicity&nbsp;:&nbsp;str<br>
+&nbsp;&nbsp;&nbsp;&nbsp;periodicity&nbsp;of&nbsp;the&nbsp;habit,&nbsp;'weekly'&nbsp;or&nbsp;'daily'<br>
+col_date&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;index&nbsp;number&nbsp;i.e.&nbsp;column&nbsp;containing&nbsp;dates<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(default&nbsp;is&nbsp;number&nbsp;5)<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;of&nbsp;tuples&nbsp;containing&nbsp;information&nbsp;on&nbsp;each&nbsp;habit<br>
+&nbsp;<br>
+Example<br>
+-------<br>
+[(1,&nbsp;'Yoga',&nbsp;'2021-03-18',&nbsp;'2021-04-17',&nbsp;'Evening',&nbsp;5,&nbsp;2),<br>
+&nbsp;(2,&nbsp;'Reading',&nbsp;'2021-03-19',&nbsp;'2021-04-25',&nbsp;'Afternoon',&nbsp;8,&nbsp;2)]</tt></dd></dl>
+
+<dl><dt><a name="Analytics-remove_habit"><strong>remove_habit</strong></a>(self, name)</dt><dd><tt>The&nbsp;habit&nbsp;is&nbsp;removed&nbsp;from&nbsp;the&nbsp;DB&nbsp;in&nbsp;the&nbsp;habit&nbsp;table&nbsp;along<br>
+with&nbsp;all&nbsp;trackings&nbsp;related&nbsp;to&nbsp;its&nbsp;id.</tt></dd></dl>
+
+<dl><dt><a name="Analytics-select_column"><strong>select_column</strong></a>(self, table, number_column)</dt><dd><tt>Select&nbsp;a&nbsp;column&nbsp;of&nbsp;the&nbsp;indicated&nbsp;table.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+table&nbsp;:&nbsp;list&nbsp;of&nbsp;tuples<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Name&nbsp;of&nbsp;the&nbsp;table<br>
+num_col&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Index&nbsp;number,&nbsp;i.e.&nbsp;column<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;with&nbsp;the&nbsp;selected&nbsp;column</tt></dd></dl>
+
+<dl><dt><a name="Analytics-select_columns"><strong>select_columns</strong></a>(self, table, start=0, stop=1)</dt><dd><tt>Select&nbsp;several&nbsp;columns&nbsp;of&nbsp;the&nbsp;indicated&nbsp;table.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+table&nbsp;:&nbsp;list&nbsp;of&nbsp;tuples<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Name&nbsp;of&nbsp;the&nbsp;table<br>
+start&nbsp;:&nbsp;int,&nbsp;optinal<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Number&nbsp;of&nbsp;the&nbsp;first&nbsp;index&nbsp;(inclusive),&nbsp;i.e.&nbsp;column<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(default&nbsp;is&nbsp;0)<br>
+stop&nbsp;:&nbsp;int,&nbsp;optional<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Number&nbsp;of&nbsp;the&nbsp;last&nbsp;index&nbsp;(exclusive),&nbsp;i.e.&nbsp;column<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(default&nbsp;is&nbsp;1)<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;of&nbsp;tuples&nbsp;with&nbsp;selected&nbsp;columns</tt></dd></dl>
+
+<dl><dt><a name="Analytics-select_rows"><strong>select_rows</strong></a>(self, table, number_column, feature)</dt><dd><tt>Select&nbsp;all&nbsp;rows&nbsp;with&nbsp;the&nbsp;same&nbsp;feature.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+table&nbsp;:&nbsp;list&nbsp;of&nbsp;tuples<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Name&nbsp;of&nbsp;the&nbsp;table<br>
+number_column&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Index&nbsp;number,&nbsp;column&nbsp;where&nbsp;the&nbsp;criterion<br>
+&nbsp;&nbsp;&nbsp;&nbsp;will&nbsp;be&nbsp;searched<br>
+feature&nbsp;:&nbsp;int,&nbsp;str<br>
+&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;criteria&nbsp;used&nbsp;for&nbsp;selection<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;of&nbsp;tuples&nbsp;with&nbsp;all&nbsp;rows&nbsp;that<br>
+&nbsp;&nbsp;&nbsp;&nbsp;satisfy&nbsp;the&nbsp;condition</tt></dd></dl>
+
+<dl><dt><a name="Analytics-sort_hours"><strong>sort_hours</strong></a>(self, hours)</dt><dd><tt>Each&nbsp;hour&nbsp;is&nbsp;renamed&nbsp;according&nbsp;to&nbsp;the&nbsp;part&nbsp;of&nbsp;the<br>
+day&nbsp;it&nbsp;corresponds&nbsp;to&nbsp;(Morning,&nbsp;Afternoon,&nbsp;Evening<br>
+or&nbsp;Overnight).<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+hours&nbsp;:&nbsp;list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;of&nbsp;numbers&nbsp;representing&nbsp;the&nbsp;hours<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+iterator<br>
+&nbsp;&nbsp;&nbsp;&nbsp;parts&nbsp;of&nbsp;the&nbsp;day&nbsp;in&nbsp;strings<br>
+&nbsp;<br>
+Example<br>
+-------<br>
+[3,&nbsp;18,&nbsp;19,&nbsp;2]&nbsp;results&nbsp;in<br>
+&nbsp;<br>
+['Overnight',&nbsp;'Evening',&nbsp;'Evening',&nbsp;'Overnight']</tt></dd></dl>
+
+<dl><dt><a name="Analytics-start_habit"><strong>start_habit</strong></a>(self, habits_trackings_table, col_date=5)</dt><dd><tt>The&nbsp;earliest&nbsp;date&nbsp;from&nbsp;a&nbsp;column&nbsp;of&nbsp;dates.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+habits_trackings_table&nbsp;:&nbsp;list&nbsp;of&nbsp;tuples<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;with&nbsp;the&nbsp;information&nbsp;of&nbsp;the&nbsp;habits&nbsp;and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;its&nbsp;trackings<br>
+col_date&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;index&nbsp;number&nbsp;i.e.&nbsp;column&nbsp;containing&nbsp;the&nbsp;dates<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(default&nbsp;is&nbsp;number&nbsp;5)<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+datetime.date<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;earliest&nbsp;date</tt></dd></dl>
+
+<dl><dt><a name="Analytics-streaks"><strong>streaks</strong></a>(self, grouping_differences)</dt><dd><tt>Count&nbsp;the&nbsp;number&nbsp;of&nbsp;items&nbsp;contained&nbsp;in&nbsp;the&nbsp;group<br>
+if&nbsp;the&nbsp;key&nbsp;is&nbsp;the&nbsp;number&nbsp;one.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+grouping_differences&nbsp;:&nbsp;list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;of&nbsp;keys&nbsp;and&nbsp;groups<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;of&nbsp;numbers<br>
+&nbsp;<br>
+Example<br>
+-------<br>
+[[1,&nbsp;[1,&nbsp;1,&nbsp;1]],&nbsp;[2,&nbsp;[2]],&nbsp;[1,&nbsp;[1,&nbsp;1]],&nbsp;[2,&nbsp;[2,&nbsp;2]]]<br>
+&nbsp;<br>
+results&nbsp;in&nbsp;[3,&nbsp;2]</tt></dd></dl>
+
+<dl><dt><a name="Analytics-table_line"><strong>table_line</strong></a>(self, table)</dt><dd><tt>Adjust&nbsp;the&nbsp;length&nbsp;of&nbsp;the&nbsp;line&nbsp;in&nbsp;relation&nbsp;to<br>
+the&nbsp;data&nbsp;in&nbsp;the&nbsp;table.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+table&nbsp;:&nbsp;list&nbsp;of&nbsp;tuples<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;of&nbsp;the&nbsp;table<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+str<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;line&nbsp;with&nbsp;the&nbsp;right&nbsp;length</tt></dd></dl>
+
+<dl><dt><a name="Analytics-table_registered_habits"><strong>table_registered_habits</strong></a>(self)</dt><dd><tt>Display&nbsp;the&nbsp;names&nbsp;and&nbsp;ids&nbsp;of&nbsp;the&nbsp;registered&nbsp;habits<br>
+in&nbsp;table&nbsp;format.&nbsp;The&nbsp;table&nbsp;has&nbsp;a&nbsp;title&nbsp;and&nbsp;the&nbsp;name<br>
+of&nbsp;the&nbsp;columns.</tt></dd></dl>
+
+<dl><dt><a name="Analytics-to_calender_week"><strong>to_calender_week</strong></a>(self, dates)</dt><dd><tt>Give&nbsp;the&nbsp;calendar&nbsp;week&nbsp;number&nbsp;for&nbsp;each&nbsp;date.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+dates&nbsp;:&nbsp;list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;of&nbsp;dates<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+iterator<br>
+&nbsp;&nbsp;&nbsp;&nbsp;calendar&nbsp;week&nbsp;numbers</tt></dd></dl>
+
+<dl><dt><a name="Analytics-trackings_table"><strong>trackings_table</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;date&nbsp;and&nbsp;time&nbsp;when&nbsp;the&nbsp;trackings&nbsp;were<br>
+registered,&nbsp;as&nbsp;well&nbsp;as&nbsp;to&nbsp;which&nbsp;habit-id&nbsp;they&nbsp;correspond.<br>
+&nbsp;<br>
+Example<br>
+-------<br>
+[(1,&nbsp;'2021-02-01',&nbsp;'19:52'),&nbsp;(2,&nbsp;'2021-02-03',&nbsp;'02:42')]</tt></dd></dl>
+
+<dl><dt><a name="Analytics-unique_data"><strong>unique_data</strong></a>(self, my_list)</dt><dd><tt>Give&nbsp;unique&nbsp;values&nbsp;from&nbsp;a&nbsp;list&nbsp;of&nbsp;data.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+my_list&nbsp;:&nbsp;list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;list&nbsp;tha&nbsp;contains&nbsp;duplicate&nbsp;elements<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;of&nbsp;unique&nbsp;elements</tt></dd></dl>
+
+<dl><dt><a name="Analytics-unique_ids_periodicity"><strong>unique_ids_periodicity</strong></a>(self, table, col_periodicity, periodicity)</dt><dd><tt>Get&nbsp;the&nbsp;ids&nbsp;of&nbsp;the&nbsp;habits&nbsp;with&nbsp;the&nbsp;same&nbsp;periodicity.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+table&nbsp;:&nbsp;list&nbsp;of&nbsp;tuples<br>
+&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;of&nbsp;the&nbsp;table<br>
+col_periodicity&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;index&nbsp;number&nbsp;i.e.&nbsp;column&nbsp;containing&nbsp;the&nbsp;periodicity<br>
+periodicity&nbsp;:&nbsp;str<br>
+&nbsp;&nbsp;&nbsp;&nbsp;periodicity&nbsp;of&nbsp;the&nbsp;habit,&nbsp;'weekly'&nbsp;or&nbsp;'daily'<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;of&nbsp;numbers&nbsp;representing&nbsp;ids</tt></dd></dl>
+
+<dl><dt><a name="Analytics-zipping_unique_data"><strong>zipping_unique_data</strong></a>(self, data)</dt><dd><tt>A&nbsp;list&nbsp;is&nbsp;sliced&nbsp;into&nbsp;one&nbsp;list&nbsp;without&nbsp;the&nbsp;first&nbsp;element<br>
+and&nbsp;into&nbsp;another&nbsp;list&nbsp;without&nbsp;the&nbsp;last&nbsp;element.<br>
+The&nbsp;first&nbsp;elements&nbsp;of&nbsp;each&nbsp;list&nbsp;are&nbsp;matched&nbsp;in&nbsp;a&nbsp;tuple,<br>
+then&nbsp;the&nbsp;second&nbsp;and&nbsp;so&nbsp;on.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+data&nbsp;:&nbsp;list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;of&nbsp;dates&nbsp;or&nbsp;numbers<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+iterator<br>
+&nbsp;&nbsp;&nbsp;&nbsp;pairs&nbsp;of&nbsp;numbers&nbsp;or&nbsp;dates<br>
+&nbsp;<br>
+Example<br>
+-------<br>
+[52,&nbsp;1,&nbsp;2,&nbsp;3,&nbsp;5]&nbsp;has&nbsp;the&nbsp;following&nbsp;result<br>
+&nbsp;<br>
+[(1,&nbsp;52),&nbsp;(2,&nbsp;1),&nbsp;(3,&nbsp;2),&nbsp;(5,&nbsp;3)]</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-reduce"><strong>reduce</strong></a>(...)</dt><dd><tt><a href="#-reduce">reduce</a>(function,&nbsp;sequence[,&nbsp;initial])&nbsp;-&gt;&nbsp;value<br>
+&nbsp;<br>
+Apply&nbsp;a&nbsp;function&nbsp;of&nbsp;two&nbsp;arguments&nbsp;cumulatively&nbsp;to&nbsp;the&nbsp;items&nbsp;of&nbsp;a&nbsp;sequence,<br>
+from&nbsp;left&nbsp;to&nbsp;right,&nbsp;so&nbsp;as&nbsp;to&nbsp;reduce&nbsp;the&nbsp;sequence&nbsp;to&nbsp;a&nbsp;single&nbsp;value.<br>
+For&nbsp;example,&nbsp;<a href="#-reduce">reduce</a>(lambda&nbsp;x,&nbsp;y:&nbsp;x+y,&nbsp;[1,&nbsp;2,&nbsp;3,&nbsp;4,&nbsp;5])&nbsp;calculates<br>
+((((1+2)+3)+4)+5).&nbsp;&nbsp;If&nbsp;initial&nbsp;is&nbsp;present,&nbsp;it&nbsp;is&nbsp;placed&nbsp;before&nbsp;the&nbsp;items<br>
+of&nbsp;the&nbsp;sequence&nbsp;in&nbsp;the&nbsp;calculation,&nbsp;and&nbsp;serves&nbsp;as&nbsp;a&nbsp;default&nbsp;when&nbsp;the<br>
+sequence&nbsp;is&nbsp;empty.</tt></dd></dl>
+</td></tr></table>
+</body></html>
