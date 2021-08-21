@@ -13,8 +13,11 @@ The Habitsbox Application allows users to create and track their daily and weekl
 * [](#)
 
 ## Screenshots
-**First habit**
-![First habit](./Habitsbox_app/images/first_habit.png)
+![Analytics](./Habitsbox_app/images/screenshoot1.png)
+![Analytics](./Habitsbox_app/images/screenshoot2.png)
+![Analytics](./Habitsbox_app/images/screenshoot3.png)
+
+
 
 ## Features
 
