@@ -5,14 +5,22 @@
 The Habitsbox Application allows users to create and track their daily and weekly habits by recording the time and date they are marked as done. It provides an analysis of the recorded habits.
 
 ## Table of contents
+* [Screenshots](#Screenshots)
+* [Features](#Features)
 * [Prerequisites](#Prerequisites)
+* [Dependencies](#Dependencies)
 * [Installation](#Installation)
-* [Setup](#setup)
+* [](#)
+
+## Screenshots
+**First habit**
+![First image](./Habitsbox_app/images/first_habit.png)
+
+## Features
 
 ## Prerequisites
-
-**Dependencies**  
-* Python version 3.7
+* Python version 3.7  
+## Dependencies  
 * PyInputPlus
 
 ## Installation
@@ -39,12 +47,23 @@ On macOS and Linux
 pip3 install pyinputplus
 ```
 
-**Step 3: Install dependencies**  
+**Step 4: Run the application**  
 
-
+1. Navigate to the directory ``Application``
+```
+cd Application\Habitsbox_app
+```
+2. Run
+```
+python menu.py
 ```
 
-```
+3. Result image  
+
+The Habitsbox application includes five predefined habits. Three of them are daily and two are weekly. Each habit has tracking data for a four-week period.
+
+
+![First image](./Habitsbox_app/images/five_habits.png)
 
 
 
