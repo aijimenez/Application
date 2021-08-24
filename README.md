@@ -17,9 +17,9 @@ The Habitsbox Application allows users to create and track their daily and weekl
 ![Analytics](./Habitsbox_app/images/screenshoot2.png)
 ![Analytics](./Habitsbox_app/images/screenshoot3.png)
 
-
-
 ## Features
+
+
 
 ## Prerequisites
 * Python version 3.7  

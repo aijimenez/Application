@@ -296,7 +296,7 @@ class Menu:
         print("""
                             CHECK A HABIT OFF
             ________________________________________________
-                            Time to improve!!
+                Check a habit off once you have done it
             ------------------------------------------------
             """)
 
@@ -308,7 +308,8 @@ class Menu:
         while True:
             print(
                 """
-                 Which habit do you want to check-off?"""
+                Which habit do you want to check-off?
+                """
                 )
             # display a table with all the registered habits
             self.analytics.table_registered_habits()
@@ -506,7 +507,7 @@ class Menu:
                         # The date of the last tracking
                         self.analytics.last_day(one_habit_trackings_info),
                         # Parts of the day separated by commas
-                        self.analytics.display_elements(most_active_time)
+                        self.analytics.display_elements(most_active_time, ', ')
                         )
                             )
                             if periodicity == 'daily':
