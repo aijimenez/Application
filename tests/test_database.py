@@ -5,7 +5,7 @@ the same periodicity and the longest streak of all habits are
 tested using the five predetermined habits in the database.
 """
 from datetime import date
-from application.analytics import Analytics
+from Habitsbox_app.application.analytics import Analytics
 
 analytics = Analytics()
 

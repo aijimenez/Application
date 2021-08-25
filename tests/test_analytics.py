@@ -3,7 +3,7 @@ Analytics module functions are tested using
 different data sets.
 """
 from datetime import timedelta, date, time
-from application.analytics import Analytics
+from Habitsbox_app.application.analytics import Analytics
 
 analytics = Analytics()
 

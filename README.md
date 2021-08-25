@@ -10,16 +10,28 @@ The Habitsbox Application allows users to create and track their daily and weekl
 * [Prerequisites](#Prerequisites)
 * [Dependencies](#Dependencies)
 * [Installation](#Installation)
+* [Documentation](#Documentation)
+* [Testing](#Testing)
+* [Links](#Links)
 * [](#)
 
 ## Screenshots
-![Analytics](./Habitsbox_app/images/screenshoot1.png)
-![Analytics](./Habitsbox_app/images/screenshoot2.png)
-![Analytics](./Habitsbox_app/images/screenshoot3.png)
+![Analytics](./images/screenshoot1.png)
+![Analytics](./images/screenshoot2.png)
+![Analytics](./images/screenshoot3.png)
 
 ## Features
 
-
+* Creation and deletation of habits
+* Two different periodicities; daily and weekly
+* Individual habit information
+* Information on habits by periodicity
+* A list of all registered habits
+* 
+* Counting days or weeks of activity according to periodicity
+* Longest streak for each tracked habit
+* Longest streak of all habits
+* Part of the day when the habit is performed most of the time
 
 ## Prerequisites
 * Python version 3.7  
@@ -66,9 +78,35 @@ python menu.py
 The Habitsbox application includes five predefined habits. Three of them are daily and two are weekly. Each habit has tracking data for a four-week period.
 
 
-![First image](./Habitsbox_app/images/five_habits.png)
+![First image](./images/five_habits.png)
 
+## Documentation
 
+## Testing
 
+**Step 1: Install Pytest**
+
+Use ``pip`` to install PyInputPlus
+```
+pip install 
+```
+On macOS and Linux
+```
+pip3 install 
+```
+**Step 2: Run the tests**   
+
+1. Navigate to the directory ``Application``
+```
+cd Application
+```
+If you already run the application and you are in ``Habitsbox_app`` directory, go back to the ``Application`` directory
+
+```
+cd ..
+```
+2. Run the tests
+```
+pytest
+```
 ## Links
-
