@@ -47,7 +47,7 @@ class Menu:
                     WELCOME TO YOUR HABITSBOX
             ________________________________________
 
-                   Everything can be archived
+                   Everything can be achieved
                 with perseverance and commitment
 
             ---------- Let's get started -----------
@@ -187,7 +187,7 @@ class Menu:
         while True:
             try:
                 name_to_check = input("""
-            Write the name of the habit you want to add """).title()
+            Write the name of the habit you want to add: """).title()
 
                 if name_to_check not in habits_names:
                     if name_to_check == '':
@@ -368,7 +368,7 @@ class Menu:
         while True:
             name = input("""
             Which habit do you want to delete?
-            Please, write just the NAME """).title()
+            Please, write just the NAME: """).title()
             if name.isdigit():
                 if int(name) == 0:
                     # back to the main menu
@@ -597,17 +597,43 @@ class Menu:
                           ALL HABITS REGISTERED
             ________________________________________________
             """)
-        # Displays the information contained in the habits table in table format
-        self.analytics.display_table(
-            ('ID', 'HABIT', 'PERIODICITY', 'MOTIVATION', 'DESCRIPTION', 'CREATION DAY'),
-            # Gets the habits table of the DB
-            self.analytics.habits_table(),
-            'HABITS INFORMATION'
-            )
+
+        self.all_tracked_habits()
+        
+        self.habits_without_trackings(self.analytics.habits_table(),
+                                      self.analytics.ids_without_trackings(
+                                          self.analytics.habits_table(), 
+                                          self.analytics.habits_trackings_table()))
         print('')
         # Return to the main menu by selecting the number zero
         self.return_menu()
-
+        
+    def habits_without_trackings(self, habits_table, ids_without_trackings):
+        self.analytics.display_table(
+            ('ID', 'HABIT', 'PERIODICITY', 'MOTIVATION', 'DESCRIPTION', 'CREATION DAY'),
+            self.analytics.habits_without_trackings(habits_table, 
+                                                    ids_without_trackings),
+            'UN-TRACKED HABITS')
+        
+    def all_tracked_habits(self):
+        """
+        Gives a table with information about all tracked habits.
+        ID and name of the habit, periodicity, motivation, description,
+        and the day it was first recorded.
+        """
+        # Displays informationo of tracked habits contained in the habits table in table format
+        self.analytics.display_table(
+            ('ID', 'HABIT', 'PERIODICITY', 'MOTIVATION', 'DESCRIPTION', 'CREATION DAY'),
+            # Gets all the tracked habits
+            self.analytics.tracked_habits(
+                # Gets the habits table of the DB
+                self.analytics.habits_table(),
+                # Join of the habits table and the trackings table from the DB
+                self.analytics.habits_trackings_table()),
+            'TRACKED HABITS'
+            )
+        print('')
+        
     def habits_same_periodicity(self):
         """
         Displays information about all habits that have the same
@@ -627,9 +653,7 @@ class Menu:
                     HABITS WITH THE SAME PERIODICITY
             ________________________________________________
             """)
-        # Join of the habits table and the trackings table from the DB
-        habits_trackings = self.analytics.habits_trackings_table()
-
+        
         while True:
             print("""
                   What periodicity would you like to see?
@@ -654,22 +678,17 @@ class Menu:
 
         # Clean up the console
         self.clear_console()
+        # Join of the habits table and the trackings table from the DB
+        # Select all rows that have the same periodicity from the join of the  table
+        habits_trackings_periodicity = self.analytics.select_rows(
+            self.analytics.habits_trackings_table(),
+            2,
+            periodicity)
         # Select all rows that have the same periodicity from the habits table
         habits_table_periodicity = self.analytics.select_rows(
              self.analytics.habits_table(),
              2,
              periodicity)
-        # IDs of habits with same periodicity from the join of habits and trackings tables
-        unique_ids_trackings_periodicity = self.analytics.unique_ids_periodicity(
-            habits_trackings,
-            2,
-            periodicity)
-        # Gives a list of habits with the same periodicity. Information and
-        # trackings for each habit are grouped together in a list.
-        habits_trackings_periodicity = self.analytics.lists_periodicity(
-            habits_trackings,
-            2,
-            periodicity)
 
         if len(habits_table_periodicity) == 0:
             print("""
@@ -683,62 +702,59 @@ class Menu:
                                     self.habits_same_periodicity)
 
         elif len(habits_table_periodicity) != 0:
-            # IDs of habits with same periodicity
-            ids_habits_table = self.analytics.get_all_ids(habits_table_periodicity)
+            print("""
+                  ________________________________________________
+                                   {} PERIODICITY
+                  ________________________________________________
+                      """.format(periodicity.upper()))
             # IDs of habits without trackings
-            ids_without_trackings = list(
-                set(ids_habits_table)-set(unique_ids_trackings_periodicity)
-                )
+            ids_without_trackings = self.analytics.ids_without_trackings(habits_table_periodicity, 
+                                                                         habits_trackings_periodicity)
             # IDs of habits that have trackings
-            ids_with_trackings = list(set(ids_habits_table)-set(ids_without_trackings))
+            ids_with_trackings = self.analytics.ids_with_trackings(habits_table_periodicity, 
+                                                                   ids_without_trackings)
+            
             if len(ids_with_trackings) != 0:
+                # trackings for each habit are grouped together in a list.
+                habits_trackings_grouped = self.analytics.lists_periodicity(
+                    self.analytics.habits_trackings_table(),
+                    2,
+                    periodicity)
                 # A list with information on habits with the same periodicity and
                 # with trackings
                 table_periodicity = self.analytics.periodicity_info(
-                    habits_trackings_periodicity,
+                    habits_trackings_grouped,
                     periodicity
                     )
                 col_names = ('ID',
-                             'HABIT',
-                             'FIST TRACKING',
-                             'LAST TRACKING',
-                             'MOST ACTIVE TIME',
-                             'ACTIVITY DAYS',
-                             'LONGEST STREAK')
+                              'HABIT',
+                              'FIST TRACKING',
+                              'LAST TRACKING',
+                              'MOST ACTIVE TIME',
+                              'ACTIVITY DAYS',
+                              'LONGEST STREAK')
 
                 if periodicity == 'weekly':
                     col_names = ('ID',
-                                 'HABIT',
-                                 'FIST TRACKING',
-                                 'LAST TRACKING',
-                                 'MOST ACTIVE TIME',
-                                 'ACTIVITY WEEKS',
-                                 'LONGEST STREAK')
+                                  'HABIT',
+                                  'FIST TRACKING',
+                                  'LAST TRACKING',
+                                  'MOST ACTIVE TIME',
+                                  'ACTIVITY WEEKS',
+                                  'LONGEST STREAK')
 
                 # Habits with same periodicity and with trackings in tabular form
                 self.analytics.display_table(col_names,
                                             table_periodicity,
-                                            periodicity.upper() +
-                                            ' PERIODICITY')
+                                            'TRACKED HABITS')
             if len(ids_without_trackings) != 0:
-                # A list with information of habits with the same periodicity and
-                # without trackings
-                habits_without_trackings = [
-                    self.analytics.select_rows(habits_table_periodicity, 0, id_n)[0]
-                                            for id_n in ids_without_trackings]
-
                 # Habits with same periodicity and without trackings in tabular form
-                self.analytics.display_table(
-                    ('ID', 'HABIT', 'PERIODICITY', 'MOTIVATION', 'DESCRIPTION', 'CREATION DAY'),
-                    habits_without_trackings,
-                    periodicity.upper() +
-                    ' PERIODICITY: '+
-                    ' Habits without trackings')
+                self.habits_without_trackings(habits_table_periodicity, 
+                                              ids_without_trackings)
 
         # Return to the main menu or see other periodicity
         self.choice_stay_return('See other periodicity',
                                 self.habits_same_periodicity)
-
 
     def habit_longest_streak(self):
         """

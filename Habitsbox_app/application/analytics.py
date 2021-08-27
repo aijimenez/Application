@@ -182,6 +182,57 @@ class Analytics:
             a list of numbers representing habit ids
         """
         return list(self.select_column(table, 0))
+    
+    def unique_ids(self, table):
+        """
+        Unique ids of a table
+        """
+        return self.unique_data(
+            self.get_all_ids(
+                table))
+    
+    # def ids_with_trackings(self, habits_trackings_table):
+    #     """
+    #     All habit ids that have trackings.
+        
+    #     Parameters
+    #     ----------
+    #     habits_trackings_table : list of tuples
+    #         a list with the information of the habits and
+    #         its trackings
+            
+    #     Returns
+    #     -------
+    #     list
+    #         a list of numbers representing habit ids with
+    #         trackings
+    #     """
+    #     return self.unique_ids(habits_trackings_table)
+    
+    def ids_without_trackings(self, habits_table, habits_trackings_table):
+        """
+        All habit ids that have no trackings.
+        
+        Parameters
+        ----------
+        habits_table : list of tuples
+            a list with the information of the registered habits
+        ids_with_trackings
+            
+        Returns
+        -------
+        list
+            a list of numbers representing habit ids without
+            trackings
+        """
+        return list(
+                set(self.unique_ids(habits_table))-set(self.unique_ids(habits_trackings_table))
+                )
+    
+    def ids_with_trackings(self, habits_table, ids_without_trackings):
+        """
+        """
+        return list(set(self.unique_ids(habits_table))-set(ids_without_trackings))
 
     def select_rows(self, table, number_column, feature):
         """
@@ -774,21 +825,17 @@ class Analytics:
         list
             a list of numbers representing ids
         """
-        return self.unique_data(
-            self.get_all_ids(
-                self.select_rows(table, col_periodicity, periodicity)
-                )
-            )
+        return self.unique_ids(
+            self.select_rows(table, col_periodicity, periodicity))
 
-    def list_habits_list(self,habits_trackings_table, unique_ids):
+    def list_habits_list(self,table, unique_ids):
         """
         Give a list of lists of habits grouped by id.
 
         Parameters
         ----------
-        habits_trackings_table : list of tuples
-            a list with the information of the habits and
-            its trackings
+        table : list of tuples
+            name of the table
         unique_ids : list
             a list of numbers representing ids
 
@@ -797,7 +844,7 @@ class Analytics:
         list
             Habits are grouped by id
         """
-        return [self.select_rows(habits_trackings_table, 0, id_n) for id_n in unique_ids]
+        return [self.select_rows(table, 0, id_n) for id_n in unique_ids]
 
     def lists_periodicity(self, table, col_periodicity, periodicity):
         """
@@ -973,6 +1020,25 @@ class Analytics:
          ('3', 'Read', '2021-08-03', '2021-08-03', 'Afternoon', 1, 1)]
         """
         return [habit for l in both_periodicities_info for habit in l]
+    
+    def tracked_habits(self, habits_table, habits_trackings_table):
+        """
+        
+        """
+        # Get all unique ids of the habits_trackings table
+        #unique_ids= self.analytics.unique_data(self.analytics.get_all_ids(habits_trackings))
+        #unique_ids= self.analytics.unique_ids(habits_trackings_table)
+        
+        return self.info_all_habits(
+            self.list_habits_list(habits_table, self.unique_ids(habits_trackings_table))
+            )
+    
+    def habits_without_trackings(self, habits_table, ids_without_trackings):
+        """
+        
+        """
+        return [self.select_rows(habits_table, 0, id_n)[0]
+                for id_n in ids_without_trackings]
 
     def habit_info_longest_streak(self, habits_trackings_table):
         """

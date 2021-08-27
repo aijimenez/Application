@@ -16,18 +16,18 @@ The Habitsbox Application allows users to create and track their daily and weekl
 * [](#)
 
 ## Screenshots
+![Analytics](./images/welcome.png)
 ![Analytics](./images/screenshoot1.png)
 ![Analytics](./images/screenshoot2.png)
 ![Analytics](./images/screenshoot3.png)
 
 ## Features
 
-* Creation and deletation of habits
+* Creation and deletion of habits
 * Two different periodicities; daily and weekly
 * Individual habit information
+* Information on all recorded habits divided by tracked und untracked habits
 * Information on habits by periodicity
-* A list of all registered habits
-* 
 * Counting days or weeks of activity according to periodicity
 * Longest streak for each tracked habit
 * Longest streak of all habits

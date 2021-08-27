@@ -79,7 +79,7 @@ def test_get_trackings_table():
                                (4, '2021-07-24', '19:10'), (4, '2021-07-25', '02:18'),
                                (4, '2021-07-26', '09:53'), (5, '2021-07-26', '16:59')]
 
-def test_get_habist_trackings_table():
+def test_get_habits_trackings_table():
     """
     Get the join of the habits and trackings tables
     in the database.
@@ -382,6 +382,9 @@ def test_all_habits_registered():
         (4, 'Meditation', 'daily', 'Training awareness', '20 minutes', '2021-06-29'),
         (5, 'Learn French', 'weekly', 'Fluent in french', 'Practice the 4 skills', '2021-06-29')
         ]
+
+def test_tracked_habits():
+    pass
 
 def test_habits_info_same_periodicity():
     """
