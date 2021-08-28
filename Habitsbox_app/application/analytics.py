@@ -1,6 +1,6 @@
 """
-This module contains methods that analyse the data
-of the habits and trackings that the user has saved.
+This module contains methods that analyse the recorded
+habits and their trackings.
 It also contains methods that have a connection to
 the database.
 """
@@ -88,6 +88,11 @@ class Analytics:
         Return all the habits with its information contained in
         the table habits in the DB. ID and name of the habit,
         periodicity, motivation, description, and the day it was recorded.
+        
+        Returns
+        -------
+        list
+            a list of tuples with the information of the registered habits
 
         Example
         -------
@@ -102,6 +107,11 @@ class Analytics:
         Return the date and time when the trackings were
         registered, as well as to which habit-id they correspond.
 
+        Returns
+        -------
+        list
+            a list of tuples with the habit id, date and time
+            
         Example
         -------
         [(1, '2021-02-01', '19:52'), (2, '2021-02-03', '02:42')]
@@ -115,6 +125,11 @@ class Analytics:
         Join the habits table and the trackings table using the
         id of the habit.
 
+        Returns
+        -------
+        list
+            a list of tuples of the join of the habits and trackings table
+            
         Example
         -------
         [(1, 'Yoga', 'daily', 'Be more flexible', 'Mornings', '2021-06-21', '09:06'),
@@ -135,7 +150,7 @@ class Analytics:
         ----------
         table : list of tuples
             Name of the table
-        num_col : int
+        number_column : int
             Index number, i.e. column
 
         Returns
@@ -182,43 +197,37 @@ class Analytics:
             a list of numbers representing habit ids
         """
         return list(self.select_column(table, 0))
-    
+
     def unique_ids(self, table):
         """
         Unique ids of a table
+
+        Parameters
+        ----------
+        table: list of tuples
+            Name of the table
+
+        Returns
+        -------
+        list
+            a list of numbers representing unique ids
         """
         return self.unique_data(
             self.get_all_ids(
                 table))
-    
-    # def ids_with_trackings(self, habits_trackings_table):
-    #     """
-    #     All habit ids that have trackings.
-        
-    #     Parameters
-    #     ----------
-    #     habits_trackings_table : list of tuples
-    #         a list with the information of the habits and
-    #         its trackings
-            
-    #     Returns
-    #     -------
-    #     list
-    #         a list of numbers representing habit ids with
-    #         trackings
-    #     """
-    #     return self.unique_ids(habits_trackings_table)
-    
+
     def ids_without_trackings(self, habits_table, habits_trackings_table):
         """
         All habit ids that have no trackings.
-        
+
         Parameters
         ----------
         habits_table : list of tuples
             a list with the information of the registered habits
-        ids_with_trackings
-            
+        habits_trackings_table : list of tuples
+            a list with the information of the habits and
+            its trackings
+
         Returns
         -------
         list
@@ -228,9 +237,22 @@ class Analytics:
         return list(
                 set(self.unique_ids(habits_table))-set(self.unique_ids(habits_trackings_table))
                 )
-    
+
     def ids_with_trackings(self, habits_table, ids_without_trackings):
         """
+        All habit ids that have trackings.
+
+        Parameters
+        ----------
+        habits_table : list of tuples
+            a list with the information of the registered habits
+        ids_without_trackings : list
+            a list of habit ids without trackings
+
+        Returns
+        -------
+        list
+            a list of numbers representing habit ids trackings
         """
         return list(set(self.unique_ids(habits_table))-set(ids_without_trackings))
 
@@ -281,7 +303,7 @@ class Analytics:
         Parameters
         ----------
         my_list : list
-            A list tha contains duplicate elements
+            A list that contains duplicate elements
 
         Returns
         -------
@@ -529,7 +551,7 @@ class Analytics:
             its trackings
         periodicity : str
             periodicity of the habit, 'weekly' or 'daily'
-        col_date : int
+        col_date : int, optional
             index number i.e. column containing the dates
             (default is number 5)
 
@@ -577,7 +599,7 @@ class Analytics:
         habits_trackings_table : list of tuples
             a list with the information of the habits and
             its trackings
-        col_date : int
+        col_date : int, optional
             index number i.e. column containing the dates
             (default is number 5)
 
@@ -604,9 +626,9 @@ class Analytics:
         habits_trackings_table : list of tuples
             a list with the information of the habits and
             its trackings
-        col_date : int
+        col_date : int, optional
             index number i.e. column containing the dates
-            ((default is number 5))
+            (default is number 5)
 
         Returns
         -------
@@ -635,7 +657,7 @@ class Analytics:
         trackings : list of tuples
             a list with the information of the trackings
             registered for a certain habit
-        col_date : int
+        col_date : int, optional
             index number i.e. column containing the dates
             (default is number 5)
 
@@ -739,7 +761,7 @@ class Analytics:
         trackings : list of tuples
             a list with the information of the trackings
             registered for a certain habit
-        col_time : int
+        col_time : int, optional
             index number i.e. column containing the times
             (default is number 6)
 
@@ -895,7 +917,7 @@ class Analytics:
             Each list has information of the habit and its trackings
         periodicity : str
             periodicity of the habit, 'weekly' or 'daily'
-        col_date : int
+        col_date : int, optional
             index number i.e. column containing dates
             (default is number 5)
 
@@ -1020,22 +1042,46 @@ class Analytics:
          ('3', 'Read', '2021-08-03', '2021-08-03', 'Afternoon', 1, 1)]
         """
         return [habit for l in both_periodicities_info for habit in l]
-    
+
     def tracked_habits(self, habits_table, habits_trackings_table):
         """
-        
+        Habits with trackings and their information from
+        the habits table of the DB.
+
+        Parameters
+        ----------
+        habits_table : list of tuples
+            a list with the information of the registered habits
+        habits_trackings_table : list of tuples
+            a list with the information of the habits and
+            its trackings
+
+        Returns
+        -------
+        list
+            a list of tuples of tracked habit information
         """
-        # Get all unique ids of the habits_trackings table
-        #unique_ids= self.analytics.unique_data(self.analytics.get_all_ids(habits_trackings))
-        #unique_ids= self.analytics.unique_ids(habits_trackings_table)
-        
         return self.info_all_habits(
-            self.list_habits_list(habits_table, self.unique_ids(habits_trackings_table))
+            self.list_habits_list(habits_table,
+                                  self.unique_ids(habits_trackings_table))
             )
-    
+
     def habits_without_trackings(self, habits_table, ids_without_trackings):
         """
-        
+        Untracked habits and their information from the habits table
+        of the DB.
+
+        Parameters
+        ----------
+        habits_table : list of tuples
+            a list with the information of the registered habits
+        ids_without_trackings : list
+            habit ids that have no trackings
+
+        Returns
+        -------
+        list
+            a list of tuples of untracked habits and their information
         """
         return [self.select_rows(habits_table, 0, id_n)[0]
                 for id_n in ids_without_trackings]
@@ -1141,9 +1187,7 @@ class Analytics:
 
         Example
         -------
-        [[1, 4, 5, 16, 25, 10],
-         [1, 4, 5, 20, 10, 10],
-         [1, 3, 6, 9, 11, 10]]
+        [[1, 4, 5, 16, 25, 10], [1, 4, 5, 20, 10, 10], [1, 3, 6, 9, 11, 10]]
 
         Results in [1, 4, 6, 20, 25, 10].
         """
@@ -1276,22 +1320,15 @@ class Analytics:
                 data_colnames)))
         print(self.table_line(data_colnames))
 
-    def table_registered_habits(self):
-        """
-        Display the names and ids of the registered habits
-        in table format. The table has a title and the name
-        of the columns.
-        """
-        self.display_table(
-            ('ID', 'HABIT'),
-            list(self.select_columns(
-                self.habits_table(),
-                stop=2)), 'YOUR HABIT(S)')
-
     def remove_habit(self, name):
         """
         The habit is removed from the DB in the habit table along
         with all trackings related to its id.
+
+        Parameters
+        ----------
+        name : str
+            Name of the habit
         """
         with self.connection:
             self.cursor.execute("SELECT HabitID FROM habits WHERE Name=:name",
@@ -1305,8 +1342,13 @@ class Analytics:
     def insert_day(self, id_habit):
         """
         Register in the trackings table the day and time
-        when the user checks a habit off, i.e. chooses
+        when the user checks a habit off, by choosing
         the id of the habit.
+
+        Parameters
+        ----------
+        id_habit : int
+            id of the habit
         """
         date = datetime.now().strftime("%Y-%m-%d")
         time = datetime.now().strftime("%H:%M")

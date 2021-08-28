@@ -68,7 +68,7 @@ def test_select_column():
     assert ids_habits == [1, 2, 3, 4, 5]
     assert ids_trackings == [1, 3, 3, 1]
     assert dates == dates_weekly
-    
+
 def test_select_columns():
     """
     Select several columns of the indicated table.
@@ -76,11 +76,12 @@ def test_select_columns():
     ids_names = analytics.select_columns(habits_table, stop = 2)
     names_periodicity = analytics.select_columns(trackings_table, start = 1, stop = 3)
     names_trackings_one_habit = analytics.select_columns(info_trackings_yoga, start = 1, stop = 2)
-    assert ids_names == [(1, 'Yoga'), (2, 'Play Piano'), (3, 'Read'), (4, 'Run'), (5, 'Try Sth New')]
+    assert ids_names == [(1, 'Yoga'), (2, 'Play Piano'),
+                         (3, 'Read'), (4, 'Run'), (5, 'Try Sth New')]
     assert names_periodicity == [('2021-07-21', '09:06'), ('2021-07-21', '15:26'),
                                  ('2021-07-21', '16:00'), ('2021-07-22', '17:11')]
     assert names_trackings_one_habit == [('Yoga',), ('Yoga',), ('Yoga',)]
-    
+
 def test_get_all_ids():
     """
     Return the first column of a table in a list.
@@ -89,21 +90,39 @@ def test_get_all_ids():
     ids_trackings = analytics.get_all_ids(trackings_table)
     assert ids_habits == [1, 2, 3, 4, 5]
     assert ids_trackings == [1, 3, 3, 1]
-    
-# def test_ids_with_trackings():
-#     ids_with_trackings = analytics.ids_with_trackings(habits_trackings_table)
-#     assert ids_with_trackings == [1, 4, 3, 5]
+
+def test_unique_ids():
+    """
+    Unique ids of a table
+    """
+    unique_ids = analytics.unique_ids(habits_trackings_table)
+    assert unique_ids == [1, 4, 3, 5]
 
 def test_ids_without_trackings():
+    """
+    All habit ids that have no trackings.
+    """
     ids_without_trackings = analytics.ids_without_trackings(habits_table, habits_trackings_table)
     no_ids_without_trackings = analytics.ids_without_trackings(
         [(1, 'Yoga', 'daily', 'Be more flexible', 'Low-impact sport', '2021-07-20'),
-         (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-21')], 
+         (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-21')],
         [(1, 'Yoga', 'daily', 'Be more flexible', 'Low-impact sport', '2021-07-21', '09:06'),
          (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-21', '15:26'),
          (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-22', '16:00')])
     assert ids_without_trackings == [2]
     assert no_ids_without_trackings == []
+
+def test_ids_with_trackings():
+    """
+    All habit ids that have trackings.
+    """
+    ids_with_trackings = analytics.ids_with_trackings(habits_table, [2])
+    all_ids_with_trackings = analytics.ids_with_trackings(
+        [(1, 'Yoga', 'daily', 'Be more flexible', 'Low-impact sport', '2021-07-20'),
+         (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-21')],
+        [])
+    assert ids_with_trackings == [1, 3, 4, 5]
+    assert all_ids_with_trackings == [1, 3]
 
 def test_select_rows():
     """
@@ -574,18 +593,29 @@ def test_info_all_habits():
         ('4', 'Run', '2021-07-21', '2021-07-28', 'Afternoon', 2, 2),
         ('5', 'Try Sth New', '2021-07-28', '2021-07-28', 'Morning', 1, 1)
         ]
-    
+
 def test_tracked_habits():
     """
-    
+    Habits with trackings and their information from
+    the habits table of the DB.
     """
-    habits_table_periodicity = [(3, 'Yoga', 'weekly', 'Faaf', 'Faaf', '2021-08-25'), 
-                                (4, 'Piano', 'weekly', 'Fa', 'Faa', '2021-08-24')]
-    habits_trackings_table_periodicity = [
-        [(4, 'Piano', 'weekly', 'Fa', 'Faa', '2021-08-24', '16:18'), 
-         (4, 'Piano', 'weekly', 'Fa', 'Faa', '2021-08-25', '16:20')]
-        ]
-    tracked_habits = analytics.tracked_habits()
+    tracked_habits = analytics.tracked_habits(habits_table,
+                                              habits_trackings_table)
+    assert tracked_habits == [
+        (1, 'Yoga', 'daily', 'Be more flexible', 'Low-impact sport', '2021-07-20'),
+        (4, 'Run', 'weekly', 'Be faster', 'At weekends', '2021-07-22'),
+        (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-21'),
+        (5, 'Try Sth New', 'weekly', 'Experiences', 'A new activity', '2021-07-28')]
+
+def test_habits_without_trackings():
+    """
+    Untracked habits and their information from
+    the habits table of the DB.
+    """
+    untracked_habits = analytics.habits_without_trackings(habits_table,
+                                                          [2])
+    assert untracked_habits == [
+        (2, 'Play Piano', 'daily', 'Learn more songs', 'Minimum one hour', '2021-07-21')]
 
 def test_habit_info_longest_streak():
     """
@@ -625,10 +655,10 @@ def test_lengths():
     """
     lengths = analytics.lengths(habits_table)
     assert lengths == [[1, 4, 5, 16, 16, 10],
-                       [1, 10, 5, 16, 16, 10],
-                       [1, 4, 5, 20, 10, 10],
-                       [1, 3, 6, 9, 11, 10],
-                       [1, 11, 6, 11, 14, 10]]
+                        [1, 10, 5, 16, 16, 10],
+                        [1, 4, 5, 20, 10, 10],
+                        [1, 3, 6, 9, 11, 10],
+                        [1, 11, 6, 11, 14, 10]]
 
 def test_max_lengths():
     """
@@ -661,18 +691,12 @@ def test_aligned_columns():
         "%-1s    %-11s    %-6s    %-20s    %-16s    %-10s    ",
         habits_table)
     assert list(data_with_distances) == [
-     '1    Yoga           daily     Be more flexible        Low-impact sport    2021-07-20    ',
-     '2    Play Piano     daily     Learn more songs        Minimum one hour    2021-07-21    ',
-     '3    Read           daily     Read 12 books a year    Afternoons          2021-07-21    ',
-     '4    Run            weekly    Be faster               At weekends         2021-07-22    ', 
-     '5    Try Sth New    weekly    Experiences             A new activity      2021-07-28    '
+      '1    Yoga           daily     Be more flexible        Low-impact sport    2021-07-20    ',
+      '2    Play Piano     daily     Learn more songs        Minimum one hour    2021-07-21    ',
+      '3    Read           daily     Read 12 books a year    Afternoons          2021-07-21    ',
+      '4    Run            weekly    Be faster               At weekends         2021-07-22    ',
+      '5    Try Sth New    weekly    Experiences             A new activity      2021-07-28    '
         ]
-    
-    [(1, 'Yoga', 'daily', 'Be more flexible', 'Low-impact sport', '2021-07-20'),
-                (2, 'Play Piano', 'daily', 'Learn more songs', 'Minimum one hour', '2021-07-21'),
-                (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-21'),
-                (4, 'Run', 'weekly', 'Be faster', 'At weekends', '2021-07-22'),
-                (5, 'Try Sth New', 'weekly', 'Experiences', 'A new activity', '2021-07-28')]
 
 def test_line():
     """
@@ -691,9 +715,9 @@ def test_add_colnames():
     add_colnames = analytics.add_colnames(
         ('ID', 'Habit', 'Periodicity', 'Motivation', 'Description'),
         [(1, 'Yoga', 'daily', 'Be more flexible', 'Low-impact sport'),
-         (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons'),
-         (4, 'Run', 'weekly', 'Be faster', 'At weekends'),
-         (5, 'Try Sth New', 'weekly', 'Experiences', 'A new activity')])
+          (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons'),
+          (4, 'Run', 'weekly', 'Be faster', 'At weekends'),
+          (5, 'Try Sth New', 'weekly', 'Experiences', 'A new activity')])
     assert add_colnames == [
         ('ID', 'Habit', 'Periodicity', 'Motivation', 'Description'),
         (1, 'Yoga', 'daily', 'Be more flexible', 'Low-impact sport'),
@@ -708,10 +732,10 @@ def test_table_line():
     """
     table_line = analytics.table_line(
         [('ID', 'Habit', 'Periodicity', 'Motivation', 'Description'),
-         (1, 'Yoga', 'daily', 'Be more flexible', 'Low-impact sport'),
-         (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons'),
-         (4, 'Run', 'weekly', 'Be faster', 'At weekends'),
-         (5, 'Try Sth New', 'weekly', 'Experiences', 'A new activity')]
+          (1, 'Yoga', 'daily', 'Be more flexible', 'Low-impact sport'),
+          (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons'),
+          (4, 'Run', 'weekly', 'Be faster', 'At weekends'),
+          (5, 'Try Sth New', 'weekly', 'Experiences', 'A new activity')]
         )
     assert table_line == '_________________________________________________'\
         '_______________________________'

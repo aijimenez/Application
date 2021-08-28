@@ -30,7 +30,7 @@ The Habitsbox Application allows users to create and track their daily and weekl
 * Information on habits by periodicity
 * Counting days or weeks of activity according to periodicity
 * Longest streak for each tracked habit
-* Longest streak of all habits
+* Longest streak of all tracked habits
 * Part of the day when the habit is performed most of the time
 
 ## Prerequisites
@@ -80,20 +80,21 @@ The Habitsbox application includes five predefined habits. Three of them are dai
 
 ![First image](./images/five_habits.png)
 
-## Documentation
+## Documentation  
+
+
 
 ## Testing
+
+The application was tested with Pytest version 6.2, the tests can be found in Application\tests. To run the tests, follow the instructions below.  
 
 **Step 1: Install Pytest**
 
 Use ``pip`` to install PyInputPlus
 ```
-pip install 
+pip install pytest==6.2
 ```
-On macOS and Linux
-```
-pip3 install 
-```
+
 **Step 2: Run the tests**   
 
 1. Navigate to the directory ``Application``

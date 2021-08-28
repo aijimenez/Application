@@ -9,7 +9,6 @@ from Habitsbox_app.application.analytics import Analytics
 
 analytics = Analytics()
 
-
 def insert_habit():
     """
     Insert the habit play piano and its corresponding
@@ -368,23 +367,29 @@ def test_days_weeks_activity():
     assert analytics.activity('daily', meditation_trackings(), 1) == 15
     assert analytics.activity('weekly', french_trackings(), 1) == 5
 
-def test_all_habits_registered():
+def test_tracked_habits():
     """
-    Give the information contained in the habits table.
-    ID and name of each habit, periodicity, motivation, description
-    of the habit, and date when the habit was created.
+    Habits with trackings and their information from
+    the habits table of the DB.
     """
-    habits_table = analytics.habits_table()
-    assert habits_table ==  [
-        (1, 'Yoga', 'daily', 'Be more flexible', 'A low-impact activity', '2021-06-25'),
+    tracked_habits = analytics.tracked_habits(analytics.habits_table(),
+                                              analytics.habits_trackings_table())
+    assert tracked_habits == [
         (2, 'Run', 'weekly', 'Improved fitness', 'Jogging and sprinting', '2021-06-25'),
         (3, 'Read', 'daily', '12 books in a year', 'Classics and dystopian', '2021-06-25'),
+        (1, 'Yoga', 'daily', 'Be more flexible', 'A low-impact activity', '2021-06-25'),
         (4, 'Meditation', 'daily', 'Training awareness', '20 minutes', '2021-06-29'),
         (5, 'Learn French', 'weekly', 'Fluent in french', 'Practice the 4 skills', '2021-06-29')
         ]
-
-def test_tracked_habits():
-    pass
+    
+def test_habits_without_trackings():
+    """
+    Untracked habits and their information from
+    the habits table of the DB.
+    """
+    untracked_habits = analytics.habits_without_trackings(analytics.habits_table,
+                                                          [])
+    assert untracked_habits == []
 
 def test_habits_info_same_periodicity():
     """

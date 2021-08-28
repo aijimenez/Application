@@ -1,19 +1,23 @@
 """
 This module shows the different options that the user
-has when adding his/her habits and trackings of each
-habit.
+has when adding his/her habits and trackings.
 """
 
 import sys
 import pyinputplus as pyip
+
 from application.analytics import Analytics
 
 class Menu:
     """
-    Show a menu and react to the user options when executed.
+    Show a menu and react to the user options.
     """
 
     def __init__(self):
+        """
+        Create an instance of the class Analytics.
+        Access the different methods in the menu.
+        """
         self.analytics = Analytics()
         self.menu_options = {
             "1": self.add_habit,
@@ -34,7 +38,6 @@ class Menu:
         Adding more options to each menu as these numbers
         increase.
         """
-
         # Gets the number of habits that exist in the habits table
         number_of_habits = len(self.analytics.habits_table())
         # Gets the number of trackings that exist in the trackings table
@@ -94,7 +97,6 @@ class Menu:
         Restricts or increases the options that can be selected
         by the user and reacts to the selected number.
         """
-
         # Gets the number of habits that exist in the habits table
         number_of_habits = len(self.analytics.habits_table())
         # Gets the number of trackings that exist in the trackings table
@@ -138,8 +140,8 @@ class Menu:
 
     def choice_stay_return(self, text, action):
         """
-        Asks the user if he/she wants to
-        return to the main menu or to perform the action
+        Asks the user if he/she wants to return to
+        the main menu or to perform the action
         indicated in number 1.
         """
         while True:
@@ -182,7 +184,7 @@ class Menu:
             """)
         else:
             # List of the names and ids of the registered habits in table format
-            self.analytics.table_registered_habits()
+            self.table_registered_habits()
 
         while True:
             try:
@@ -286,8 +288,8 @@ class Menu:
 
     def check_off(self):
         """
-        Record the date and time in the trackings table when
-        the user enters the id of the habit to be marked as done.
+        Record the date and time in the DB tracking table when
+        the user enters the habit id to mark it as done.
         """
         # Clean up the console
         self.clear_console()
@@ -312,7 +314,7 @@ class Menu:
                 """
                 )
             # display a table with all the registered habits
-            self.analytics.table_registered_habits()
+            self.table_registered_habits()
             print('')
             id_n = pyip.inputNum("Choose the ID of your habit ")
             if id_n == 0:
@@ -363,7 +365,7 @@ class Menu:
                     will also reset all progress on it!
             -------------------------------------------------""")
         # List of the names and ids of the registered habits in table format
-        self.analytics.table_registered_habits()
+        self.table_registered_habits()
 
         while True:
             name = input("""
@@ -394,11 +396,7 @@ class Menu:
                 # habits_names = self.analytics.get_all_names()
                 if len(habits_names) >= 1:
                     # List of the names and ids of the remaining habits in table format
-                    self.analytics.display_table(('ID', 'HABIT'),
-                                                self.analytics.select_columns(
-                                                    self.analytics.habits_table(),
-                                                    stop=2),
-                                                'REMAINING HABITS')
+                    self.table_registered_habits(title='REMAINING HABITS')
                     # Return to the main menu or delete another habit
                     self.choice_stay_return('Delete another habit', self.delete_habit)
                 else:
@@ -417,11 +415,11 @@ class Menu:
 
     def see_habit(self):
         """
-        Displays individual information for each recorded habit.
-        Habit name, motivation, description, periodicity, the date
-        of the first tracking if any, the last day of activity, last
-        day of activity, in which part of the day the habit is mostly
-        checked off, the longest streak and the number of days or
+        Displays individual information for each recorded habit
+        depending on the tracking number. Habit name, motivation,
+        description, periodicity, the date of the first tracking if any,
+        the last day of activity, in which part of the day the habit is
+        mostly checked off, the longest streak and the number of days or
         weeks of activity.
         """
         # Clean up the console
@@ -435,7 +433,7 @@ class Menu:
         # Gets the habits table of the DB
         habits_info = self.analytics.habits_table()
         # List of the names and ids of the registered habits in table format
-        self.analytics.table_registered_habits()
+        self.table_registered_habits()
         # Union of the habits table and the trackings table from the DB
         habits_trackings = self.analytics.habits_trackings_table()
         # A list of the trackings that have been recorded in the trackings table of the DB
@@ -585,8 +583,9 @@ class Menu:
 
     def show_all_habits(self):
         """
-        Gives a table with information about all recorded habits.
-        ID and name of the habit, periodicity, motivation, description,
+        Displays information on all registered habits,
+        dividing tracked und untracked habits. ID and name
+        of the habit, periodicity, motivation, description,
         and the day it was first recorded.
         """
         # Clean up the console
@@ -598,30 +597,7 @@ class Menu:
             ________________________________________________
             """)
 
-        self.all_tracked_habits()
-        
-        self.habits_without_trackings(self.analytics.habits_table(),
-                                      self.analytics.ids_without_trackings(
-                                          self.analytics.habits_table(), 
-                                          self.analytics.habits_trackings_table()))
-        print('')
-        # Return to the main menu by selecting the number zero
-        self.return_menu()
-        
-    def habits_without_trackings(self, habits_table, ids_without_trackings):
-        self.analytics.display_table(
-            ('ID', 'HABIT', 'PERIODICITY', 'MOTIVATION', 'DESCRIPTION', 'CREATION DAY'),
-            self.analytics.habits_without_trackings(habits_table, 
-                                                    ids_without_trackings),
-            'UN-TRACKED HABITS')
-        
-    def all_tracked_habits(self):
-        """
-        Gives a table with information about all tracked habits.
-        ID and name of the habit, periodicity, motivation, description,
-        and the day it was first recorded.
-        """
-        # Displays informationo of tracked habits contained in the habits table in table format
+        # Displays information of tracked habits contained in the habits table in table format
         self.analytics.display_table(
             ('ID', 'HABIT', 'PERIODICITY', 'MOTIVATION', 'DESCRIPTION', 'CREATION DAY'),
             # Gets all the tracked habits
@@ -633,17 +609,30 @@ class Menu:
             'TRACKED HABITS'
             )
         print('')
-        
+        # IDs of habits without trackings
+        ids_without_trackings = self.analytics.ids_without_trackings(
+            # Gets the habits table of the DB
+            self.analytics.habits_table(),
+            # Join of the habits table and the trackings table from the DB
+            self.analytics.habits_trackings_table())
+
+        if len(ids_without_trackings) != 0:
+            # Habits without trackings in tabular form
+            self.table_untracked_habits(self.analytics.habits_table(),
+                                                  ids_without_trackings)
+        print('')
+        # Return to the main menu by selecting the number zero
+        self.return_menu()
+
     def habits_same_periodicity(self):
         """
-        Displays information about all habits that have the same
-        periodicity. For habits with trackings: ID and name of
-        the habit, date of the first and last tracking, part of
-        the day when the user checks the habit of most often,
-        numbers of days or weeks of activity, and the longest streak.
-        For habits without trackings it shows the ID, name, periodicity,
-        motivation, description, and date when the habit was first
-        created.
+        Displays information about all habits with the same
+        periodicity and divides them into tracked und untracked
+        habits. For tracked habits, it shows ID and name of the habit,
+        date of the first and last tracking, part of the day when
+        the user checks the habit of most often, numbers of days or weeks
+        of activity, and the longest streak. For untracked habits, it shows
+        information from the habits table of the DB.
         """
         # Clean up the console
         self.clear_console()
@@ -653,7 +642,7 @@ class Menu:
                     HABITS WITH THE SAME PERIODICITY
             ________________________________________________
             """)
-        
+
         while True:
             print("""
                   What periodicity would you like to see?
@@ -679,7 +668,7 @@ class Menu:
         # Clean up the console
         self.clear_console()
         # Join of the habits table and the trackings table from the DB
-        # Select all rows that have the same periodicity from the join of the  table
+        # Select all rows that have the same periodicity from the join of the table
         habits_trackings_periodicity = self.analytics.select_rows(
             self.analytics.habits_trackings_table(),
             2,
@@ -708,20 +697,21 @@ class Menu:
                   ________________________________________________
                       """.format(periodicity.upper()))
             # IDs of habits without trackings
-            ids_without_trackings = self.analytics.ids_without_trackings(habits_table_periodicity, 
-                                                                         habits_trackings_periodicity)
+            ids_without_trackings = self.analytics.ids_without_trackings(
+                habits_table_periodicity,
+                habits_trackings_periodicity)
             # IDs of habits that have trackings
-            ids_with_trackings = self.analytics.ids_with_trackings(habits_table_periodicity, 
+            ids_with_trackings = self.analytics.ids_with_trackings(habits_table_periodicity,
                                                                    ids_without_trackings)
-            
+
             if len(ids_with_trackings) != 0:
                 # trackings for each habit are grouped together in a list.
                 habits_trackings_grouped = self.analytics.lists_periodicity(
+                    # Join of the habits table and the trackings table from the DB
                     self.analytics.habits_trackings_table(),
                     2,
                     periodicity)
-                # A list with information on habits with the same periodicity and
-                # with trackings
+                # Habits with the same periodicity and with trackings
                 table_periodicity = self.analytics.periodicity_info(
                     habits_trackings_grouped,
                     periodicity
@@ -749,8 +739,8 @@ class Menu:
                                             'TRACKED HABITS')
             if len(ids_without_trackings) != 0:
                 # Habits with same periodicity and without trackings in tabular form
-                self.habits_without_trackings(habits_table_periodicity, 
-                                              ids_without_trackings)
+                self.table_untracked_habits(habits_table_periodicity,
+                                                      ids_without_trackings)
 
         # Return to the main menu or see other periodicity
         self.choice_stay_return('See other periodicity',
@@ -786,6 +776,44 @@ class Menu:
         print(' ')
         # Return to the main menu by selecting the number zero
         self.return_menu()
+
+    def table_registered_habits(self, title='YOUR HABIT(S)'):
+        """
+        Display the names and ids of the registered habits
+        in table format. The table has a title and the name
+        of the columns.
+
+        Parameters
+        ----------
+        title : str, optional
+            title of the table
+            (default is the title 'YOUR HABIT(S)')
+        """
+        self.analytics.display_table(
+            ('ID', 'HABIT'),
+            list(self.analytics.select_columns(
+                self.analytics.habits_table(),
+                stop=2)),
+            title)
+
+    def table_untracked_habits(self, habits_table, ids_without_trackings):
+        """
+        Display information of the habits without trackings
+        in table format.
+
+        Parameters
+        ----------
+        habits_table : list of tuples
+            a list with the information of the registered habits
+        ids_without_trackings : list
+            a list of numbers representing the ids of the habits
+            without trackings
+        """
+        self.analytics.display_table(
+            ('ID', 'HABIT', 'PERIODICITY', 'MOTIVATION', 'DESCRIPTION', 'CREATION DAY'),
+            self.analytics.habits_without_trackings(habits_table,
+                                                    ids_without_trackings),
+            'UN-TRACKED HABITS')
 
     def return_menu(self):
         """
