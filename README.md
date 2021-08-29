@@ -82,7 +82,7 @@ The Habitsbox application includes five predefined habits. Three of them are dai
 
 ## Documentation  
 
-
+The documentation for the application was generated using ``pydoc`` and can be found at Application\docs. 
 
 ## Testing
 

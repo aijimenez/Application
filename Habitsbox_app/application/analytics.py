@@ -11,6 +11,7 @@ from functools import reduce
 from collections import Counter
 from operator import itemgetter
 
+# from .habit import Habit
 from .habit import Habit
 
 class Analytics:
@@ -88,7 +89,7 @@ class Analytics:
         Return all the habits with its information contained in
         the table habits in the DB. ID and name of the habit,
         periodicity, motivation, description, and the day it was recorded.
-        
+
         Returns
         -------
         list
@@ -111,7 +112,7 @@ class Analytics:
         -------
         list
             a list of tuples with the habit id, date and time
-            
+
         Example
         -------
         [(1, '2021-02-01', '19:52'), (2, '2021-02-03', '02:42')]
@@ -129,7 +130,7 @@ class Analytics:
         -------
         list
             a list of tuples of the join of the habits and trackings table
-            
+
         Example
         -------
         [(1, 'Yoga', 'daily', 'Be more flexible', 'Mornings', '2021-06-21', '09:06'),
@@ -422,7 +423,7 @@ class Analytics:
         Returns
         -------
         iterator
-            difference between the first element and the second
+            substract of the second element from the first
 
         Example
         -------
@@ -454,7 +455,7 @@ class Analytics:
         """
         return map(lambda x: x.days, differences)
 
-    def cw_5152_to_1(self, differences):
+    def dif_5152_to_1(self, differences):
         """
         Change the number to 1 if the number in the list
         is -51 o -52.
@@ -467,7 +468,7 @@ class Analytics:
         Returns
         -------
         iterator
-            numbers representing calender week numbers
+            numbers representing days
         """
         return map(lambda x: 1
                    if x in (-51, -52)
@@ -522,7 +523,7 @@ class Analytics:
 
     def longest_streak(self, streaks):
         """
-        Give the maximum number in a list of numbers.
+        Choose the maximum number and add 1 to it.
         If the list is empty, returns the number one.
 
         Parameters
@@ -579,7 +580,7 @@ class Analytics:
         return self.longest_streak(
             self.streaks(
                 self.grouping_differences(
-                    self.cw_5152_to_1(
+                    self.dif_5152_to_1(
                         self.differences(
                             self.zipping_unique_data(
                                 self.unique_data(
@@ -600,7 +601,7 @@ class Analytics:
             a list with the information of the habits and
             its trackings
         col_date : int, optional
-            index number i.e. column containing the dates
+            index number i.e. column containing dates
             (default is number 5)
 
         Returns
@@ -627,7 +628,7 @@ class Analytics:
             a list with the information of the habits and
             its trackings
         col_date : int, optional
-            index number i.e. column containing the dates
+            index number i.e. column containing dates
             (default is number 5)
 
         Returns
@@ -850,16 +851,16 @@ class Analytics:
         return self.unique_ids(
             self.select_rows(table, col_periodicity, periodicity))
 
-    def list_habits_list(self,table, unique_ids):
+    def grouped_habits(self,table, unique_ids):
         """
-        Give a list of lists of habits grouped by id.
+        Habits grouped by id.
 
         Parameters
         ----------
         table : list of tuples
             name of the table
         unique_ids : list
-            a list of numbers representing ids
+            a list of ids of the habits with the same periodicity
 
         Returns
         -------
@@ -870,8 +871,8 @@ class Analytics:
 
     def lists_periodicity(self, table, col_periodicity, periodicity):
         """
-        A list of habits with the same periodicity. Information and
-        trackings for each habit are grouped together in a list.
+        Information and trackings of the habits with the same
+        periodicity are grouped together by id.
 
         Parameters
         ----------
@@ -897,10 +898,10 @@ class Analytics:
           (1, 'Yoga', 'daily', 'Be more flexible', 'Mornings', '2021-08-03', '13:43')],
          [(3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-08-03', '15:44')]]
         """
-        return self.list_habits_list(table,
-                                     self.unique_ids_periodicity(table,
-                                                                 col_periodicity,
-                                                                 periodicity))
+        return self.grouped_habits(table,
+                                   self.unique_ids_periodicity(table,
+                                                               col_periodicity,
+                                                               periodicity))
 
     def periodicity_info(self, lists_periodicity, periodicity, col_date=5):
         """
@@ -965,9 +966,8 @@ class Analytics:
 
     def lists_both_periodicities(self, habits_trackings_table):
         """
-        Information and trackings for each habit are grouped together
-        in a list. In addition, habits with the same periodicity are
-        grouped together.
+        Habits are separated according to periodicity.
+        Information and trackings of each habit are grouped together.
 
         Parameters
         ----------
@@ -980,7 +980,7 @@ class Analytics:
         list
             list of lists. Information and trackings for each habit
             are grouped together, and habits with the same periodicity
-            are grouped together as well.
+            are grouped are separated.
 
         Example
         -------
@@ -1004,9 +1004,8 @@ class Analytics:
         Parameters
         ----------
         lists_both_periodicities : list
-            Information and trackings for each habit grouped
-            together. Habits with the same periodicity
-            grouped together as well.
+            Habits are separated according to periodicity. Information
+            and trackings of each habit are grouped together.
 
         Returns
         -------
@@ -1024,7 +1023,8 @@ class Analytics:
 
     def info_all_habits(self, both_periodicities_info):
         """
-        Information on the habits is merged into a single list.
+        Information on the habits separated by periodicity
+        is merged into a single list.
 
         Parameters
         ----------
@@ -1062,8 +1062,8 @@ class Analytics:
             a list of tuples of tracked habit information
         """
         return self.info_all_habits(
-            self.list_habits_list(habits_table,
-                                  self.unique_ids(habits_trackings_table))
+            self.grouped_habits(habits_table,
+                                self.unique_ids(habits_trackings_table))
             )
 
     def habits_without_trackings(self, habits_table, ids_without_trackings):
@@ -1219,7 +1219,7 @@ class Analytics:
 
     def aligned_columns(self, format_distance, table):
         """
-        Elements of the db table are separated and
+        Elements of a table are separated and
         aligned.
 
         Parameters
@@ -1232,8 +1232,8 @@ class Analytics:
 
         Returns
         -------
-        list
-            a list of strings whose elements are aligned with
+        iterator
+            strings whose elements are aligned with
             the given distance
         """
         return map(lambda x: format_distance % x, table)
@@ -1328,7 +1328,7 @@ class Analytics:
         Parameters
         ----------
         name : str
-            Name of the habit
+            name of the habit
         """
         with self.connection:
             self.cursor.execute("SELECT HabitID FROM habits WHERE Name=:name",

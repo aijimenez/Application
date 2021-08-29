@@ -5,6 +5,7 @@ different data sets.
 from datetime import timedelta, date, time
 from Habitsbox_app.application.analytics import Analytics
 
+
 analytics = Analytics()
 
 habits_table = [(1, 'Yoga', 'daily', 'Be more flexible', 'Low-impact sport', '2021-07-20'),
@@ -64,10 +65,13 @@ def test_select_column():
     ids_habits = analytics.select_column(habits_table, 0)
     ids_trackings = analytics.select_column(trackings_table, 0)
     dates = analytics.select_column(ID_1_Week, 1)
+    col_dates = analytics.select_column([(1, '2019-12-24', '09:52'),
+                                      (1, '2019-12-29', '03:42')], 1)
     assert names_habits_table == ['Yoga', 'Play Piano', 'Read', 'Run', 'Try Sth New']
     assert ids_habits == [1, 2, 3, 4, 5]
     assert ids_trackings == [1, 3, 3, 1]
     assert dates == dates_weekly
+    assert col_dates == ['2019-12-24', '2019-12-29']
 
 def test_select_columns():
     """
@@ -84,7 +88,7 @@ def test_select_columns():
 
 def test_get_all_ids():
     """
-    Return the first column of a table in a list.
+    First column of a table in a list.
     """
     ids_habits = analytics.get_all_ids(habits_table)
     ids_trackings = analytics.get_all_ids(trackings_table)
@@ -257,13 +261,13 @@ def test_difference_in_days():
                                               timedelta(days=1)])
     assert list(diff_days) == [2, 2, 1]
 
-def test_cw_5152_to_1():
+def test_dif_5152_to_1():
     """
     Change the number to 1 if the number in the list
     is -51 o -52.
     """
-    differences_to_1 = analytics.cw_5152_to_1([-51, 1, 1, 2, 1, 1, 2, 2])
-    assert list(differences_to_1) == [1, 1, 1, 2, 1, 1, 2, 2]
+    differences_to_1 = analytics.dif_5152_to_1([-51, 1, 1, 2, 1, 1, 2, -52])
+    assert list(differences_to_1) == [1, 1, 1, 2, 1, 1, 2, 1]
 
 def unpacking_group_diff(grouping_differences):
     """
@@ -420,12 +424,13 @@ def test_most_active_time():
     Get the dictionary key(s) with the maximum value.
     """
     most_active_time = analytics.most_active_time(
-        {'Morning': 4, 'Afternoon': 3, 'Evening': 4, 'Overnight': 5},
-        5
-        )
+        {'Morning': 4, 'Afternoon': 3, 'Evening': 4, 'Overnight': 5}, 5)
     empty_dic = analytics.max_value({})
+    several_active_times = analytics.most_active_time(
+        {'Morning': 4, 'Afternoon': 3, 'Evening': 4, 'Overnight': 2}, 4)
     assert most_active_time == ['Overnight']
     assert empty_dic == {}
+    assert several_active_times == ['Morning', 'Evening']
 
 def test_unique_ids_periodicity():
     """
@@ -436,12 +441,12 @@ def test_unique_ids_periodicity():
     assert unique_ids_daily == [1, 3]
     assert unique_ids_weakly == [4, 5]
 
-def test_list_habits_list():
+def test_grouped_habits():
     """
-    Give a list of lists of habits grouped by id.
+    Habits grouped by id.
     """
-    grouped_habits_daily = analytics.list_habits_list(habits_trackings_table, [1, 3])
-    grouped_habits = analytics.list_habits_list(habits_trackings_table, [1, 5])
+    grouped_habits_daily = analytics.grouped_habits(habits_trackings_table, [1, 3])
+    grouped_habits_weekly = analytics.grouped_habits(habits_trackings_table, [1, 5])
     assert grouped_habits_daily == [
         [(1, 'Yoga', 'daily', 'Be more flexible', 'Low-impact sport', '2021-07-21', '09:06'),
          (1, 'Yoga', 'daily', 'Be more flexible', 'Low-impact sport', '2021-07-22', '17:11'),
@@ -449,7 +454,7 @@ def test_list_habits_list():
         [(3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-21', '15:26'),
          (3, 'Read', 'daily', 'Read 12 books a year', 'Afternoons', '2021-07-22', '16:00')]
         ]
-    assert grouped_habits == [
+    assert grouped_habits_weekly == [
         [(1, 'Yoga', 'daily', 'Be more flexible', 'Low-impact sport', '2021-07-21', '09:06'),
          (1, 'Yoga', 'daily', 'Be more flexible', 'Low-impact sport', '2021-07-22', '17:11'),
          (1, 'Yoga', 'daily', 'Be more flexible', 'Low-impact sport', '2021-07-28', '14:56')],
@@ -458,8 +463,8 @@ def test_list_habits_list():
 
 def test_lists_periodicity():
     """
-    A list of habits with the same periodicity. Information and
-    trackings for each habit are grouped together in a list.
+    Information and trackings of the habits with the same
+    periodicity are grouped together by id.
     """
     list_daily = analytics.lists_periodicity(habits_trackings_table, 2, 'daily')
     list_weekly = analytics.lists_periodicity(habits_trackings_table, 2, 'weekly')
@@ -519,9 +524,8 @@ def test_periodicity_info():
 
 def test_lists_both_periodicities():
     """
-    Information and trackings for each habit are grouped together
-    in a list. Habits with the same periodicity are grouped
-    together.
+    Habits are separated according to periodicity.
+    Information and trackings of each habit are grouped together.
     """
     lists_both_periodicities = analytics.lists_both_periodicities(habits_trackings_table)
     assert lists_both_periodicities == [
@@ -573,7 +577,8 @@ def test_both_periodicities_info():
 
 def test_info_all_habits():
     """
-    Information on the habits is merged into a single list.
+    Information on the habits separated by periodicity
+    is merged into a single list.
     """
     info_habits = analytics.info_all_habits(
         [
@@ -684,7 +689,7 @@ def test_distance_format():
 
 def test_aligned_columns():
     """
-    Elements of the db table are separated and
+    Elements of a table are separated and
     aligned.
     """
     data_with_distances = analytics.aligned_columns(

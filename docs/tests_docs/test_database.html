@@ -8,11 +8,12 @@
 <td valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>test_database</strong></big></big></font></td
 ><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:d%3A%5Ciubh%5C2semester%5Coofp_python%5Capplication%5Chabitsbox_app%5Capplication%5Ctest_database.py">d:\iubh\2semester\oofp_python\application\habitsbox_app\application\test_database.py</a></font></td></tr></table>
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:d%3A%5Ciubh%5C2semester%5Coofp_python%5Capplication%5Chabitsbox_app%5Ctest_database.py">d:\iubh\2semester\oofp_python\application\habitsbox_app\test_database.py</a></font></td></tr></table>
     <p><tt>Database&nbsp;related&nbsp;methods&nbsp;in&nbsp;the&nbsp;analytics&nbsp;module&nbsp;are&nbsp;tested.<br>
-Results&nbsp;of&nbsp;menu&nbsp;options&nbsp;such&nbsp;as&nbsp;see&nbsp;one&nbsp;habit,&nbsp;see&nbsp;habits&nbsp;with<br>
-the&nbsp;same&nbsp;periodicity&nbsp;and&nbsp;the&nbsp;longest&nbsp;streak&nbsp;of&nbsp;all&nbsp;habits&nbsp;are<br>
-tested&nbsp;using&nbsp;the&nbsp;five&nbsp;predetermined&nbsp;habits&nbsp;in&nbsp;the&nbsp;database.</tt></p>
+Results&nbsp;of&nbsp;menu&nbsp;options&nbsp;such&nbsp;as&nbsp;see&nbsp;one&nbsp;habit,&nbsp;see&nbsp;all&nbsp;habits<br>
+registered,&nbsp;see&nbsp;habits&nbsp;with&nbsp;the&nbsp;same&nbsp;periodicity&nbsp;and&nbsp;the&nbsp;longest&nbsp;<br>
+streak&nbsp;of&nbsp;all&nbsp;habits&nbsp;are&nbsp;tested&nbsp;using&nbsp;the&nbsp;five&nbsp;predetermined&nbsp;<br>
+habits&nbsp;in&nbsp;the&nbsp;database.</tt></p>
 <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#eeaa77">
@@ -47,17 +48,14 @@ in&nbsp;the&nbsp;join&nbsp;of&nbsp;the&nbsp;habits&nbsp;and&nbsp;trackings&nbsp;
 of&nbsp;the&nbsp;database.</tt></dd></dl>
  <dl><dt><a name="-run_trackings"><strong>run_trackings</strong></a>()</dt><dd><tt>Select&nbsp;the&nbsp;rows&nbsp;corresponding&nbsp;to&nbsp;the&nbsp;run<br>
 habit&nbsp;in&nbsp;the&nbsp;trackings&nbsp;table&nbsp;of&nbsp;the&nbsp;db.</tt></dd></dl>
- <dl><dt><a name="-test_all_habits_registered"><strong>test_all_habits_registered</strong></a>()</dt><dd><tt>Give&nbsp;the&nbsp;information&nbsp;contained&nbsp;in&nbsp;the&nbsp;habits&nbsp;table.<br>
-ID&nbsp;and&nbsp;name&nbsp;of&nbsp;each&nbsp;habit,&nbsp;periodicity,&nbsp;motivation,&nbsp;description<br>
-of&nbsp;the&nbsp;habit,&nbsp;and&nbsp;date&nbsp;when&nbsp;the&nbsp;habit&nbsp;was&nbsp;created.</tt></dd></dl>
  <dl><dt><a name="-test_days_weeks_activity"><strong>test_days_weeks_activity</strong></a>()</dt><dd><tt>Total&nbsp;number&nbsp;of&nbsp;trackings.&nbsp;Days&nbsp;or&nbsp;weeks&nbsp;of&nbsp;activity<br>
 depending&nbsp;on&nbsp;the&nbsp;periodicity&nbsp;of&nbsp;each&nbsp;habit.</tt></dd></dl>
  <dl><dt><a name="-test_first_tracking"><strong>test_first_tracking</strong></a>()</dt><dd><tt>Gives&nbsp;the&nbsp;date&nbsp;of&nbsp;the&nbsp;first&nbsp;tracking.</tt></dd></dl>
- <dl><dt><a name="-test_get_habist_trackings_table"><strong>test_get_habist_trackings_table</strong></a>()</dt><dd><tt>Get&nbsp;the&nbsp;join&nbsp;of&nbsp;the&nbsp;habits&nbsp;and&nbsp;trackings&nbsp;tables<br>
-in&nbsp;the&nbsp;database.</tt></dd></dl>
  <dl><dt><a name="-test_get_habits_table_piano"><strong>test_get_habits_table_piano</strong></a>()</dt><dd><tt>Get&nbsp;the&nbsp;habits&nbsp;registered&nbsp;in&nbsp;the&nbsp;habits&nbsp;table<br>
 of&nbsp;the&nbsp;database.<br>
 Verify&nbsp;that&nbsp;the&nbsp;habit&nbsp;play&nbsp;piano&nbsp;was&nbsp;inserted.</tt></dd></dl>
+ <dl><dt><a name="-test_get_habits_trackings_table"><strong>test_get_habits_trackings_table</strong></a>()</dt><dd><tt>Get&nbsp;the&nbsp;join&nbsp;of&nbsp;the&nbsp;habits&nbsp;and&nbsp;trackings&nbsp;tables<br>
+in&nbsp;the&nbsp;database.</tt></dd></dl>
  <dl><dt><a name="-test_get_last_tracking_insertation_"><strong>test_get_last_tracking_insertation_</strong></a>()</dt><dd><tt>Get&nbsp;the&nbsp;id&nbsp;number&nbsp;and&nbsp;date&nbsp;of&nbsp;the&nbsp;tracking&nbsp;61&nbsp;in<br>
 the&nbsp;trackings&nbsp;table&nbsp;of&nbsp;the&nbsp;database.</tt></dd></dl>
  <dl><dt><a name="-test_get_trackings_table"><strong>test_get_trackings_table</strong></a>()</dt><dd><tt>Get&nbsp;the&nbsp;trackings&nbsp;recorded&nbsp;in&nbsp;the&nbsp;trackings&nbsp;table<br>
@@ -66,12 +64,16 @@ of&nbsp;the&nbsp;database.</tt></dd></dl>
 ID&nbsp;and&nbsp;name&nbsp;of&nbsp;each&nbsp;habit,&nbsp;date&nbsp;of&nbsp;the&nbsp;first&nbsp;and&nbsp;last&nbsp;tracking,<br>
 most&nbsp;active&nbsp;time,&nbsp;days&nbsp;or&nbsp;weeks&nbsp;of&nbsp;activity&nbsp;according&nbsp;to<br>
 periodicity&nbsp;and&nbsp;its&nbsp;longest&nbsp;streak.</tt></dd></dl>
+ <dl><dt><a name="-test_habits_without_trackings"><strong>test_habits_without_trackings</strong></a>()</dt><dd><tt>Untracked&nbsp;habits&nbsp;and&nbsp;their&nbsp;information&nbsp;from<br>
+the&nbsp;habits&nbsp;table&nbsp;of&nbsp;the&nbsp;DB.</tt></dd></dl>
  <dl><dt><a name="-test_last_tracking"><strong>test_last_tracking</strong></a>()</dt><dd><tt>Gives&nbsp;the&nbsp;date&nbsp;of&nbsp;the&nbsp;last&nbsp;tracking.</tt></dd></dl>
  <dl><dt><a name="-test_longest_streak"><strong>test_longest_streak</strong></a>()</dt><dd><tt>Give&nbsp;the&nbsp;longest&nbsp;streak&nbsp;for&nbsp;a&nbsp;given&nbsp;habit.</tt></dd></dl>
  <dl><dt><a name="-test_longest_streak_all_habits"><strong>test_longest_streak_all_habits</strong></a>()</dt><dd><tt>Give&nbsp;the&nbsp;longest&nbsp;streak&nbsp;of&nbsp;all&nbsp;habits.</tt></dd></dl>
  <dl><dt><a name="-test_most_active_time"><strong>test_most_active_time</strong></a>()</dt><dd><tt>Part(s)&nbsp;of&nbsp;the&nbsp;day&nbsp;(Morning,&nbsp;Afternoon,&nbsp;Evening&nbsp;and&nbsp;Overnight)<br>
 with&nbsp;the&nbsp;most&nbsp;trackings&nbsp;for&nbsp;a&nbsp;given&nbsp;habit,&nbsp;which&nbsp;means&nbsp;that&nbsp;the<br>
 activity&nbsp;is&nbsp;most&nbsp;often&nbsp;performed&nbsp;in&nbsp;that&nbsp;part&nbsp;of&nbsp;the&nbsp;day.</tt></dd></dl>
+ <dl><dt><a name="-test_tracked_habits"><strong>test_tracked_habits</strong></a>()</dt><dd><tt>Habits&nbsp;with&nbsp;trackings&nbsp;and&nbsp;their&nbsp;information&nbsp;from<br>
+the&nbsp;habits&nbsp;table&nbsp;of&nbsp;the&nbsp;DB.</tt></dd></dl>
  <dl><dt><a name="-yoga_habits_trackings"><strong>yoga_habits_trackings</strong></a>()</dt><dd><tt>Select&nbsp;the&nbsp;rows&nbsp;corresponding&nbsp;to&nbsp;the&nbsp;yoga&nbsp;habit<br>
 in&nbsp;the&nbsp;join&nbsp;of&nbsp;the&nbsp;habits&nbsp;and&nbsp;trackings&nbsp;tables<br>
 of&nbsp;the&nbsp;database.</tt></dd></dl>
@@ -84,5 +86,5 @@ habit&nbsp;in&nbsp;the&nbsp;trackings&nbsp;table&nbsp;of&nbsp;the&nbsp;db.</tt><
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>analytics</strong> = &lt;analytics.Analytics object&gt;</td></tr></table>
+<td width="100%"><strong>analytics</strong> = &lt;application.analytics.Analytics object&gt;</td></tr></table>
 </body></html>

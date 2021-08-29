@@ -1,8 +1,9 @@
 """
 Database related methods in the analytics module are tested.
-Results of menu options such as see one habit, see habits with
-the same periodicity and the longest streak of all habits are
-tested using the five predetermined habits in the database.
+Results of menu options such as see one habit, see all habits
+registered, see habits with the same periodicity and the longest
+streak of all habits are tested using the five predetermined
+habits in the database.
 """
 from datetime import date
 from Habitsbox_app.application.analytics import Analytics
@@ -381,7 +382,7 @@ def test_tracked_habits():
         (4, 'Meditation', 'daily', 'Training awareness', '20 minutes', '2021-06-29'),
         (5, 'Learn French', 'weekly', 'Fluent in french', 'Practice the 4 skills', '2021-06-29')
         ]
-    
+
 def test_habits_without_trackings():
     """
     Untracked habits and their information from
