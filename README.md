@@ -10,13 +10,14 @@ The Habitsbox Application allows users to create and track their daily and weekl
 * [Prerequisites](#Prerequisites)
 * [Dependencies](#Dependencies)
 * [Installation](#Installation)
+* [Using the application](#Using the application)
 * [Documentation](#Documentation)
 * [Testing](#Testing)
 * [Links](#Links)
 * [](#)
 
 ## Screenshots
-![Analytics](./images/welcome.png)
+
 ![Analytics](./images/screenshoot1.png)
 ![Analytics](./images/screenshoot2.png)
 ![Analytics](./images/screenshoot3.png)
@@ -77,8 +78,52 @@ python menu.py
 
 The Habitsbox application includes five predefined habits. Three of them are daily and two are weekly. Each habit has tracking data for a four-week period.
 
+![Five habits](./images/five_habits.png)
 
-![First image](./images/five_habits.png)
+**Step 5: Exit the application**
+
+To exit the application you must press the number zero once if you are in the main menu, twice if you are using any of the menu options.
+
+## Using the application
+
+**Optional Step: Delete the five default habits**
+
+To use the application without the five default habits
+
+1. Navigate to the directory ``Application``
+```
+cd Application\Habitsbox_app
+```
+2. Delete all predefined habits before running the application
+
+```
+del DB_Habitsbox_app.db
+```
+3. Run the application
+```
+python menu.py
+```
+4. First image
+
+Once the predefined habits have been deleted, this will be the first image.
+
+![First habit](./images/welcome.png)
+
+**Step 1: Create a habit**
+
+1. Choose the option ``Add a new habit`` with the number 1.
+
+2. Write the name of your habit, choose the frecuency, write your motivation and a short description of the habit.
+
+3. At the end of your habit registration there will be a confirmation.
+
+![Confirmation](./images/Added_habit_confirmation.png)
+
+**Step 2: Check a habit off**
+
+
+
+
 
 ## Documentation  
 
