@@ -70,15 +70,14 @@ class Menu:
             3. Delete a habit
             ----------------------------------------
             """)
-
-            if (number_of_trackings == 0) or (number_of_habits == 1):
+            if (number_of_habits == 1):
                 print("""
             Analysis -------------------------------
 
             4. See my habit
             ----------------------------------------
                     """)
-            elif number_of_trackings >= 1:
+            elif (number_of_habits > 1): #or (number_of_trackings >= 0):
                 print(
                     """
             Analysis -------------------------------
@@ -86,10 +85,12 @@ class Menu:
             4. See a habit
             5. See all habits registered
             6. See habits with same periodicity
+            """)
+                if (number_of_trackings > 0):
+                    print(""" 
             7. See my longest streak of all habits
-
             ----------------------------------------
-                  """)
+                      """)
 
 
     def run(self):
@@ -109,17 +110,15 @@ class Menu:
             if (number_of_habits == 0) and (choice in [0, 1]):
                 action = self.menu_options.get(str(choice))
                 action()
-            elif (number_of_habits >=1) and (choice in [0, 1, 2, 3]):
+            elif (number_of_habits == 1) and (choice in [0, 1, 2, 3, 4]):
                 action = self.menu_options.get(str(choice))
                 action()
-            elif (
-                    (number_of_trackings == 0) or
-                    (number_of_habits == 1)) and (choice in [0, 1, 2, 3, 4]):
+            elif (number_of_habits > 1) and (choice in [0, 1, 2, 3, 4, 5, 6]):
                 action = self.menu_options.get(str(choice))
                 action()
-            elif (number_of_trackings >= 1) and (choice in [0, 1, 2, 3, 4, 5, 6, 7]):
+            elif number_of_trackings > 0 and (choice in [0, 1, 2, 3, 4, 5, 6, 7]):
                 action = self.menu_options.get(str(choice))
-                action()
+                action()    
             else:
                 print('Choose a number from the list')
 
@@ -596,30 +595,34 @@ class Menu:
                           ALL HABITS REGISTERED
             ________________________________________________
             """)
-
-        # Displays information of tracked habits contained in the habits table in table format
-        self.analytics.display_table(
-            ('ID', 'HABIT', 'PERIODICITY', 'MOTIVATION', 'DESCRIPTION', 'CREATION DAY'),
-            # Gets all the tracked habits
-            self.analytics.tracked_habits(
-                # Gets the habits table of the DB
-                self.analytics.habits_table(),
-                # Join of the habits table and the trackings table from the DB
-                self.analytics.habits_trackings_table()),
-            'TRACKED HABITS'
-            )
-        print('')
+        
+        # Gets the habits table of the DB
+        habits_table = self.analytics.habits_table()
         # IDs of habits without trackings
         ids_without_trackings = self.analytics.ids_without_trackings(
-            # Gets the habits table of the DB
-            self.analytics.habits_table(),
+            habits_table,
             # Join of the habits table and the trackings table from the DB
             self.analytics.habits_trackings_table())
+        # IDs of habits that have trackings
+        ids_with_trackings = self.analytics.ids_with_trackings(habits_table, 
+                                                               ids_without_trackings)
+        if len(ids_with_trackings) != 0:
+            # Displays information of tracked habits contained in the habits table in table format
+            self.analytics.display_table(
+                ('ID', 'HABIT', 'PERIODICITY', 'MOTIVATION', 'DESCRIPTION', 'CREATION DAY'),
+                # Gets all the tracked habits
+                self.analytics.tracked_habits(
+                    habits_table,
+                    # Join of the habits table and the trackings table from the DB
+                    self.analytics.habits_trackings_table()),
+                'TRACKED HABITS'
+                )
+        print('')
 
         if len(ids_without_trackings) != 0:
             # Habits without trackings in tabular form
-            self.table_untracked_habits(self.analytics.habits_table(),
-                                                  ids_without_trackings)
+            self.table_untracked_habits(habits_table,
+                                        ids_without_trackings)
         print('')
         # Return to the main menu by selecting the number zero
         self.return_menu()
