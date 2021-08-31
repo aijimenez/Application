@@ -13,7 +13,6 @@ The Habitsbox Application allows users to create and track their daily and weekl
 * [Usage](#Usage)
 * [Documentation](#Documentation)
 * [Testing](#Testing)
-* [Links](#Links)
 
 ## Screenshots
 
