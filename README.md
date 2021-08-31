@@ -176,6 +176,21 @@ Once you have selected a menu option you can always return to the main menu by t
 
 The documentation for the application was generated using ``pydoc`` and can be found at ``Application\docs``. 
 
+To view the documentation in a Web browser
+
+1. Navigate to the directory ``Application``
+```
+cd Application\Habitsbox_app
+```
+2. Start the documentation server
+```
+python -m pydoc -b
+```
+3. When you are ready, stop the server by retorning to the console and enter
+```
+q
+```
+
 ## Testing
 
 The application was tested with Pytest version 6.2, the tests can be found in ``Application\tests``. To run the tests, follow the instructions below.  
