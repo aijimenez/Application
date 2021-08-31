@@ -1,7 +1,7 @@
 """
 The Habit class in the habit module is tested.
 """
-from Habitsbox_app.application.habit import Habit
+from Habitsbox_app.app.habit import Habit
 
 def test_print():
     """

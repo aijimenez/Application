@@ -6,7 +6,7 @@ has when adding his/her habits and trackings.
 import sys
 import pyinputplus as pyip
 
-from application.analytics import Analytics
+from app.analytics import Analytics
 
 class Menu:
     """
