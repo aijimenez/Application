@@ -326,7 +326,7 @@ class Menu:
                     """
                  ------------------------------------------
                                 Good job!
-                              {} ✔ is done.
+                             - {} - is done.
                  ------------------------------------------
                  """.format(
                  # Selects the habit name from the row that corresponds to the id
